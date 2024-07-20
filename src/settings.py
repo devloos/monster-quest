@@ -33,8 +33,16 @@ WORLD_LAYERS = {
 }
 
 BATTLE_POSITIONS = {
-    'left': {'top': (360, 260), 'center': (190, 400), 'bottom': (410, 520)},
-    'right': {'top': (900, 260), 'center': (1110, 390), 'bottom': (900, 550)}
+    'left': {
+        'top': (360, 260),
+        'center': (190, 400),
+        'bottom': (410, 520)
+    },
+    'right': {
+        'top': (900, 260),
+        'center': (1110, 390),
+        'bottom': (900, 550)
+    }
 }
 
 BATTLE_LAYERS = {
@@ -50,10 +58,12 @@ BATTLE_CHOICES = {
         'fight':  {'pos': vector(30, -60), 'icon': 'sword'},
         'defend': {'pos': vector(40, -20), 'icon': 'shield'},
         'switch': {'pos': vector(40, 20), 'icon': 'arrows'},
-        'catch':  {'pos': vector(30, 60), 'icon': 'hand'}},
+        'catch':  {'pos': vector(30, 60), 'icon': 'hand'}
+    },
 
     'limited': {
         'fight':  {'pos': vector(30, -40), 'icon': 'sword'},
         'defend': {'pos': vector(40, 0), 'icon': 'shield'},
-        'switch': {'pos': vector(30, 40), 'icon': 'arrows'}}
+        'switch': {'pos': vector(30, 40), 'icon': 'arrows'}
+    }
 }
