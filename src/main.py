@@ -13,6 +13,7 @@ class Game:
             (WINDOW_WIDTH, WINDOW_HEIGHT)
         )
         pg.display.set_caption('Monster Quest')
+        self.clock = pg.time.Clock()
 
         self.all_sprites = pg.sprite.Group()
 
@@ -38,6 +39,7 @@ class Game:
 
     def run(self) -> None:
         while True:
+            dt = self.clock.tick() / 1000
             # handle events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -45,6 +47,7 @@ class Game:
                     exit()
 
             # handle game logic
+            self.all_sprites.update(dt)
             self.all_sprites.draw(self.display_surface)
 
             pg.display.update()
