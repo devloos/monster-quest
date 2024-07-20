@@ -3,6 +3,7 @@ from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap
 from os.path import join
 from sprites import Sprite
+from entities import Player
 
 
 class Game:
@@ -30,6 +31,10 @@ class Game:
                 surf,
                 self.all_sprites
             )
+
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
+                player = Player((obj.x, obj.y), self.all_sprites)
 
     def run(self) -> None:
         while True:
