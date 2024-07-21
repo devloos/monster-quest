@@ -34,8 +34,6 @@ class Game:
             'coast': coast_importer(24, 12, 'graphics', 'tilesets', 'coast')
         }
 
-        print(self.overworld_frames['coast'])
-
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         for layer in ['Terrain', 'Terrain Top']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
@@ -57,6 +55,13 @@ class Game:
                         self.overworld_frames['water'],
                         self.all_sprites
                     )
+
+        for obj in tmx_map.get_layer_by_name('Coast'):
+            pos = (obj.x, obj.y)
+            terrain = obj.properties['terrain']
+            side = obj.properties['side']
+            frames = self.overworld_frames['coast'][terrain][side]
+            AnimatedSprite(pos, frames, self.all_sprites)
 
         for obj in tmx_map.get_layer_by_name('Objects'):
             Sprite((obj.x, obj.y), obj.image, self.all_sprites)
