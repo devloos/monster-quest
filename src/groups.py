@@ -14,5 +14,13 @@ class AllSpriteGroup(pg.sprite.Group):
         self.offset.y = -(player_center.y - WINDOW_HEIGHT / 2)
 
         sprite: pg.sprite.Sprite
-        for sprite in self:
-            self.screen.blit(sprite.image, sprite.rect.topleft + self.offset)
+
+        bg_sprites = filter(lambda sprite: sprite.z < WorldLayer.main, self)
+        main_sprites = filter(lambda sprite: sprite.z == WorldLayer.main, self)
+        fg_sprites = filter(lambda sprite: sprite.z > WorldLayer.main, self)
+
+        for sprites in [bg_sprites, main_sprites, fg_sprites]:
+            for sprite in sprites:
+                self.screen.blit(
+                    sprite.image, sprite.rect.topleft + self.offset
+                )

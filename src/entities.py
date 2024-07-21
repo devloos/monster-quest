@@ -12,6 +12,7 @@ class Entity(pg.sprite.Sprite):
         self.direction = vector()
         self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
+        self.z = WorldLayer.main
 
     def get_state(self):
         moving = bool(self.direction)

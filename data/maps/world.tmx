@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="86" height="86" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="1152">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="86" height="86" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="1160">
  <tileset firstgid="1" source="../tilesets/world.tsx"/>
  <tileset firstgid="211" source="../tilesets/objects.tsx"/>
  <tileset firstgid="242" source="../tilesets/Grass.tsx"/>
@@ -183,7 +183,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="Entities">
+ <objectgroup id="3" name="Entities" visible="0">
   <object id="12" name="Player" x="4444.42" y="3887">
    <properties>
     <property name="direction" value="down"/>
@@ -3879,7 +3879,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="2" name="Objects" visible="0">
+ <objectgroup id="2" name="Objects">
   <object id="1" gid="211" x="4352" y="3776" width="320" height="320"/>
   <object id="2" gid="226" x="3455.33" y="3783.33" width="128" height="192"/>
   <object id="3" gid="226" x="3264" y="3712" width="128" height="192"/>
@@ -4078,9 +4078,6 @@
   <object id="665" gid="237" x="2963.33" y="3235.33" width="56" height="60"/>
   <object id="666" gid="237" x="2813.33" y="2674.67" width="56" height="60"/>
   <object id="667" gid="238" x="3724" y="2610" width="60" height="60"/>
-  <object id="668" gid="238" x="3364" y="2270" width="60" height="60"/>
-  <object id="669" gid="239" x="3298.67" y="2349.67" width="56" height="60"/>
-  <object id="670" gid="239" x="4326.67" y="2652.33" width="56" height="60"/>
   <object id="671" gid="226" x="4692" y="3166.67" width="128" height="192"/>
   <object id="672" gid="227" x="4780" y="3273.33" width="128" height="192"/>
   <object id="673" gid="227" x="4866.67" y="3816" width="128" height="192"/>
@@ -4097,10 +4094,6 @@
   <object id="684" gid="240" x="4821" y="4147.67" width="60" height="60"/>
   <object id="685" gid="240" x="4786.67" y="4114.33" width="60" height="60"/>
   <object id="686" gid="215" x="4744.33" y="3964.67" width="64" height="128"/>
-  <object id="687" gid="239" x="5226.85" y="4272.21" width="56" height="60"/>
-  <object id="688" gid="239" x="4931" y="4506" width="56" height="60"/>
-  <object id="689" gid="239" x="4649" y="5086" width="56" height="60"/>
-  <object id="690" gid="239" x="1073" y="5079" width="56" height="60"/>
   <object id="691" gid="238" x="1107" y="5108" width="60" height="60"/>
   <object id="692" gid="238" x="608" y="5029" width="60" height="60"/>
   <object id="830" gid="240" x="4934" y="4245" width="60" height="60"/>
@@ -4152,6 +4145,13 @@
   <object id="1077" gid="228" x="4669" y="2022" width="64" height="128"/>
   <object id="1078" gid="228" x="4623" y="2089" width="64" height="128"/>
   <object id="1079" gid="227" x="4678" y="2170" width="128" height="192"/>
+  <object id="1153" gid="239" x="5223.9" y="4288.92" width="56" height="60"/>
+  <object id="1154" gid="238" x="3394.92" y="2278.07" width="60" height="60"/>
+  <object id="1155" gid="239" x="4997.05" y="4526.33" width="56" height="60"/>
+  <object id="1156" gid="239" x="4685.11" y="5088.8" width="56" height="60"/>
+  <object id="1157" gid="239" x="1071.08" y="5077.48" width="56" height="60"/>
+  <object id="1158" gid="239" x="4308.51" y="2683.75" width="56" height="60"/>
+  <object id="1159" gid="239" x="3298.33" y="2378.28" width="56" height="60"/>
  </objectgroup>
  <objectgroup id="12" name="Collisions" visible="0">
   <object id="211" x="4832.33" y="1976.5" width="33.3333" height="647.5"/>

@@ -36,16 +36,19 @@ class Game:
         }
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
+        # Terrain
         for layer in ['Terrain', 'Terrain Top']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
                 Sprite(
                     (x * TILE_SIZE, y * TILE_SIZE),
                     surf,
+                    WorldLayer.bg,
                     self.all_sprites
                 )
 
         obj: TiledObject
 
+        # Water
         for obj in tmx_map.get_layer_by_name('Water'):
             # this is not really a grid with row, col
             # just tiles that act as coords
@@ -54,32 +57,45 @@ class Game:
                     AnimatedSprite(
                         (x, y),
                         self.overworld_frames['water'],
+                        WorldLayer.water,
                         self.all_sprites
                     )
 
+        # Coast
         for obj in tmx_map.get_layer_by_name('Coast'):
             pos = (obj.x, obj.y)
             terrain = obj.properties['terrain']
             side = obj.properties['side']
             frames = self.overworld_frames['coast'][terrain][side]
-            AnimatedSprite(pos, frames, self.all_sprites)
+            AnimatedSprite(pos, frames, WorldLayer.water, self.all_sprites)
 
+        # Objects
         for obj in tmx_map.get_layer_by_name('Objects'):
-            Sprite((obj.x, obj.y), obj.image, self.all_sprites)
+            z = WorldLayer.main
 
-        entity: TiledObject
-        for entity in tmx_map.get_layer_by_name('Entities'):
-            frames = self.overworld_frames['characters'][entity.properties['graphic']]
-            state = entity.properties['direction']
+            if obj.name == 'top':
+                z = WorldLayer.top
+
+            Sprite((obj.x, obj.y), obj.image, z, self.all_sprites)
+
+        # Monsters
+        for obj in tmx_map.get_layer_by_name('Monsters'):
+            Sprite((obj.x, obj.y), obj.image,
+                   WorldLayer.main, self.all_sprites)
+
+        # Entities
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            frames = self.overworld_frames['characters'][obj.properties['graphic']]
+            state = obj.properties['direction']
 
             # check for player and check starting pos
-            if entity.name == 'Player' and entity.properties['pos'] == player_start_pos:
+            if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
                 self.player = Player(
-                    (entity.x, entity.y), frames, state, self.all_sprites
+                    (obj.x, obj.y), frames, state, self.all_sprites
                 )
-            elif entity.name == 'Character':
+            elif obj.name == 'Character':
                 Character(
-                    (entity.x, entity.y), frames, state, self.all_sprites
+                    (obj.x, obj.y), frames, state, self.all_sprites
                 )
 
     def run(self) -> None:

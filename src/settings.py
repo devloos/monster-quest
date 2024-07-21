@@ -1,6 +1,7 @@
 import pygame as pg
 from pygame.math import Vector2 as vector
 from sys import exit
+from enum import IntEnum
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -24,13 +25,14 @@ COLORS = {
     'blue': '#66d7ee'
 }
 
-WORLD_LAYERS = {
-    'water': 0,
-    'bg': 1,
-    'shadow': 2,
-    'main': 3,
-    'top': 4
-}
+
+class WorldLayer(IntEnum):
+    water = 0,
+    bg = 1,
+    shadow = 2,
+    main = 3,
+    top = 4
+
 
 BATTLE_POSITIONS = {
     'left': {
