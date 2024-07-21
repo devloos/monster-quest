@@ -1,13 +1,20 @@
-from typing import Any
 from settings import *
 
 
-class Player(pg.sprite.Sprite):
-    def __init__(self, pos, groups) -> None:
+class Entity(pg.sprite.Sprite):
+    def __init__(self, pos, frames: dict[str, list[pg.Surface]], groups) -> None:
         super().__init__(groups)
-        self.image = pg.Surface((50, 50))
-        self.image.fill('blue')
+
+        self.frame_index = 0
+        self.frames = frames
+
+        self.image = self.frames['down'][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
+
+
+class Player(Entity):
+    def __init__(self, pos, frames: dict, groups) -> None:
+        super().__init__(pos, frames, groups)
 
         self.direction = vector()
 

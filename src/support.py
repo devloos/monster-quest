@@ -70,7 +70,38 @@ def import_tilemap(cols, rows, *path) -> dict:
     return frames
 
 
-def coast_importer(cols, rows, *path) -> dict:
+def import_characters_helper(cols, rows, *path) -> dict:
+    # frames[(0, 0)] = Surface
+    frames = import_tilemap(cols, rows, *path)
+    directions = ['down', 'left', 'right', 'up']
+    normalized_frames = {}
+
+    for index, direction in enumerate(directions):
+        normalized_frames[direction] = []
+        normalized_frames[f'{direction}_idle'] = [frames[(0, index)]]
+
+        for col in range(cols):
+            normalized_frames[direction].append(frames[(col, index)])
+
+    return normalized_frames
+
+
+def import_characters(cols, rows, *path) -> dict:
+    # each character will have its corresponding side
+    # e.g. normalized_frames['player'] = {'down': [surfaces]}
+    normalized_frames = {}
+
+    for _, __, image_names in walk(join(*path)):
+        image_name: str
+        for image_name in image_names:
+            name = image_name.split('.')[0]
+            frames = import_characters_helper(cols, rows, *path, name)
+            normalized_frames[name] = frames
+
+    return normalized_frames
+
+
+def import_coast(cols, rows, *path) -> dict:
     STEP = 3
     frames = import_tilemap(cols, rows, *path)
     normalized_frames = {}

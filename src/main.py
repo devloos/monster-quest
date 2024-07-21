@@ -31,7 +31,8 @@ class Game:
 
         self.overworld_frames = {
             'water': import_folder('graphics', 'tilesets', 'water'),
-            'coast': coast_importer(24, 12, 'graphics', 'tilesets', 'coast')
+            'coast': import_coast(24, 12, 'graphics', 'tilesets', 'coast'),
+            'characters': import_characters(4, 4, 'graphics', 'characters')
         }
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
@@ -69,7 +70,12 @@ class Game:
         entity: TiledObject
         for entity in tmx_map.get_layer_by_name('Entities'):
             if entity.name == 'Player' and entity.properties['pos'] == player_start_pos:
-                self.player = Player((entity.x, entity.y), self.all_sprites)
+                frames = self.overworld_frames['characters']['player']
+                self.player = Player(
+                    (entity.x, entity.y),
+                    frames,
+                    self.all_sprites
+                )
 
     def run(self) -> None:
         while True:
