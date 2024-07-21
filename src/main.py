@@ -30,8 +30,11 @@ class Game:
         }
 
         self.overworld_frames = {
-            'water': import_folder('graphics', 'tilesets', 'water')
+            'water': import_folder('graphics', 'tilesets', 'water'),
+            'coast': coast_importer(24, 12, 'graphics', 'tilesets', 'coast')
         }
+
+        print(self.overworld_frames['coast'])
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         for layer in ['Terrain', 'Terrain Top']:

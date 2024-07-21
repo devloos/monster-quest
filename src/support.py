@@ -50,7 +50,7 @@ def import_sub_folders(*path):
     return frames
 
 
-def import_tilemap(cols, rows, *path):
+def import_tilemap(cols, rows, *path) -> dict:
     frames = {}
     surf = import_image(*path)
 
@@ -68,3 +68,33 @@ def import_tilemap(cols, rows, *path):
             frames[(col, row)] = cutout_surf
 
     return frames
+
+
+def coast_importer(cols, rows, *path) -> dict:
+    STEP = 3
+    frames = import_tilemap(cols, rows, *path)
+    normalized_frames = {}
+    terrains = [
+        'grass', 'grass_i', 'sand_i', 'sand', 'rock', 'rock_i', 'ice', 'ice_i'
+    ]
+
+    sides = {
+        'topleft': (0, 0), 'top': (1, 0), 'topright': (2, 0),
+        'left': (0, 1), 'right': (2, 1),
+        'bottomleft': (0, 2), 'bottom': (1, 2), 'bottomright': (2, 2),
+    }
+
+    for terrain_index, terrain in enumerate(terrains):
+        # each terrain will have its corresponding sides
+        # e.g. normalized_frames['grass'] = {'top': [surfaces]}
+        normalized_frames[terrain] = {}
+        for side, pos in sides.items():
+            normalized_frames[terrain][side] = []
+
+            # for each terrain move down using current row and store frame
+            # into what ever side we are doing this for
+            for row in range(0, rows, STEP):
+                frame = frames[(pos[0] + terrain_index * STEP, pos[1] + row)]
+                normalized_frames[terrain][side].append(frame)
+
+    return normalized_frames
