@@ -8,30 +8,52 @@ class Entity(pg.sprite.Sprite):
         self.frame_index = 0
         self.frames = frames
 
-        self.image = self.frames['down'][self.frame_index]
+        self.state = 'down'
+        self.direction = vector()
+        self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
+
+    def get_state(self):
+        moving = bool(self.direction)
+
+        if not moving:
+            return f'{self.state}_idle'
+
+        return self.state
+
+    def animate(self, dt):
+        self.frame_index += ANIMATION_SPEED * dt
+
+        state = self.get_state()
+        if self.frame_index > len(self.frames[state]):
+            self.frame_index = 0
+
+        index = int(self.frame_index) % len(self.frames[state])
+        self.image = self.frames[state][index]
 
 
 class Player(Entity):
     def __init__(self, pos, frames: dict, groups) -> None:
         super().__init__(pos, frames, groups)
 
-        self.direction = vector()
-
     def _input(self):
         keys = pg.key.get_pressed()
         input_vector = vector()
 
         if keys[pg.K_UP]:
+            self.state = 'up'
             input_vector.y -= 1
 
         if keys[pg.K_DOWN]:
+            self.state = 'down'
             input_vector.y += 1
 
         if keys[pg.K_LEFT]:
+            self.state = 'left'
             input_vector.x -= 1
 
         if keys[pg.K_RIGHT]:
+            self.state = 'right'
             input_vector.x += 1
 
         self.direction = input_vector
@@ -42,6 +64,7 @@ class Player(Entity):
 
     def update(self, dt: float) -> None:
         self._input()
+        self.animate(dt)
         self.move(dt)
 
     def get_center_pos(self) -> vector:
