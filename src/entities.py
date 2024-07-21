@@ -2,13 +2,13 @@ from settings import *
 
 
 class Entity(pg.sprite.Sprite):
-    def __init__(self, pos, frames: dict[str, list[pg.Surface]], groups) -> None:
+    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, groups) -> None:
         super().__init__(groups)
 
         self.frame_index = 0
         self.frames = frames
 
-        self.state = 'down'
+        self.state = state
         self.direction = vector()
         self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
@@ -32,9 +32,14 @@ class Entity(pg.sprite.Sprite):
         self.image = self.frames[state][index]
 
 
+class Character(Entity):
+    def __init__(self, pos, frames: dict, state: str, groups) -> None:
+        super().__init__(pos, frames, state, groups)
+
+
 class Player(Entity):
-    def __init__(self, pos, frames: dict, groups) -> None:
-        super().__init__(pos, frames, groups)
+    def __init__(self, pos, frames: dict, state: str, groups) -> None:
+        super().__init__(pos, frames, state, groups)
 
     def _input(self):
         keys = pg.key.get_pressed()

@@ -4,7 +4,7 @@ from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join
 from sprites import Sprite, AnimatedSprite
-from entities import Player
+from entities import Player, Character
 from groups import AllSpriteGroup
 
 
@@ -69,12 +69,17 @@ class Game:
 
         entity: TiledObject
         for entity in tmx_map.get_layer_by_name('Entities'):
+            frames = self.overworld_frames['characters'][entity.properties['graphic']]
+            state = entity.properties['direction']
+
+            # check for player and check starting pos
             if entity.name == 'Player' and entity.properties['pos'] == player_start_pos:
-                frames = self.overworld_frames['characters']['player']
                 self.player = Player(
-                    (entity.x, entity.y),
-                    frames,
-                    self.all_sprites
+                    (entity.x, entity.y), frames, state, self.all_sprites
+                )
+            elif entity.name == 'Character':
+                Character(
+                    (entity.x, entity.y), frames, state, self.all_sprites
                 )
 
     def run(self) -> None:

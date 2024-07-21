@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="24" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="933">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="24" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="933">
  <tileset firstgid="1" source="../tilesets/world.tsx"/>
  <tileset firstgid="211" source="../tilesets/objects.tsx"/>
  <tileset firstgid="242" source="../tilesets/Grass.tsx"/>
@@ -84,6 +84,7 @@
   <object id="854" name="Player" x="703" y="1865">
    <properties>
     <property name="direction" value="up"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="entrance"/>
    </properties>
    <point/>

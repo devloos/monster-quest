@@ -187,6 +187,7 @@
   <object id="12" name="Player" x="4444.42" y="3887">
    <properties>
     <property name="direction" value="down"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="house"/>
    </properties>
    <point/>
@@ -214,6 +215,7 @@
   <object id="20" name="Player" x="4282.67" y="3466">
    <properties>
     <property name="direction" value="down"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="hospital"/>
    </properties>
    <point/>
@@ -241,6 +243,7 @@
   <object id="931" name="Player" x="734.667" y="984">
    <properties>
     <property name="direction" value="down"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="water"/>
    </properties>
    <point/>
@@ -258,6 +261,7 @@
   <object id="963" name="Player" x="1372.67" y="4073.33">
    <properties>
     <property name="direction" value="down"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="fire"/>
    </properties>
    <point/>
@@ -285,6 +289,7 @@
   <object id="1149" name="Player" x="4318.32" y="1482.47">
    <properties>
     <property name="direction" value="down"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="plant"/>
    </properties>
    <point/>
@@ -292,6 +297,7 @@
   <object id="1151" name="Player" x="1790.75" y="2304.25">
    <properties>
     <property name="direction" value="down"/>
+    <property name="graphic" value="player"/>
     <property name="pos" value="hospital2"/>
    </properties>
    <point/>
@@ -3873,7 +3879,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="2" name="Objects">
+ <objectgroup id="2" name="Objects" visible="0">
   <object id="1" gid="211" x="4352" y="3776" width="320" height="320"/>
   <object id="2" gid="226" x="3455.33" y="3783.33" width="128" height="192"/>
   <object id="3" gid="226" x="3264" y="3712" width="128" height="192"/>
