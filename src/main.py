@@ -1,8 +1,9 @@
 from settings import *
+from support import *
 from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join
-from sprites import Sprite
+from sprites import Sprite, AnimatedSprite
 from entities import Player
 from groups import AllSpriteGroup
 
@@ -28,6 +29,10 @@ class Game:
             'hospital': load_pygame(join('data', 'maps', 'hospital.tmx'))
         }
 
+        self.overworld_frames = {
+            'water': import_folder('graphics', 'tilesets', 'water')
+        }
+
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         for layer in ['Terrain', 'Terrain Top']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
@@ -38,6 +43,18 @@ class Game:
                 )
 
         obj: TiledObject
+
+        for obj in tmx_map.get_layer_by_name('Water'):
+            # this is not really a grid with row, col
+            # just tiles that act as coords
+            for x in range(int(obj.x), int(obj.x + obj.width), TILE_SIZE):
+                for y in range(int(obj.y), int(obj.y + obj.height), TILE_SIZE):
+                    AnimatedSprite(
+                        (x, y),
+                        self.overworld_frames['water'],
+                        self.all_sprites
+                    )
+
         for obj in tmx_map.get_layer_by_name('Objects'):
             Sprite((obj.x, obj.y), obj.image, self.all_sprites)
 
