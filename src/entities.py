@@ -30,8 +30,15 @@ class Player(pg.sprite.Sprite):
         self.direction = input_vector
 
     def move(self, dt: float):
-        self.rect.center += self.direction * 250 * dt
+        speed = 250
+        self.rect.center += self.direction * speed * dt
 
     def update(self, dt: float) -> None:
         self._input()
         self.move(dt)
+
+    def get_center_pos(self) -> vector:
+        x = self.rect.center[0]
+        y = self.rect.center[1]
+
+        return vector(x, y)

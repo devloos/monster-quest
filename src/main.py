@@ -4,18 +4,19 @@ from pytmx import TiledMap
 from os.path import join
 from sprites import Sprite
 from entities import Player
+from groups import AllSpriteGroup
 
 
 class Game:
     def __init__(self) -> None:
         pg.init()
-        self.display_surface = pg.display.set_mode(
+        self.screen = pg.display.set_mode(
             (WINDOW_WIDTH, WINDOW_HEIGHT)
         )
         pg.display.set_caption('Monster Quest')
         self.clock = pg.time.Clock()
 
-        self.all_sprites = pg.sprite.Group()
+        self.all_sprites = AllSpriteGroup()
 
         self.import_assets()
         self.setup(self.tmx_maps['world'], 'house')
@@ -35,7 +36,7 @@ class Game:
 
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
-                player = Player((obj.x, obj.y), self.all_sprites)
+                self.player = Player((obj.x, obj.y), self.all_sprites)
 
     def run(self) -> None:
         while True:
@@ -48,7 +49,8 @@ class Game:
 
             # handle game logic
             self.all_sprites.update(dt)
-            self.all_sprites.draw(self.display_surface)
+            self.screen.fill((0, 0, 0))
+            self.all_sprites.draw(self.player.get_center_pos())
 
             pg.display.update()
 
