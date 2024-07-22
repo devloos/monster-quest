@@ -86,7 +86,7 @@ class Game:
 
         # Entities
         for obj in tmx_map.get_layer_by_name('Entities'):
-            frames = self.overworld_frames['characters']['blond']
+            frames = self.overworld_frames['characters'][obj.properties['graphic']]
             state = obj.properties['direction']
 
             # check for player and check starting pos
