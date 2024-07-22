@@ -60,9 +60,12 @@ def import_tilemap(cols, rows, *path) -> dict:
     for col in range(cols):
         for row in range(rows):
             cutout_rect = pg.Rect(
-                col * cell_width, row * cell_height, cell_width, cell_height)
-            cutout_surf = pg.Surface((cell_width, cell_height))
+                col * cell_width, row * cell_height, cell_width, cell_height
+            )
+            cutout_surf = pg.Surface((cell_width, cell_height)).convert_alpha()
+            # fill bg with color we dont use
             cutout_surf.fill('green')
+            # ignore that color
             cutout_surf.set_colorkey('green')
             cutout_surf.blit(surf, (0, 0), cutout_rect)
             frames[(col, row)] = cutout_surf
@@ -70,7 +73,7 @@ def import_tilemap(cols, rows, *path) -> dict:
     return frames
 
 
-def import_characters_helper(cols, rows, *path) -> dict:
+def import_character_helper(cols, rows, *path) -> dict:
     # frames[(0, 0)] = Surface
     frames = import_tilemap(cols, rows, *path)
     directions = ['down', 'left', 'right', 'up']
@@ -95,7 +98,7 @@ def import_characters(cols, rows, *path) -> dict:
         image_name: str
         for image_name in image_names:
             name = image_name.split('.')[0]
-            frames = import_characters_helper(cols, rows, *path, name)
+            frames = import_character_helper(cols, rows, *path, name)
             normalized_frames[name] = frames
 
     return normalized_frames

@@ -183,7 +183,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="Entities" visible="0">
+ <objectgroup id="3" name="Entities">
   <object id="12" name="Player" x="4444.42" y="3887">
    <properties>
     <property name="direction" value="down"/>
@@ -4087,7 +4087,7 @@
   <object id="677" gid="237" x="4869.33" y="3610" width="56" height="60"/>
   <object id="678" gid="237" x="4917.33" y="3108.67" width="56" height="60"/>
   <object id="679" gid="237" x="4881.33" y="3946" width="56" height="60"/>
-  <object id="680" gid="213" x="4747.67" y="4043.67" width="128" height="192"/>
+  <object id="680" gid="213" x="4754.59" y="4043.67" width="121.08" height="180.467"/>
   <object id="681" gid="241" x="4839" y="4087" width="56" height="60"/>
   <object id="682" gid="241" x="4810" y="4069.33" width="56" height="60"/>
   <object id="683" gid="241" x="4918.67" y="4295.33" width="56" height="60"/>

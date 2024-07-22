@@ -80,12 +80,13 @@ class Game:
 
         # Monsters
         for obj in tmx_map.get_layer_by_name('Monsters'):
-            Sprite((obj.x, obj.y), obj.image,
-                   WorldLayer.main, self.all_sprites)
+            Sprite(
+                (obj.x, obj.y), obj.image, WorldLayer.main, self.all_sprites
+            )
 
         # Entities
         for obj in tmx_map.get_layer_by_name('Entities'):
-            frames = self.overworld_frames['characters'][obj.properties['graphic']]
+            frames = self.overworld_frames['characters']['blond']
             state = obj.properties['direction']
 
             # check for player and check starting pos
