@@ -69,6 +69,13 @@ class Player(Entity):
 
     def move(self, dt: float):
         speed = 250
+
+        if DEBUG:
+            keys = pg.key.get_pressed()
+
+            if keys[pg.K_LSHIFT]:
+                speed = 800
+
         self.rect.center += self.direction * speed * dt
 
     def update(self, dt: float) -> None:
