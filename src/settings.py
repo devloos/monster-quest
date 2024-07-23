@@ -8,7 +8,7 @@ WINDOW_HEIGHT = 720
 TILE_SIZE = 64
 ANIMATION_SPEED = 6
 BATTLE_OUTLINE_WIDTH = 4
-DEBUG = False
+DEBUG = True
 
 COLORS = {
     'white': '#f4fefa',

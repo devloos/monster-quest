@@ -3,7 +3,7 @@ from support import *
 from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join
-from sprites import Sprite, AnimatedSprite, MonsterPatchSprite, CollisionSprite
+from sprites import Sprite, AnimatedSprite, MonsterPatchSprite, CollidableSprite
 from entities import Player, Character
 from groups import RenderGroup
 
@@ -73,19 +73,22 @@ class Game:
         # Objects
         for obj in tmx_map.get_layer_by_name('Objects'):
             z = WorldLayer.main
-
-            groups = [self.render_group]
+            pos = (obj.x, obj.y)
+            surf = obj.image
 
             if obj.name == 'top':
                 z = WorldLayer.top
-                groups.append(self.collision_group)
-
-            Sprite((obj.x, obj.y), obj.image, z, groups)
+                Sprite(pos, surf, z, self.render_group)
+            else:
+                CollidableSprite(
+                    pos, surf, [self.render_group, self.collision_group]
+                )
 
         for obj in tmx_map.get_layer_by_name('Collisions'):
-            CollisionSprite(
+            Sprite(
                 (obj.x, obj.y),
                 pg.Surface((obj.width, obj.height)),
+                WorldLayer.main,
                 self.collision_group
             )
 
@@ -109,7 +112,7 @@ class Game:
             # check for player and check starting pos
             if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
                 self.player = Player(
-                    (obj.x, obj.y), frames, state, self.render_group
+                    (obj.x, obj.y), frames, state, self.collision_group, self.render_group
                 )
             elif obj.name == 'Character':
                 Character(

@@ -1,5 +1,6 @@
 from settings import *
 from entities import Entity
+from sprites import Sprite
 from support import import_image
 
 
@@ -16,14 +17,14 @@ class RenderGroup(pg.sprite.Group):
         self.offset.x = -(player_center.x - WINDOW_WIDTH / 2)
         self.offset.y = -(player_center.y - WINDOW_HEIGHT / 2)
 
-        sprite: pg.sprite.Sprite
-
         bg_sprites = filter(lambda sprite: sprite.z < WorldLayer.main, self)
         main_sprites = filter(lambda sprite: sprite.z == WorldLayer.main, self)
         main_sprites = sorted(
             main_sprites, key=lambda sprite: sprite.get_y_sort()
         )
         fg_sprites = filter(lambda sprite: sprite.z > WorldLayer.main, self)
+
+        sprite: Entity | Sprite
 
         for sprites in [bg_sprites, main_sprites, fg_sprites]:
             for sprite in sprites:

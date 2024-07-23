@@ -1,6 +1,7 @@
 from typing import Any
 from pygame import Surface
 from settings import *
+from abc import ABC
 
 
 class Sprite(pg.sprite.Sprite):
@@ -9,17 +10,18 @@ class Sprite(pg.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_frect(topleft=pos)
         self.z = z
+        self.hitbox = self.rect.copy()
 
     def get_y_sort(self) -> float:
         return self.rect.centery
 
 
-class CollisionSprite(Sprite):
+class CollidableSprite(Sprite):
     def __init__(self, pos: tuple[float, float], surf: Surface, groups) -> None:
         super().__init__(pos, surf, WorldLayer.main, groups)
 
-    def get_hitbox(self) -> pg.FRect:
-        return self.rect.copy
+        # keep width the same and subtract 40 percent of the height
+        self.hitbox = self.rect.inflate(0, self.rect.height * -0.5)
 
 
 class MonsterPatchSprite(Sprite):
