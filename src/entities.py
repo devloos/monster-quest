@@ -2,11 +2,12 @@ from settings import *
 
 
 class Entity(pg.sprite.Sprite):
-    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, groups) -> None:
+    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, collision_group: list[pg.sprite.Sprite], groups) -> None:
         super().__init__(groups)
 
         self.frame_index = 0
         self.frames = frames
+        self.collision_group = collision_group
 
         self.state = state
         self.direction = vector()
@@ -80,6 +81,14 @@ class Player(Entity):
                 speed = 800
 
         self.rect.center += self.direction * speed * dt
+
+        if (self.collision()):
+            print('collision')
+
+    def collision(self) -> bool:
+        for sprite in self.collision_group:
+            if self.get_hitbox().colliderect(sprite.get_hitbox()):
+                return True
 
     def update(self, dt: float) -> None:
         self._input()
