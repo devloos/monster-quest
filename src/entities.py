@@ -22,6 +22,9 @@ class Entity(pg.sprite.Sprite):
 
         return self.state
 
+    def get_hitbox(self) -> pg.FRect:
+        return self.rect.inflate(-(self.rect.width / 2), -60)
+
     def animate(self, dt):
         self.frame_index += ANIMATION_SPEED * dt
 

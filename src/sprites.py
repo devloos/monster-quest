@@ -14,6 +14,14 @@ class Sprite(pg.sprite.Sprite):
         return self.rect.centery
 
 
+class CollisionSprite(Sprite):
+    def __init__(self, pos: tuple[float, float], surf: Surface, groups) -> None:
+        super().__init__(pos, surf, WorldLayer.main, groups)
+
+    def get_hitbox(self) -> pg.FRect:
+        return self.rect.copy
+
+
 class MonsterPatchSprite(Sprite):
     def __init__(self, pos: tuple[float, float], surf: Surface, z: WorldLayer, biome: str, groups) -> None:
         super().__init__(pos, surf, z, groups)

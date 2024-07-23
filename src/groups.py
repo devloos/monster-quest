@@ -3,7 +3,7 @@ from entities import Entity
 from support import import_image
 
 
-class AllSpriteGroup(pg.sprite.Group):
+class RenderGroup(pg.sprite.Group):
     def __init__(self) -> None:
         super().__init__()
         self.screen = pg.display.get_surface()

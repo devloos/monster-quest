@@ -3,9 +3,9 @@ from support import *
 from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join
-from sprites import Sprite, AnimatedSprite, MonsterPatchSprite
+from sprites import Sprite, AnimatedSprite, MonsterPatchSprite, CollisionSprite
 from entities import Player, Character
-from groups import AllSpriteGroup
+from groups import RenderGroup
 
 
 class Game:
@@ -17,7 +17,8 @@ class Game:
         pg.display.set_caption('Monster Quest')
         self.clock = pg.time.Clock()
 
-        self.all_sprites = AllSpriteGroup()
+        self.render_group = RenderGroup()
+        self.collision_group = pg.sprite.Group()
 
         self.import_assets()
         self.setup(self.tmx_maps['world'], 'house')
@@ -43,7 +44,7 @@ class Game:
                     (x * TILE_SIZE, y * TILE_SIZE),
                     surf,
                     WorldLayer.bg,
-                    self.all_sprites
+                    self.render_group
                 )
 
         obj: TiledObject
@@ -58,7 +59,7 @@ class Game:
                         (x, y),
                         self.overworld_frames['water'],
                         WorldLayer.water,
-                        self.all_sprites
+                        self.render_group
                     )
 
         # Coast
@@ -67,16 +68,26 @@ class Game:
             terrain = obj.properties['terrain']
             side = obj.properties['side']
             frames = self.overworld_frames['coast'][terrain][side]
-            AnimatedSprite(pos, frames, WorldLayer.water, self.all_sprites)
+            AnimatedSprite(pos, frames, WorldLayer.water, self.render_group)
 
         # Objects
         for obj in tmx_map.get_layer_by_name('Objects'):
             z = WorldLayer.main
 
+            groups = [self.render_group]
+
             if obj.name == 'top':
                 z = WorldLayer.top
+                groups.append(self.collision_group)
 
-            Sprite((obj.x, obj.y), obj.image, z, self.all_sprites)
+            Sprite((obj.x, obj.y), obj.image, z, groups)
+
+        for obj in tmx_map.get_layer_by_name('Collisions'):
+            CollisionSprite(
+                (obj.x, obj.y),
+                pg.Surface((obj.width, obj.height)),
+                self.collision_group
+            )
 
         # Monsters
         for obj in tmx_map.get_layer_by_name('Monsters'):
@@ -87,7 +98,7 @@ class Game:
                 z = WorldLayer.bg
 
             MonsterPatchSprite(
-                (obj.x, obj.y), obj.image, z, biome, self.all_sprites
+                (obj.x, obj.y), obj.image, z, biome, self.render_group
             )
 
         # Entities
@@ -98,11 +109,14 @@ class Game:
             # check for player and check starting pos
             if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
                 self.player = Player(
-                    (obj.x, obj.y), frames, state, self.all_sprites
+                    (obj.x, obj.y), frames, state, self.render_group
                 )
             elif obj.name == 'Character':
                 Character(
-                    (obj.x, obj.y), frames, state, self.all_sprites
+                    (obj.x, obj.y),
+                    frames,
+                    state,
+                    (self.render_group, self.collision_group)
                 )
 
     def run(self) -> None:
@@ -115,9 +129,9 @@ class Game:
                     exit()
 
             # handle game logic
-            self.all_sprites.update(dt)
+            self.render_group.update(dt)
             self.screen.fill((0, 0, 0))
-            self.all_sprites.draw(self.player.get_center_pos())
+            self.render_group.draw(self.player.get_center_pos())
 
             pg.display.update()
 
