@@ -3,7 +3,7 @@ from support import *
 from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join
-from sprites import Sprite, AnimatedSprite
+from sprites import Sprite, AnimatedSprite, MonsterPatchSprite
 from entities import Player, Character
 from groups import AllSpriteGroup
 
@@ -80,8 +80,14 @@ class Game:
 
         # Monsters
         for obj in tmx_map.get_layer_by_name('Monsters'):
-            Sprite(
-                (obj.x, obj.y), obj.image, WorldLayer.main, self.all_sprites
+            z = WorldLayer.main
+            biome = obj.properties['biome']
+
+            if biome == 'sand':
+                z = WorldLayer.bg
+
+            MonsterPatchSprite(
+                (obj.x, obj.y), obj.image, z, biome, self.all_sprites
             )
 
         # Entities

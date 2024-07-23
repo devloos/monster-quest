@@ -32,6 +32,9 @@ class Entity(pg.sprite.Sprite):
         index = int(self.frame_index) % len(self.frames[state])
         self.image = self.frames[state][index]
 
+    def get_y_sort(self) -> float:
+        return self.rect.centery
+
 
 class Character(Entity):
     def __init__(self, pos, frames: dict, state: str, groups) -> None:

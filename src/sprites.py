@@ -10,6 +10,18 @@ class Sprite(pg.sprite.Sprite):
         self.rect = self.image.get_frect(topleft=pos)
         self.z = z
 
+    def get_y_sort(self) -> float:
+        return self.rect.centery
+
+
+class MonsterPatchSprite(Sprite):
+    def __init__(self, pos: tuple[float, float], surf: Surface, z: WorldLayer, biome: str, groups) -> None:
+        super().__init__(pos, surf, z, groups)
+        self.biome = biome
+
+    def get_y_sort(self) -> float:
+        return self.rect.centery - 40
+
 
 class AnimatedSprite(Sprite):
     def __init__(self, pos: tuple[float, float], frames: list[Surface], z: WorldLayer, groups) -> None:

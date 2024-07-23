@@ -18,7 +18,7 @@ class AllSpriteGroup(pg.sprite.Group):
         bg_sprites = filter(lambda sprite: sprite.z < WorldLayer.main, self)
         main_sprites = filter(lambda sprite: sprite.z == WorldLayer.main, self)
         main_sprites = sorted(
-            main_sprites, key=lambda sprite: sprite.rect.centery
+            main_sprites, key=lambda sprite: sprite.get_y_sort()
         )
         fg_sprites = filter(lambda sprite: sprite.z > WorldLayer.main, self)
 
