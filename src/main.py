@@ -6,6 +6,8 @@ from os.path import join
 from sprites import Sprite, AnimatedSprite, MonsterPatchSprite, CollidableSprite
 from entities import Player, Character
 from groups import RenderGroup
+from game_data import *
+from dialog import DialogTree
 
 
 class Game:
@@ -35,6 +37,10 @@ class Game:
             'water': import_folder('graphics', 'tilesets', 'water'),
             'coast': import_coast(24, 12, 'graphics', 'tilesets', 'coast'),
             'characters': import_characters(4, 4, 'graphics', 'characters')
+        }
+
+        self.fonts = {
+            'dialog': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 30)
         }
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
@@ -116,11 +122,17 @@ class Game:
                     (obj.x, obj.y), frames, state, self.collision_group, self.render_group
                 )
             elif obj.name == 'Character':
+                groups = (
+                    self.render_group, self.collision_group, self.character_group
+                )
+                character_data = TRAINER_DATA[obj.properties['character_id']]
+
                 Character(
                     (obj.x, obj.y),
                     frames,
                     state,
-                    (self.render_group, self.collision_group, self.character_group)
+                    character_data,
+                    groups
                 )
 
     def _input(self):
@@ -132,7 +144,12 @@ class Game:
                 if check_connection(200, self.player, character):
                     self.player.block()
                     character.face_target_pos(self.player.rect.center)
-                    print('dialog')
+                    self.create_dialog(character)
+
+    def create_dialog(self, character: Character) -> None:
+        dialog = DialogTree(
+            self.player, character, self.render_group, self.fonts['dialog']
+        )
 
     def run(self) -> None:
         while True:

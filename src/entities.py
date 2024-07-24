@@ -40,8 +40,16 @@ class Entity(pg.sprite.Sprite):
 
 
 class Character(Entity):
-    def __init__(self, pos, frames: dict, state: str, groups) -> None:
+    def __init__(self, pos, frames: dict, state: str, character_data: dict, groups) -> None:
         super().__init__(pos, frames, state, groups)
+
+        self.character_data = character_data
+
+    def get_dialog(self) -> list:
+        if self.character_data['defeated']:
+            return self.character_data['dialog']['defeated']
+
+        return self.character_data['dialog']['default']
 
     def face_target_pos(self, target_pos: tuple[float, float]) -> None:
         relation = vector(target_pos) - vector(self.rect.center)
