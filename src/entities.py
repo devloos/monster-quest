@@ -1,3 +1,4 @@
+from typing import Any
 from settings import *
 from sprites import Sprite
 
@@ -42,12 +43,27 @@ class Character(Entity):
     def __init__(self, pos, frames: dict, state: str, groups) -> None:
         super().__init__(pos, frames, state, groups)
 
+    def face_target_pos(self, target_pos: tuple[float, float]) -> None:
+        relation = vector(target_pos) - vector(self.rect.center)
+
+        # this is using the rect since a y less than 30 means player is either
+        # left or right. this is true since the rect is taller but its width
+        # is shorter
+        if abs(relation.y) < 30:
+            self.state = 'right' if relation.x > 0 else 'left'
+        else:
+            self.state = 'down' if relation.y > 0 else 'up'
+
+    def update(self, dt) -> None:
+        self.animate(dt)
+
 
 class Player(Entity):
     def __init__(self, pos, frames: dict, state: str, collision_group: list[pg.sprite.Sprite], groups) -> None:
         super().__init__(pos, frames, state, groups)
 
         self.collision_group = collision_group
+        self.blocked = False
 
     def _input(self):
         keys = pg.key.get_pressed()
@@ -69,7 +85,10 @@ class Player(Entity):
             self.state = 'right'
             input_vector.x += 1
 
-        self.direction = input_vector
+        if input_vector:
+            self.direction = input_vector.normalize()
+        else:
+            self.direction = input_vector
 
     def move(self, dt: float):
         speed = 250
@@ -115,12 +134,21 @@ class Player(Entity):
                 self.rect.centery = self.hitbox.centery
 
     def update(self, dt: float) -> None:
-        self._input()
+        if not self.blocked:
+            self._input()
+            self.move(dt)
+
         self.animate(dt)
-        self.move(dt)
 
     def get_center_pos(self) -> vector:
         x = self.rect.center[0]
         y = self.rect.center[1]
 
         return vector(x, y)
+
+    def block(self) -> None:
+        self.blocked = True
+        self.direction = vector()
+
+    def unblock(self) -> None:
+        self.blocked = False

@@ -19,6 +19,7 @@ class Game:
 
         self.render_group = RenderGroup()
         self.collision_group = pg.sprite.Group()
+        self.character_group = pg.sprite.Group()
 
         self.import_assets()
         self.setup(self.tmx_maps['world'], 'house')
@@ -119,8 +120,19 @@ class Game:
                     (obj.x, obj.y),
                     frames,
                     state,
-                    (self.render_group, self.collision_group)
+                    (self.render_group, self.collision_group, self.character_group)
                 )
+
+    def _input(self):
+        keys = pg.key.get_just_pressed()
+        if keys[pg.K_SPACE]:
+            character: Character
+
+            for character in self.character_group:
+                if check_connection(200, self.player, character):
+                    self.player.block()
+                    character.face_target_pos(self.player.rect.center)
+                    print('dialog')
 
     def run(self) -> None:
         while True:
@@ -130,6 +142,9 @@ class Game:
                 if event.type == pg.QUIT:
                     pg.quit()
                     exit()
+
+            # handle game input
+            self._input()
 
             # handle game logic
             self.render_group.update(dt)
