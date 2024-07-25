@@ -76,6 +76,7 @@ class DialogTree:
 
         if self.dialog_index >= len(self.dialog):
             self.in_dialog = False
+            self.player.unblock()
             return
 
         self.dialog_sprite = DialogSprite(

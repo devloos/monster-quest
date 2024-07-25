@@ -141,8 +141,6 @@ class Game:
         if self.dialog_tree.in_dialog:
             return
 
-        self.player.unblock()
-
         keys = pg.key.get_just_pressed()
 
         if keys[pg.K_SPACE]:
