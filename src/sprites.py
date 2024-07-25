@@ -1,7 +1,5 @@
-from typing import Any
 from pygame import Surface
 from settings import *
-from abc import ABC
 
 
 class Sprite(pg.sprite.Sprite):
