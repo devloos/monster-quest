@@ -1,6 +1,5 @@
-from typing import Any
-from settings import *
 from sprites import Sprite
+from settings import *
 
 
 class Entity(pg.sprite.Sprite):
@@ -12,8 +11,10 @@ class Entity(pg.sprite.Sprite):
 
         self.state = state
         self.direction = vector()
+
         self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
+
         self.z = WorldLayer.main
         self.hitbox = self.rect.inflate(-(self.rect.width / 2), -60)
 
@@ -38,19 +39,6 @@ class Entity(pg.sprite.Sprite):
     def get_y_sort(self) -> float:
         return self.rect.centery
 
-
-class Character(Entity):
-    def __init__(self, pos, frames: dict, state: str, character_data: dict, groups) -> None:
-        super().__init__(pos, frames, state, groups)
-
-        self.character_data = character_data
-
-    def get_dialog(self) -> list:
-        if self.character_data['defeated']:
-            return self.character_data['dialog']['defeated']
-
-        return self.character_data['dialog']['default']
-
     def face_target_pos(self, target_pos: tuple[float, float]) -> None:
         relation = vector(target_pos) - vector(self.rect.center)
 
@@ -61,9 +49,6 @@ class Character(Entity):
             self.state = 'right' if relation.x > 0 else 'left'
         else:
             self.state = 'down' if relation.y > 0 else 'up'
-
-    def update(self, dt) -> None:
-        self.animate(dt)
 
 
 class Player(Entity):
@@ -160,3 +145,37 @@ class Player(Entity):
 
     def unblock(self) -> None:
         self.blocked = False
+
+
+class Character(Entity):
+    def __init__(
+        self, pos, frames: dict, state: str, character_data: dict, player: Player, dialog_tree, font: pg.Font, groups
+    ) -> None:
+        super().__init__(pos, frames, state, groups)
+
+        self.character_data = character_data
+        self.player = player
+        self.dialog_tree = dialog_tree
+        self.font = font
+
+    def get_dialog(self) -> list:
+        if self.character_data['defeated']:
+            return self.character_data['dialog']['defeated']
+
+        return self.character_data['dialog']['default']
+
+    def raycast(self) -> None:
+        from support import check_connection
+
+        if self.dialog_tree.in_dialog:
+            return
+
+        if check_connection(400, self, self.player):
+            self.player.face_target_pos(self.rect.center)
+            self.player.block()
+
+            self.dialog_tree.setup(self.player, self, self.font)
+
+    def update(self, dt) -> None:
+        self.raycast()
+        self.animate(dt)

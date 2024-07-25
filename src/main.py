@@ -23,7 +23,7 @@ class Game:
         self.collision_group = pg.sprite.Group()
         self.character_group = pg.sprite.Group()
 
-        self.dialog_tree = DialogTree()
+        self.dialog_tree = DialogTree(self.render_group)
 
         self.import_assets()
         self.setup(self.tmx_maps['world'], 'house')
@@ -134,6 +134,9 @@ class Game:
                     frames,
                     state,
                     character_data,
+                    self.player,
+                    self.dialog_tree,
+                    self.fonts['dialog'],
                     groups
                 )
 
@@ -152,7 +155,7 @@ class Game:
                     character.face_target_pos(self.player.rect.center)
 
                     self.dialog_tree.setup(
-                        self.player, character, self.render_group, self.fonts['dialog']
+                        self.player, character, self.fonts['dialog']
                     )
 
     def run(self) -> None:

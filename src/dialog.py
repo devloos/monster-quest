@@ -1,6 +1,7 @@
-from settings import *
 from entities import Player, Character
 from groups import RenderGroup
+from settings import *
+from timer import Timer
 
 
 class DialogSprite(pg.sprite.Sprite):
@@ -45,27 +46,36 @@ class DialogSprite(pg.sprite.Sprite):
 
 
 class DialogTree:
-    def __init__(self) -> None:
+    def __init__(self, render_group: RenderGroup) -> None:
+        self.render_group = render_group
+
         self.player: Player
         self.character: Character
-        self.render_group: RenderGroup
         self.font: pg.Font
 
         self.dialog: list
         self.dialog_index: int
 
         self.dialog_sprite: DialogSprite = None
+        self.timer: Timer = None
         self.in_dialog = False
+        self.await_next_tick = False
 
-    def setup(self, player: Player, character: Character, render_group: RenderGroup, font: pg.Font) -> None:
+    def setup(self, player: Player, character: Character, font: pg.Font) -> None:
         self.player = player
         self.character = character
-        self.render_group = render_group
         self.font = font
 
         self.dialog = self.character.get_dialog()
-        self.dialog_index = -1
+        self.dialog_index = 0
+
+        self.dialog_sprite = DialogSprite(
+            self.dialog[self.dialog_index], self.character, self.font, self.render_group
+        )
+
+        self.timer = None
         self.in_dialog = True
+        self.await_next_tick = True
 
     def move_dialog(self) -> None:
         if (self.dialog_sprite):
@@ -75,19 +85,32 @@ class DialogTree:
         self.dialog_index += 1
 
         if self.dialog_index >= len(self.dialog):
-            self.in_dialog = False
             self.player.unblock()
+            self.in_dialog = False
             return
 
         self.dialog_sprite = DialogSprite(
             self.dialog[self.dialog_index], self.character, self.font, self.render_group
         )
 
+    def reset_await(self) -> None:
+        self.await_next_tick = False
+        self.timer = None
+
     def _input(self) -> None:
+        if self.await_next_tick:
+            if not self.timer:
+                self.timer = Timer(500, False, True, self.reset_await)
+
+            return
+
         keys = pg.key.get_just_pressed()
 
         if keys[pg.K_SPACE]:
             self.move_dialog()
 
     def update(self) -> None:
+        if self.timer:
+            self.timer.update()
+
         self._input()
