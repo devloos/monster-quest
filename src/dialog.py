@@ -1,7 +1,12 @@
-from entities import Player, Character
-from groups import RenderGroup
+from __future__ import annotations
+
 from settings import *
-from timer import Timer
+from util.timer import Timer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # <-try this,
+    from entities import Player, Character
+    from groups import RenderGroup
 
 
 class DialogSprite(pg.sprite.Sprite):

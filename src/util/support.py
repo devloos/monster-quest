@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 from settings import *
 from os.path import join
 from os import walk
-from entities import Entity
 
-# imports
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from entities import Entity
 
 
 def import_image(*path, alpha=True, format='png') -> pg.Surface:

@@ -1,5 +1,12 @@
-from sprites import Sprite
+from __future__ import annotations
+
 from settings import *
+from util.support import check_connection
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from dialog import DialogTree
+    from sprites import Sprite
 
 
 class Entity(pg.sprite.Sprite):
@@ -149,7 +156,7 @@ class Player(Entity):
 
 class Character(Entity):
     def __init__(
-        self, pos, frames: dict, state: str, character_data: dict, player: Player, dialog_tree, font: pg.Font, groups
+        self, pos, frames: dict, state: str, character_data: dict, player: Player, dialog_tree: DialogTree, font: pg.Font, groups
     ) -> None:
         super().__init__(pos, frames, state, groups)
 
@@ -165,8 +172,6 @@ class Character(Entity):
         return self.character_data['dialog']['default']
 
     def raycast(self) -> None:
-        from support import check_connection
-
         if self.dialog_tree.in_dialog:
             return
 

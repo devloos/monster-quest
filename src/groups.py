@@ -1,7 +1,7 @@
 from settings import *
 from entities import Entity
 from sprites import Sprite
-from support import import_image
+from util.support import import_image
 
 
 class RenderGroup(pg.sprite.Group):

@@ -1,5 +1,5 @@
 from settings import *
-from support import *
+from util.support import *
 from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join

@@ -1,5 +1,5 @@
-from pygame import Surface
 from settings import *
+from pygame import Surface
 
 
 class Sprite(pg.sprite.Sprite):
