@@ -29,7 +29,7 @@ class DialogSprite(pg.sprite.Sprite):
         pg.draw.rect(surf, COLORS['pure white'], rect, 0, 4)
 
         rect = pg.Rect()
-        rect.midbottom = surf.get_rect().midbottom - vector(60, 10)
+        rect.midbottom = surf.get_rect().bottomleft + vector(width / 3, -10)
         rect = rect.inflate(15, 28)
 
         pg.draw.rect(surf, COLORS['pure white'], rect, 0, 20)
@@ -45,15 +45,48 @@ class DialogSprite(pg.sprite.Sprite):
 
 
 class DialogTree:
-    def __init__(self, player: Player, character: Character, render_group: RenderGroup, font: pg.Font) -> None:
+    def __init__(self) -> None:
+        self.player: Player
+        self.character: Character
+        self.render_group: RenderGroup
+        self.font: pg.Font
+
+        self.dialog: list
+        self.dialog_index: int
+
+        self.dialog_sprite: DialogSprite = None
+        self.in_dialog = False
+
+    def setup(self, player: Player, character: Character, render_group: RenderGroup, font: pg.Font) -> None:
         self.player = player
         self.character = character
         self.render_group = render_group
         self.font = font
 
         self.dialog = self.character.get_dialog()
-        self.dialog_index = 0
+        self.dialog_index = -1
+        self.in_dialog = True
+
+    def move_dialog(self) -> None:
+        if (self.dialog_sprite):
+            self.dialog_sprite.kill()
+            self.dialog_sprite = None
+
+        self.dialog_index += 1
+
+        if self.dialog_index >= len(self.dialog):
+            self.in_dialog = False
+            return
 
         self.dialog_sprite = DialogSprite(
             self.dialog[self.dialog_index], self.character, self.font, self.render_group
         )
+
+    def _input(self) -> None:
+        keys = pg.key.get_just_pressed()
+
+        if keys[pg.K_SPACE]:
+            self.move_dialog()
+
+    def update(self) -> None:
+        self._input()

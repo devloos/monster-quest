@@ -23,6 +23,8 @@ class Game:
         self.collision_group = pg.sprite.Group()
         self.character_group = pg.sprite.Group()
 
+        self.dialog_tree = DialogTree()
+
         self.import_assets()
         self.setup(self.tmx_maps['world'], 'house')
         # self.setup(self.tmx_maps['hospital'], 'world')
@@ -136,7 +138,13 @@ class Game:
                 )
 
     def _input(self):
+        if self.dialog_tree.in_dialog:
+            return
+
+        self.player.unblock()
+
         keys = pg.key.get_just_pressed()
+
         if keys[pg.K_SPACE]:
             character: Character
 
@@ -144,12 +152,10 @@ class Game:
                 if check_connection(200, self.player, character):
                     self.player.block()
                     character.face_target_pos(self.player.rect.center)
-                    self.create_dialog(character)
 
-    def create_dialog(self, character: Character) -> None:
-        dialog = DialogTree(
-            self.player, character, self.render_group, self.fonts['dialog']
-        )
+                    self.dialog_tree.setup(
+                        self.player, character, self.render_group, self.fonts['dialog']
+                    )
 
     def run(self) -> None:
         while True:
@@ -167,6 +173,9 @@ class Game:
             self.render_group.update(dt)
             self.screen.fill((0, 0, 0))
             self.render_group.draw(self.player.get_center_pos())
+
+            if self.dialog_tree.in_dialog:
+                self.dialog_tree.update()
 
             pg.display.update()
 
