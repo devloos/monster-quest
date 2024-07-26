@@ -128,15 +128,18 @@ class Game:
                     self.render_group, self.collision_group, self.character_group
                 )
                 character_data = TRAINER_DATA[obj.properties['character_id']]
+                radius = obj.properties['radius']
 
                 Character(
                     (obj.x, obj.y),
                     frames,
                     state,
                     character_data,
+                    radius,
                     self.player,
                     self.dialog_tree,
                     self.fonts['dialog'],
+                    self.collision_group,
                     groups
                 )
 

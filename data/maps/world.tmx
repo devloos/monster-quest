@@ -198,7 +198,7 @@
     <property name="character_id" value="o3"/>
     <property name="direction" value="down"/>
     <property name="graphic" value="hat_girl"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>
@@ -208,7 +208,7 @@
     <property name="character_id" value="o1"/>
     <property name="direction" value="down"/>
     <property name="graphic" value="straw"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>
@@ -226,7 +226,7 @@
     <property name="character_id" value="o6"/>
     <property name="direction" value="right"/>
     <property name="graphic" value="straw"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>
@@ -236,7 +236,7 @@
     <property name="character_id" value="o2"/>
     <property name="direction" value="left"/>
     <property name="graphic" value="blond"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>
@@ -254,7 +254,7 @@
     <property name="character_id" value="o7"/>
     <property name="direction" value="right"/>
     <property name="graphic" value="young_guy"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>
@@ -272,7 +272,7 @@
     <property name="character_id" value="o4"/>
     <property name="direction" value="right"/>
     <property name="graphic" value="straw"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>
@@ -282,7 +282,7 @@
     <property name="character_id" value="o5"/>
     <property name="direction" value="up"/>
     <property name="graphic" value="straw"/>
-    <property name="radius" value="400"/>
+    <property name="radius" type="float" value="400"/>
    </properties>
    <point/>
   </object>

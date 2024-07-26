@@ -156,14 +156,23 @@ class Player(Entity):
 
 class Character(Entity):
     def __init__(
-        self, pos, frames: dict, state: str, character_data: dict, player: Player, dialog_tree: DialogTree, font: pg.Font, groups
+        self, pos, frames: dict, state: str, character_data: dict,
+        radius: float, player: Player, dialog_tree: DialogTree,
+        font: pg.Font, collision_group: pg.sprite.Group, groups
     ) -> None:
         super().__init__(pos, frames, state, groups)
 
         self.character_data = character_data
+        self.radius = radius
         self.player = player
         self.dialog_tree = dialog_tree
         self.font = font
+
+        self.collision_group = pg.sprite.Group()
+
+        for sprite in collision_group:
+            if not sprite == self:
+                self.collision_group.add(sprite)
 
     def get_dialog(self) -> list:
         if self.character_data['defeated']:
@@ -175,11 +184,25 @@ class Character(Entity):
         if self.dialog_tree.in_dialog:
             return
 
-        if check_connection(400, self, self.player):
+        if check_connection(self.radius, self, self.player) and self.has_line_of_sight():
             self.player.face_target_pos(self.rect.center)
             self.player.block()
 
             self.dialog_tree.setup(self.player, self, self.font)
+
+    def has_line_of_sight(self) -> bool:
+        if vector(self.rect.center).distance_to(self.player.rect.center) >= self.radius:
+            return
+
+        sprite: pg.sprite.Sprite
+
+        for sprite in self.collision_group:
+            # does the sprite collide with a line from character to player
+            # e.g. character ----------- sprite ------------ player -> TRUE
+            if sprite.rect.clipline(self.rect.center, self.player.rect.center):
+                return False
+
+        return True
 
     def update(self, dt) -> None:
         self.raycast()
