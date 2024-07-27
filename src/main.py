@@ -113,6 +113,8 @@ class Game:
                 (obj.x, obj.y), obj.image, z, biome, self.render_group
             )
 
+        SHADOW = import_image('graphics', 'other', 'shadow')
+        ALERT = import_image('graphics', 'ui', 'alert')
         # Entities
         for obj in tmx_map.get_layer_by_name('Entities'):
             frames = self.overworld_frames['characters'][obj.properties['graphic']]
@@ -121,7 +123,13 @@ class Game:
             # check for player and check starting pos
             if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
                 self.player = Player(
-                    (obj.x, obj.y), frames, state, self.collision_group, self.render_group
+                    (obj.x, obj.y),
+                    frames,
+                    state,
+                    SHADOW,
+                    ALERT,
+                    self.collision_group,
+                    self.render_group
                 )
             elif obj.name == 'Character':
                 groups = (
@@ -139,6 +147,8 @@ class Game:
                     self.player,
                     self.dialog_tree,
                     self.fonts['dialog'],
+                    SHADOW,
+                    ALERT,
                     self.collision_group,
                     groups
                 )

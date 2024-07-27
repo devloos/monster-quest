@@ -3,6 +3,10 @@ from __future__ import annotations
 from settings import *
 from util.support import check_connection
 from typing import TYPE_CHECKING
+from random import choice
+from util.timer import Timer
+from util.support import import_image
+from abc import ABCMeta, abstractmethod
 
 if TYPE_CHECKING:
     from dialog import DialogTree
@@ -10,8 +14,12 @@ if TYPE_CHECKING:
 
 
 class Entity(pg.sprite.Sprite):
-    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, groups) -> None:
+    __metaclass__ = ABCMeta
+
+    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, shadow: pg.Surface, alert: pg.Surface, groups) -> None:
         super().__init__(groups)
+
+        self.screen = pg.display.get_surface()
 
         self.frame_index = 0
         self.frames = frames
@@ -22,8 +30,15 @@ class Entity(pg.sprite.Sprite):
         self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
 
+        self.shadow = shadow
+        self.alert = alert
+
         self.z = WorldLayer.main
         self.hitbox = self.rect.inflate(-(self.rect.width / 2), -60)
+
+    @abstractmethod
+    def draw(self, offset: vector) -> None:
+        return
 
     def get_state(self):
         moving = bool(self.direction)
@@ -59,11 +74,16 @@ class Entity(pg.sprite.Sprite):
 
 
 class Player(Entity):
-    def __init__(self, pos, frames: dict, state: str, collision_group: list[pg.sprite.Sprite], groups) -> None:
-        super().__init__(pos, frames, state, groups)
+    def __init__(
+        self, pos, frames: dict, state: str,
+        shadow: pg.Surface, alert: pg.Surface,
+        collision_group: list[pg.sprite.Sprite], groups
+    ) -> None:
+        super().__init__(pos, frames, state, shadow, alert, groups)
 
         self.collision_group = collision_group
         self.blocked = False
+        self.alerted = False
 
     def _input(self):
         keys = pg.key.get_pressed()
@@ -133,6 +153,20 @@ class Player(Entity):
 
                 self.rect.centery = self.hitbox.centery
 
+    def draw(self, offset: vector) -> None:
+        if self.alerted:
+            self.screen.blit(
+                self.alert, self.rect.midtop + offset + vector(-50, -100)
+            )
+
+        self.screen.blit(
+            self.shadow, self.rect.topleft + offset + vector(40, 110)
+        )
+
+        self.screen.blit(
+            self.image, self.rect.topleft + offset
+        )
+
     def update(self, dt: float) -> None:
         if not self.blocked:
             self._input()
@@ -158,11 +192,10 @@ class Character(Entity):
     def __init__(
         self, pos, frames: dict, state: str, character_data: dict,
         radius: float, player: Player, dialog_tree: DialogTree,
-        font: pg.Font, collision_group: pg.sprite.Group, groups
+        font: pg.Font, shadow: pg.Surface, alert: pg.Surface,
+        collision_group: pg.sprite.Group, groups
     ) -> None:
-        super().__init__(pos, frames, state, groups)
-
-        self.state = 'left'
+        super().__init__(pos, frames, state, shadow, alert, groups)
 
         self.character_data = character_data
         self.radius = radius
@@ -170,6 +203,14 @@ class Character(Entity):
         self.dialog_tree = dialog_tree
         self.font = font
         self.has_moved = False
+
+        self.can_rotate = True
+
+        self.timers = {
+            'look_around': Timer(
+                2000, True, True, self.choose_random_state
+            )
+        }
 
         self.collision_group = pg.sprite.Group()
 
@@ -190,12 +231,14 @@ class Character(Entity):
         if check_connection(self.radius, self, self.player) and self.has_line_of_sight() and not self.has_moved:
             self.player.face_target_pos(self.rect.center)
             self.player.block()
+            self.can_rotate = False
 
             relation = (
                 vector(self.player.rect.center) - vector(self.rect.center)
             ).normalize()
 
             self.direction = vector(round(relation.x), round(relation.y))
+            self.player.alerted = True
 
     def move(self, dt: float) -> None:
         if self.has_moved:
@@ -208,6 +251,7 @@ class Character(Entity):
             self.hitbox.center = self.rect.center
         else:
             self.has_moved = True
+            self.player.alerted = False
             self.direction = vector()
             self.dialog_tree.setup(self.player, self, self.font)
 
@@ -225,7 +269,27 @@ class Character(Entity):
 
         return True
 
+    def choose_random_state(self) -> None:
+        if self.can_rotate:
+            self.state = choice(self.character_data['directions'])
+
+    def update_timers(self) -> None:
+        timer: Timer
+
+        for timer in self.timers.values():
+            timer.update()
+
+    def draw(self, offset: vector) -> None:
+        self.screen.blit(
+            self.shadow, self.rect.topleft + offset + vector(40, 110)
+        )
+
+        self.screen.blit(
+            self.image, self.rect.topleft + offset
+        )
+
     def update(self, dt) -> None:
+        self.update_timers()
         self.raycast()
         self.move(dt)
         self.animate(dt)

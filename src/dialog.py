@@ -13,6 +13,8 @@ class DialogSprite(pg.sprite.Sprite):
     def __init__(self, message: str, character: Character, font: pg.Font, groups) -> None:
         super().__init__(groups)
 
+        self.screen = pg.display.get_surface()
+
         self.z = WorldLayer.top
 
         font_surf = font.render(message, False, COLORS['black'])
@@ -45,6 +47,11 @@ class DialogSprite(pg.sprite.Sprite):
 
         self.image = surf
         self.rect = self.image.get_frect(midbottom=character.rect.midtop)
+
+    def draw(self, offset: vector) -> None:
+        self.screen.blit(
+            self.image, self.rect.topleft + offset
+        )
 
     def get_y_sort(self) -> float:
         return self.rect.centery

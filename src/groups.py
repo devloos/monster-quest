@@ -1,7 +1,11 @@
+from __future__ import annotations
 from settings import *
-from entities import Entity
-from sprites import Sprite
-from util.support import import_image
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # <-try this,
+    from entities import Entity
+    from sprites import Sprite
+    from dialog import DialogSprite
 
 
 class RenderGroup(pg.sprite.Group):
@@ -9,7 +13,6 @@ class RenderGroup(pg.sprite.Group):
         super().__init__()
         self.screen = pg.display.get_surface()
         self.offset = vector()
-        self.shadow = import_image('graphics', 'other', 'shadow')
 
     def draw(self, player_center: vector):
         # we want the player always in the center, if the player moves right
@@ -24,16 +27,8 @@ class RenderGroup(pg.sprite.Group):
         )
         fg_sprites = filter(lambda sprite: sprite.z > WorldLayer.main, self)
 
-        sprite: Entity | Sprite
+        sprite: Entity | Sprite | DialogSprite
 
         for sprites in [bg_sprites, main_sprites, fg_sprites]:
             for sprite in sprites:
-                if isinstance(sprite, Entity):
-                    self.screen.blit(
-                        self.shadow, sprite.rect.topleft +
-                        self.offset + vector(40, 110)
-                    )
-
-                self.screen.blit(
-                    sprite.image, sprite.rect.topleft + self.offset
-                )
+                sprite.draw(self.offset)
