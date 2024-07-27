@@ -62,6 +62,8 @@ class Character(Entity):
         if check_connection(self.radius, self, self.player) and self.has_line_of_sight() and not self.has_moved:
             self.player.face_target_pos(self.rect.center)
             self.player.block()
+            self.dialog_tree.block()
+            self.dialog_tree.in_dialog = True
             self.player.alerted = True
             self.can_rotate = False
             self.start_move()
@@ -72,14 +74,14 @@ class Character(Entity):
 
         speed = 200
 
-        if not self.hitbox.inflate(10, 10).colliderect(self.player.hitbox):
-            self.rect.center += self.direction * speed * dt
-            self.hitbox.center = self.rect.center
-        else:
+        if self.hitbox.inflate(10, 10).colliderect(self.player.hitbox):
             self.has_moved = True
             self.player.alerted = False
             self.direction = vector()
             self.dialog_tree.setup(self.player, self, self.font)
+        else:
+            self.rect.center += self.direction * speed * dt
+            self.hitbox.center = self.rect.center
 
     def has_line_of_sight(self) -> bool:
         if vector(self.rect.center).distance_to(self.player.rect.center) >= self.radius:

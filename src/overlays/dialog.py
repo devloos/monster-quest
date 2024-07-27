@@ -62,16 +62,17 @@ class DialogTree:
     def __init__(self, render_group: RenderGroup) -> None:
         self.render_group = render_group
 
-        self.player: Player
-        self.character: Character
-        self.font: pg.Font
+        self.player: Player = None
+        self.character: Character = None
+        self.font: pg.Font = None
 
-        self.dialog: list
-        self.dialog_index: int
+        self.dialog = []
+        self.dialog_index = 0
 
         self.dialog_sprite: DialogSprite = None
         self.timer: Timer = None
         self.in_dialog = False
+        self.blocked = False
         self.await_next_tick = False
 
     def setup(self, player: Player, character: Character, font: pg.Font) -> None:
@@ -88,6 +89,7 @@ class DialogTree:
 
         self.timer = None
         self.in_dialog = True
+        self.blocked = False
         self.await_next_tick = True
 
     def move_dialog(self) -> None:
@@ -126,4 +128,11 @@ class DialogTree:
         if self.timer:
             self.timer.update()
 
-        self._input()
+        if not self.blocked:
+            self._input()
+
+    def block(self) -> None:
+        self.blocked = True
+
+    def unblock(self) -> None:
+        self.blocked = False
