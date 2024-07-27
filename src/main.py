@@ -13,6 +13,8 @@ from sprites.character import Character
 from groups import RenderGroup
 from game_data import *
 from overlays.dialog import DialogTree
+from overlays.monster_index import MonsterIndex
+from monster import Monster
 
 
 class Game:
@@ -21,23 +23,40 @@ class Game:
         self.screen = pg.display.set_mode(
             (WINDOW_WIDTH, WINDOW_HEIGHT)
         )
+
         pg.display.set_caption('Monster Quest')
         self.clock = pg.time.Clock()
 
+        # import all assets
+        self.import_assets()
+
+        # groups
         self.render_group = RenderGroup()
         self.collision_group = pg.sprite.Group()
         self.character_group = pg.sprite.Group()
         self.transition_group = pg.sprite.Group()
 
+        # transitions / tint
         self.transition_map: str
         self.transition_pos: str
         self.tint = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.tint_mode = 'untint'
         self.tint_progress = 0
 
-        self.dialog_tree = DialogTree(self.render_group)
+        self.player_monsters = [
+            Monster('Atrox', 16),
+            Monster('Friolera', 4),
+            Monster('Jacana', 39),
+            Monster('Larvea', 23),
+            Monster('Charmadillo', 30),
+            Monster('Finsta', 16)
+        ]
 
-        self.import_assets()
+        # overlay
+        self.dialog_tree = DialogTree(self.render_group)
+        self.monster_index = MonsterIndex(self.player_monsters, self.fonts)
+
+        # essentially start game
         self.setup(self.tmx_maps['world'], 'house')
 
     def import_assets(self) -> None:
