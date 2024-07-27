@@ -3,8 +3,12 @@ from util.support import *
 from pytmx.util_pygame import load_pygame
 from pytmx import TiledMap, TiledObject
 from os.path import join
-from sprites import Sprite, AnimatedSprite, MonsterPatchSprite, CollidableSprite
-from entities import Player, Character
+from textures.texture import Texture
+from textures.animated_texture import AnimatedTexture
+from textures.monster_patch_texture import MonsterPatchTexture
+from textures.collidable_texture import CollidableTexture
+from sprites.player import Player
+from sprites.character import Character
 from groups import RenderGroup
 from game_data import *
 from dialog import DialogTree
@@ -49,7 +53,7 @@ class Game:
         # Terrain
         for layer in ['Terrain', 'Terrain Top']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
-                Sprite(
+                Texture(
                     (x * TILE_SIZE, y * TILE_SIZE),
                     surf,
                     WorldLayer.bg,
@@ -64,7 +68,7 @@ class Game:
             # just tiles that act as coords
             for x in range(int(obj.x), int(obj.x + obj.width), TILE_SIZE):
                 for y in range(int(obj.y), int(obj.y + obj.height), TILE_SIZE):
-                    AnimatedSprite(
+                    AnimatedTexture(
                         (x, y),
                         self.overworld_frames['water'],
                         WorldLayer.water,
@@ -77,7 +81,7 @@ class Game:
             terrain = obj.properties['terrain']
             side = obj.properties['side']
             frames = self.overworld_frames['coast'][terrain][side]
-            AnimatedSprite(pos, frames, WorldLayer.water, self.render_group)
+            AnimatedTexture(pos, frames, WorldLayer.water, self.render_group)
 
         # Objects
         for obj in tmx_map.get_layer_by_name('Objects'):
@@ -87,14 +91,14 @@ class Game:
 
             if obj.name == 'top':
                 z = WorldLayer.top
-                Sprite(pos, surf, z, self.render_group)
+                Texture(pos, surf, z, self.render_group)
             else:
-                CollidableSprite(
+                CollidableTexture(
                     pos, surf, [self.render_group, self.collision_group]
                 )
 
         for obj in tmx_map.get_layer_by_name('Collisions'):
-            Sprite(
+            Texture(
                 (obj.x, obj.y),
                 pg.Surface((obj.width, obj.height)),
                 WorldLayer.main,
@@ -109,7 +113,7 @@ class Game:
             if biome == 'sand':
                 z = WorldLayer.bg
 
-            MonsterPatchSprite(
+            MonsterPatchTexture(
                 (obj.x, obj.y), obj.image, z, biome, self.render_group
             )
 

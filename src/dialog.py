@@ -5,7 +5,8 @@ from util.timer import Timer
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # <-try this,
-    from entities import Player, Character
+    from sprites.player import Player
+    from sprites.character import Character
     from groups import RenderGroup
 
 

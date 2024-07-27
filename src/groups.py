@@ -3,8 +3,8 @@ from settings import *
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # <-try this,
-    from entities import Entity
-    from sprites import Sprite
+    from sprites.entity import Entity
+    from textures.texture import Texture
     from dialog import DialogSprite
 
 
@@ -27,7 +27,7 @@ class RenderGroup(pg.sprite.Group):
         )
         fg_sprites = filter(lambda sprite: sprite.z > WorldLayer.main, self)
 
-        sprite: Entity | Sprite | DialogSprite
+        sprite: Entity | Texture | DialogSprite
 
         for sprites in [bg_sprites, main_sprites, fg_sprites]:
             for sprite in sprites:
