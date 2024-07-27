@@ -50,7 +50,10 @@ class Game:
         }
 
         self.fonts = {
-            'dialog': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 30)
+            'dialog': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 30),
+            'regular': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 20),
+            'small': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 14),
+            'bold': pg.Font(join('graphics', 'fonts', 'dogicapixelbold.otf'), 30),
         }
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
