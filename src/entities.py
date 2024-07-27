@@ -5,7 +5,6 @@ from util.support import check_connection
 from typing import TYPE_CHECKING
 from random import choice
 from util.timer import Timer
-from util.support import import_image
 from abc import ABCMeta, abstractmethod
 
 if TYPE_CHECKING:
@@ -209,7 +208,7 @@ class Character(Entity):
         self.timers = {
             'look_around': Timer(
                 2000, True, True, self.choose_random_state
-            )
+            ),
         }
 
         self.collision_group = pg.sprite.Group()
@@ -224,6 +223,13 @@ class Character(Entity):
 
         return self.character_data['dialog']['default']
 
+    def start_move(self) -> None:
+        relation = (
+            vector(self.player.rect.center) - vector(self.rect.center)
+        ).normalize()
+
+        self.direction = vector(round(relation.x), round(relation.y))
+
     def raycast(self) -> None:
         if self.dialog_tree.in_dialog:
             return
@@ -231,20 +237,15 @@ class Character(Entity):
         if check_connection(self.radius, self, self.player) and self.has_line_of_sight() and not self.has_moved:
             self.player.face_target_pos(self.rect.center)
             self.player.block()
-            self.can_rotate = False
-
-            relation = (
-                vector(self.player.rect.center) - vector(self.rect.center)
-            ).normalize()
-
-            self.direction = vector(round(relation.x), round(relation.y))
             self.player.alerted = True
+            self.can_rotate = False
+            self.start_move()
 
     def move(self, dt: float) -> None:
         if self.has_moved:
             return
 
-        speed = 400
+        speed = 200
 
         if not self.hitbox.inflate(10, 10).colliderect(self.player.hitbox):
             self.rect.center += self.direction * speed * dt
