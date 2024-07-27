@@ -9,7 +9,7 @@ from random import choice
 from util.timer import Timer
 
 if TYPE_CHECKING:
-    from dialog import DialogTree
+    from overlays.dialog import DialogTree
 
 
 class Character(Entity):

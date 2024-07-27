@@ -12,7 +12,7 @@ from sprites.player import Player
 from sprites.character import Character
 from groups import RenderGroup
 from game_data import *
-from dialog import DialogTree
+from overlays.dialog import DialogTree
 
 
 class Game:

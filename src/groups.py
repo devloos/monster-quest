@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  # <-try this,
     from sprites.entity import Entity
     from textures.texture import Texture
-    from dialog import DialogSprite
+    from overlays.dialog import DialogSprite
 
 
 class RenderGroup(pg.sprite.Group):
