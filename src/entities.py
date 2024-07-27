@@ -167,6 +167,7 @@ class Character(Entity):
         self.player = player
         self.dialog_tree = dialog_tree
         self.font = font
+        self.has_moved = False
 
         self.collision_group = pg.sprite.Group()
 
@@ -184,10 +185,28 @@ class Character(Entity):
         if self.dialog_tree.in_dialog:
             return
 
-        if check_connection(self.radius, self, self.player) and self.has_line_of_sight():
+        if check_connection(self.radius, self, self.player) and self.has_line_of_sight() and not self.has_moved:
             self.player.face_target_pos(self.rect.center)
             self.player.block()
 
+            relation = (
+                vector(self.player.rect.center) - vector(self.rect.center)
+            ).normalize()
+
+            self.direction = vector(round(relation.x), round(relation.y))
+
+    def move(self, dt: float) -> None:
+        if self.has_moved:
+            return
+
+        speed = 400
+
+        if not self.hitbox.inflate(10, 10).colliderect(self.player.hitbox):
+            self.rect.center += self.direction * speed * dt
+            self.hitbox.center = self.rect.center
+        else:
+            self.has_moved = True
+            self.direction = vector()
             self.dialog_tree.setup(self.player, self, self.font)
 
     def has_line_of_sight(self) -> bool:
@@ -206,4 +225,5 @@ class Character(Entity):
 
     def update(self, dt) -> None:
         self.raycast()
+        self.move(dt)
         self.animate(dt)
