@@ -3,11 +3,12 @@ from __future__ import annotations
 from settings import *
 from os.path import join
 from os import walk
+from pytmx.util_pygame import load_pygame
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from entities import Entity
+    from sprites.entity import Entity
 
 
 def import_image(*path, alpha=True, format='png') -> pg.Surface:
@@ -137,6 +138,19 @@ def import_coast(cols, rows, *path) -> dict:
                 normalized_frames[terrain][side].append(frame)
 
     return normalized_frames
+
+
+def import_tmx_maps(*path) -> dict:
+    tmx_dict = {}
+
+    for folder_path, _, file_names in walk(join(*path)):
+        file_name: str
+        for file_name in file_names:
+            tmx_dict[file_name.split('.')[0]] = load_pygame(
+                join(folder_path, file_name)
+            )
+
+    return tmx_dict
 
 
 def check_connection(radius: float, entity: Entity, character: Entity, tolerance: float = 30):

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="9" height="12" tilewidth="64" tileheight="64" infinite="0" nextlayerid="11" nextobjectid="18">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="9" height="12" tilewidth="64" tileheight="64" infinite="0" nextlayerid="11" nextobjectid="19">
  <tileset firstgid="1" source="../tilesets/world.tsx"/>
  <tileset firstgid="211" source="../tilesets/objects.tsx"/>
  <tileset firstgid="242" source="../tilesets/indoor.tsx"/>
@@ -36,7 +36,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="Entities">
-  <object id="1" name="Player" x="192.666" y="539.292">
+  <object id="1" name="Player" x="192.666" y="609.964">
    <properties>
     <property name="direction" value="up"/>
     <property name="graphic" value="player"/>
@@ -44,7 +44,7 @@
    </properties>
    <point/>
   </object>
-  <object id="12" name="Character" x="287.846" y="431.973">
+  <object id="12" name="Character" x="286.984" y="356.13">
    <properties>
     <property name="character_id" value="Nurse"/>
     <property name="direction" value="down"/>

@@ -13,7 +13,6 @@ from sprites.character import Character
 from groups import RenderGroup
 from game_data import *
 from dialog import DialogTree
-from util.timer import Timer
 
 
 class Game:
@@ -40,19 +39,9 @@ class Game:
 
         self.import_assets()
         self.setup(self.tmx_maps['world'], 'house')
-        # self.setup(self.tmx_maps['hospital'], 'world')
 
     def import_assets(self) -> None:
-        self.tmx_maps = {
-            'world': load_pygame(join('data', 'maps', 'world.tmx')),
-            'house': load_pygame(join('data', 'maps', 'house.tmx')),
-            'arena': load_pygame(join('data', 'maps', 'arena.tmx')),
-            'water': load_pygame(join('data', 'maps', 'water.tmx')),
-            'plant': load_pygame(join('data', 'maps', 'plant.tmx')),
-            'fire': load_pygame(join('data', 'maps', 'fire.tmx')),
-            'spawn_hospital': load_pygame(join('data', 'maps', 'spawn-hospital.tmx')),
-            'ice_hospital': load_pygame(join('data', 'maps', 'ice-hospital.tmx'))
-        }
+        self.tmx_maps = import_tmx_maps('data', 'maps')
 
         self.overworld_frames = {
             'water': import_folder('graphics', 'tilesets', 'water'),

@@ -4357,7 +4357,7 @@
   <object id="18" x="4226.67" y="3389.33" width="120" height="3.81818">
    <properties>
     <property name="pos" value="world"/>
-    <property name="target" value="spawn_hospital"/>
+    <property name="target" value="spawn-hospital"/>
    </properties>
   </object>
   <object id="930" x="706.667" y="891.417" width="54.6667" height="3.83333">
@@ -4381,7 +4381,7 @@
   <object id="1150" x="1731.67" y="2170.92" width="120" height="3.81818">
    <properties>
     <property name="pos" value="world"/>
-    <property name="target" value="ice_hospital"/>
+    <property name="target" value="ice-hospital"/>
    </properties>
   </object>
  </objectgroup>
