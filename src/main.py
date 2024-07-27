@@ -7,11 +7,13 @@ from textures.texture import Texture
 from textures.animated_texture import AnimatedTexture
 from textures.monster_patch_texture import MonsterPatchTexture
 from textures.collidable_texture import CollidableTexture
+from textures.transition_texture import TransitionTexture
 from sprites.player import Player
 from sprites.character import Character
 from groups import RenderGroup
 from game_data import *
 from dialog import DialogTree
+from util.timer import Timer
 
 
 class Game:
@@ -26,6 +28,13 @@ class Game:
         self.render_group = RenderGroup()
         self.collision_group = pg.sprite.Group()
         self.character_group = pg.sprite.Group()
+        self.transition_group = pg.sprite.Group()
+
+        self.transition_map: str
+        self.transition_pos: str
+        self.tint = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.tint_mode = 'untint'
+        self.tint_progress = 0
 
         self.dialog_tree = DialogTree(self.render_group)
 
@@ -36,7 +45,13 @@ class Game:
     def import_assets(self) -> None:
         self.tmx_maps = {
             'world': load_pygame(join('data', 'maps', 'world.tmx')),
-            'hospital': load_pygame(join('data', 'maps', 'hospital.tmx'))
+            'house': load_pygame(join('data', 'maps', 'house.tmx')),
+            'arena': load_pygame(join('data', 'maps', 'arena.tmx')),
+            'water': load_pygame(join('data', 'maps', 'water.tmx')),
+            'plant': load_pygame(join('data', 'maps', 'plant.tmx')),
+            'fire': load_pygame(join('data', 'maps', 'fire.tmx')),
+            'spawn_hospital': load_pygame(join('data', 'maps', 'spawn-hospital.tmx')),
+            'ice_hospital': load_pygame(join('data', 'maps', 'ice-hospital.tmx'))
         }
 
         self.overworld_frames = {
@@ -50,6 +65,11 @@ class Game:
         }
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
+        self.render_group.empty()
+        self.collision_group.empty()
+        self.character_group.empty()
+        self.transition_group.empty()
+
         # Terrain
         for layer in ['Terrain', 'Terrain Top']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
@@ -97,6 +117,7 @@ class Game:
                     pos, surf, [self.render_group, self.collision_group]
                 )
 
+        # Collisions
         for obj in tmx_map.get_layer_by_name('Collisions'):
             Texture(
                 (obj.x, obj.y),
@@ -104,6 +125,13 @@ class Game:
                 WorldLayer.main,
                 self.collision_group
             )
+
+        # Transitions
+        for obj in tmx_map.get_layer_by_name('Transition'):
+            pos = (obj.x, obj.y)
+            size = (obj.width, obj.height)
+            target = (obj.properties['target'], obj.properties['pos'])
+            TransitionTexture(pos, size, target, self.transition_group)
 
         # Monsters
         for obj in tmx_map.get_layer_by_name('Monsters'):
@@ -175,6 +203,36 @@ class Game:
                         self.player, character, self.fonts['dialog']
                     )
 
+    def check_transitions(self) -> None:
+        transition: TransitionTexture
+
+        for transition in self.transition_group:
+            if self.player.hitbox.colliderect(transition.rect):
+                self.player.block()
+                self.transition_map = transition.target[0]
+                self.transition_pos = transition.target[1]
+                self.tint_mode = 'tint'
+
+    def tint_screen(self, dt) -> None:
+        speed = 600
+
+        if self.tint_mode == 'tint':
+            self.tint_progress += speed * dt
+        elif self.tint_mode == 'untint':
+            self.tint_progress -= speed * dt
+
+        self.tint_progress = max(0, min(255, self.tint_progress))
+
+        if self.tint_progress == 255 and self.transition_map in self.tmx_maps:
+            self.setup(self.tmx_maps[self.transition_map], self.transition_pos)
+            self.tint_mode = 'untint'
+            self.transition_map = None
+            self.transition_pos = None
+
+        # keep tint progress between 0 and 255
+        self.tint.set_alpha(self.tint_progress)
+        self.screen.blit(self.tint, self.tint.get_rect())
+
     def run(self) -> None:
         while True:
             dt = self.clock.tick() / 1000
@@ -185,6 +243,7 @@ class Game:
                     exit()
 
             # handle game input
+            self.check_transitions()
             self._input()
 
             # handle game logic
@@ -194,6 +253,8 @@ class Game:
 
             if self.dialog_tree.in_dialog:
                 self.dialog_tree.update()
+
+            self.tint_screen(dt)
 
             pg.display.update()
 

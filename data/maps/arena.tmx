@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="24" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="13" nextobjectid="983">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="24" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="13" nextobjectid="983">
  <tileset firstgid="1" source="../tilesets/world.tsx"/>
  <tileset firstgid="211" source="../tilesets/objects.tsx"/>
  <tileset firstgid="242" source="../tilesets/Grass.tsx"/>
- <tileset firstgid="244" source="../tilesets/indoor.tsx"/>
+ <tileset firstgid="245" source="../tilesets/indoor.tsx"/>
  <layer id="1" name="Terrain" width="24" height="34">
   <data encoding="csv">
 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
@@ -36,14 +36,14 @@
 15,15,15,15,15,15,15,15,15,14,15,15,7,26,15,15,15,15,15,15,15,15,15,15,
 15,15,15,15,15,15,15,15,15,14,15,15,16,15,15,15,15,15,15,15,15,15,15,15,
 15,15,15,15,15,15,15,15,15,14,15,15,16,15,15,15,15,15,15,15,15,15,15,15,
-15,15,15,15,15,15,15,15,15,287,287,287,287,15,15,15,15,15,15,15,15,15,15,15,
-287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,
-287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,
-287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287,287
+15,15,15,15,15,15,15,15,15,288,288,288,288,15,15,15,15,15,15,15,15,15,15,15,
+288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,
+288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,
+288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288,288
 </data>
  </layer>
- <objectgroup id="3" name="Entities" visible="0">
-  <object id="854" name="Player" x="703" y="1865">
+ <objectgroup id="3" name="Entities">
+  <object id="854" name="Player" x="703" y="1855.23">
    <properties>
     <property name="direction" value="up"/>
     <property name="pos" value="entrance"/>
