@@ -162,6 +162,8 @@ class Character(Entity):
     ) -> None:
         super().__init__(pos, frames, state, groups)
 
+        self.state = 'left'
+
         self.character_data = character_data
         self.radius = radius
         self.player = player
