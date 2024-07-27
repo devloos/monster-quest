@@ -7,6 +7,7 @@ from util.support import check_connection
 from typing import TYPE_CHECKING
 from random import choice
 from util.timer import Timer
+from time import time
 
 if TYPE_CHECKING:
     from overlays.dialog import DialogTree
@@ -27,8 +28,8 @@ class Character(Entity):
         self.dialog_tree = dialog_tree
         self.font = font
         self.has_moved = False
-
         self.can_rotate = True
+        self.can_alert_player = self.character_data['can_alert_player']
 
         self.timers = {
             'look_around': Timer(
@@ -56,6 +57,9 @@ class Character(Entity):
         self.direction = vector(round(relation.x), round(relation.y))
 
     def raycast(self) -> None:
+        if not self.can_alert_player:
+            return
+
         if self.dialog_tree.in_dialog:
             return
 
@@ -85,7 +89,7 @@ class Character(Entity):
 
     def has_line_of_sight(self) -> bool:
         if vector(self.rect.center).distance_to(self.player.rect.center) >= self.radius:
-            return
+            return False
 
         sprite: pg.sprite.Sprite
 

@@ -57,7 +57,7 @@
  <objectgroup id="6" name="Coast" visible="0"/>
  <objectgroup id="7" name="Water" visible="0"/>
  <objectgroup id="8" name="Monsters" visible="0"/>
- <objectgroup id="9" name="Collisions" visible="0" locked="1">
+ <objectgroup id="9" name="Collisions" locked="1">
   <object id="13" x="51.5577" y="142.299" width="395.136" height="302.333"/>
   <object id="14" x="-4.94921" y="702.006" width="154.26" height="64.3437"/>
   <object id="15" x="238.815" y="688.395" width="351.003" height="69.7057"/>

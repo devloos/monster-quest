@@ -5,7 +5,7 @@ TRAINER_DATA = {
             'default': ['Hey, how are you?', 'Oh, so you want to fight?', 'FIGHT!'],
             'defeated': ['You are very strong!', 'Let\'s fight again sometime?']},
         'directions': ['down'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'forest'
     },
@@ -15,7 +15,7 @@ TRAINER_DATA = {
             'default': ['I don\'t like sand', 'It\'s coarse and rough', 'oh god, fight'],
             'defeated': ['May the force be with you']},
         'directions': ['left', 'down'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -25,7 +25,7 @@ TRAINER_DATA = {
             'default': ['I love skating!', 'FIGHT!'],
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['left', 'right', 'up', 'down'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'sand'
     },
@@ -35,7 +35,7 @@ TRAINER_DATA = {
             'default': ['I love skating!', 'FIGHT!'],
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'forest'
     },
@@ -45,7 +45,7 @@ TRAINER_DATA = {
             'default': ['I love skating!', 'FIGHT!'],
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['up', 'right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'forest'
     },
@@ -55,7 +55,7 @@ TRAINER_DATA = {
             'default': ['I love skating!', 'FIGHT!'],
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['down'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -65,7 +65,7 @@ TRAINER_DATA = {
             'default': ['There are no bugs in the snow!'],
             'defeated': ['Maybe I should check a vulcano...', 'It\'s so cold in here']},
         'directions': ['right'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -75,7 +75,7 @@ TRAINER_DATA = {
             'default': ['I love trees', 'and fights'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -85,7 +85,7 @@ TRAINER_DATA = {
             'default': ['I love trees', 'and fights'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -95,7 +95,7 @@ TRAINER_DATA = {
             'default': ['I love trees', 'and fights'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -105,7 +105,7 @@ TRAINER_DATA = {
             'default': ['I love trees', 'and fights'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -115,7 +115,7 @@ TRAINER_DATA = {
             'default': ['I love trees', 'and fights'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -125,7 +125,7 @@ TRAINER_DATA = {
             'default': ['It\'s so cold in here', 'maybe a fight will warm me up'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['left'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'ice'
     },
@@ -135,7 +135,7 @@ TRAINER_DATA = {
             'default': ['It\'s so cold in here', 'maybe a fight will warm me up'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'ice'
     },
@@ -145,7 +145,7 @@ TRAINER_DATA = {
             'default': ['It\'s so cold in here', 'maybe a fight will warm me up'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['left'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'ice'
     },
@@ -155,7 +155,7 @@ TRAINER_DATA = {
             'default': ['It\'s so cold in here', 'maybe a fight will warm me up'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'ice'
     },
@@ -165,7 +165,7 @@ TRAINER_DATA = {
             'default': ['It\'s so cold in here', 'maybe a fight will warm me up'],
             'defeated': ['Good luck with the boss!']},
         'directions': ['left'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'ice'
     },
@@ -175,7 +175,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['down'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'ice'
     },
@@ -185,7 +185,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'sand'
     },
@@ -195,7 +195,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['right', 'left'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -205,7 +205,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['right', 'left'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'sand'
     },
@@ -215,7 +215,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['up', 'right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'sand'
     },
@@ -225,7 +225,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['left'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'sand'
     },
@@ -235,7 +235,7 @@ TRAINER_DATA = {
             'default': ['This place feels kinda warm...', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['right'],
-        'look_around': True,
+        'can_alert_player': True,
         'defeated': False,
         'biome': 'sand'
     },
@@ -245,14 +245,14 @@ TRAINER_DATA = {
             'default': ['Time to bring the heat', 'fight!'],
             'defeated': ['Congratultion!']},
         'directions': ['down'],
-        'look_around': False,
+        'can_alert_player': False,
         'defeated': False,
         'biome': 'sand'
     },
     'Nurse': {
         'direction': 'down',
         'radius': 0,
-        'look_around': False,
+        'can_alert_player': False,
         'dialog': {
             'default': ['Welcome to the hospital', 'Your monsters have been healed'],
             'defeated': None},
