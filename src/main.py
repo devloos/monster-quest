@@ -48,11 +48,11 @@ class Game:
             Monster('Friolera', 4),
             Monster('Jacana', 39),
             Monster('Larvea', 23),
-            Monster('Charmadillo', 30),
-            Monster('Finsta', 16),
-            Monster('Charmadillo', 30),
-            Monster('Larvea', 23),
-            Monster('Finsta', 16)
+            # Monster('Charmadillo', 30),
+            # Monster('Finsta', 16),
+            # Monster('Charmadillo', 30),
+            # Monster('Larvea', 23),
+            # Monster('Finsta', 16)
         ]
 
         # overlay
@@ -220,6 +220,10 @@ class Game:
         if keys[pg.K_TAB]:
             self.monster_index.opened = not self.monster_index.opened
             self.player.blocked = not self.player.blocked
+
+        if keys[pg.K_ESCAPE]:
+            self.monster_index.opened = False
+            self.player.blocked = False
 
     def check_transitions(self) -> None:
         transition: TransitionTexture

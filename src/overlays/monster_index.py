@@ -97,7 +97,19 @@ class MonsterIndex:
 
         self.screen.blit(monster.icon, icon_rect)
 
-    def draw_list(self, dt: float) -> None:
+    def draw_list(self) -> None:
+
+        # draw list background
+        bg_rect = pg.Rect(
+            self.main_rect.topleft, (self.item_width, self.main_rect.height)
+        )
+
+        pg.draw.rect(
+            self.screen, COLORS['gray'], bg_rect,
+            border_bottom_left_radius=8, border_top_left_radius=8
+        )
+
+        # draw items in list
         start_index = 0
 
         if self.hovered_index >= self.visible_items:
@@ -120,15 +132,22 @@ class MonsterIndex:
                 bg_color = COLORS['light']
                 text_color = COLORS['gray']
 
+            divider_rect = pg.FRect(0, 0, self.item_width, 2)
+            divider_rect.bottomleft = item_rect.bottomleft
+
             if item_rect.collidepoint(self.main_rect.topleft):
-                pg.draw.rect(self.screen, bg_color, item_rect,
-                             border_top_left_radius=8)
+                pg.draw.rect(
+                    self.screen, bg_color, item_rect, border_top_left_radius=8
+                )
+                pg.draw.rect(self.screen, COLORS['light-gray'], divider_rect)
             elif item_rect.collidepoint(self.main_rect.bottomleft + vector(1, -1)):
                 # added vector offset to handle bug not detecting the collision
-                pg.draw.rect(self.screen, bg_color, item_rect,
-                             border_bottom_left_radius=8)
+                pg.draw.rect(
+                    self.screen, bg_color, item_rect, border_bottom_left_radius=8
+                )
             else:
                 pg.draw.rect(self.screen, bg_color, item_rect)
+                pg.draw.rect(self.screen, COLORS['light-gray'], divider_rect)
 
             _, monster_name_rect = self.draw_monster_name(
                 item_rect, monster, text_color
@@ -146,9 +165,27 @@ class MonsterIndex:
             (self.main_rect.left + self.item_width - 4, self.main_rect.top)
         )
 
+    def draw_main(self, dt: float) -> None:
+        monster = self.monsters[self.hovered_index]
+
+        rect = pg.FRect(
+            self.main_rect.left + self.item_width,
+            self.main_rect.top, self.main_rect.width - self.item_width,
+            self.main_rect.height
+        )
+
+        pg.draw.rect(
+            self.screen, COLORS['dark'], rect, border_top_right_radius=8, border_bottom_right_radius=8
+        )
+
+        top_rect = pg.FRect(rect.topleft, (rect.width, rect.height * 0.4))
+        pg.draw.rect(
+            self.screen, COLORS[monster.element], top_rect, border_top_right_radius=8
+        )
+
     def update(self, dt: float) -> None:
         self._input()
 
         self.screen.blit(self.tint, (0, 0))
-        # pg.draw.rect(self.screen, 'black', self.main_rect, border_radius=8)
-        self.draw_list(dt)
+        self.draw_list()
+        self.draw_main(dt)
