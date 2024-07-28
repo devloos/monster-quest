@@ -139,9 +139,16 @@ class MonsterIndex:
             if self.selected_index == index + start_index:
                 self.draw_selected_badge(item_rect)
 
+        shadow = pg.Surface((4, self.main_rect.height))
+        shadow.set_alpha(100)
+        self.screen.blit(
+            shadow,
+            (self.main_rect.left + self.item_width - 4, self.main_rect.top)
+        )
+
     def update(self, dt: float) -> None:
         self._input()
 
         self.screen.blit(self.tint, (0, 0))
-        pg.draw.rect(self.screen, 'black', self.main_rect, border_radius=8)
+        # pg.draw.rect(self.screen, 'black', self.main_rect, border_radius=8)
         self.draw_list(dt)
