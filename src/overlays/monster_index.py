@@ -20,24 +20,24 @@ class MonsterIndex:
         self.visible_items = 6
         self.item_width = self.main_rect.width * 0.3
         self.item_height = self.main_rect.height / self.visible_items
-        self.selected_index = 0
+        self.hovered_index = 0
 
     def _input(self) -> None:
         keys = pg.key.get_just_pressed()
 
         if keys[pg.K_UP]:
-            self.selected_index -= 1
+            self.hovered_index -= 1
 
         if keys[pg.K_DOWN]:
-            self.selected_index += 1
+            self.hovered_index += 1
 
-        self.selected_index = self.selected_index % len(self.monsters)
+        self.hovered_index = self.hovered_index % len(self.monsters)
 
     def display_list(self, dt: float) -> None:
         start_index = 0
 
-        if self.selected_index >= self.visible_items:
-            start_index = self.selected_index - self.visible_items + 1
+        if self.hovered_index >= self.visible_items:
+            start_index = self.hovered_index - self.visible_items + 1
 
         for index, monster in enumerate(self.monsters[start_index:]):
             top = self.main_rect.top + index * self.item_height
@@ -52,7 +52,7 @@ class MonsterIndex:
             bg_color = COLORS['gray']
             text_color = COLORS['light']
 
-            if self.selected_index == index + start_index:
+            if self.hovered_index == index + start_index:
                 bg_color = COLORS['light']
                 text_color = COLORS['gray']
 
