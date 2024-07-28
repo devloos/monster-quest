@@ -49,7 +49,10 @@ class Game:
             Monster('Jacana', 39),
             Monster('Larvea', 23),
             Monster('Charmadillo', 30),
-            # Monster('Finsta', 16)
+            Monster('Finsta', 16),
+            Monster('Charmadillo', 30),
+            Monster('Larvea', 23),
+            Monster('Finsta', 16)
         ]
 
         # overlay

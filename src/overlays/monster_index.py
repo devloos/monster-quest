@@ -20,24 +20,50 @@ class MonsterIndex:
         self.visible_items = 6
         self.item_width = self.main_rect.width * 0.3
         self.item_height = self.main_rect.height / self.visible_items
+        self.selected_index = 0
+
+    def _input(self) -> None:
+        keys = pg.key.get_just_pressed()
+
+        if keys[pg.K_UP]:
+            self.selected_index -= 1
+
+        if keys[pg.K_DOWN]:
+            self.selected_index += 1
+
+        self.selected_index = self.selected_index % len(self.monsters)
 
     def display_list(self, dt: float) -> None:
-        for index, monster in enumerate(self.monsters):
-            top = self.main_rect.top + index * self.item_height + index
-            self.item_rect = pg.FRect(
+        start_index = 0
+
+        if self.selected_index >= self.visible_items:
+            start_index = self.selected_index - self.visible_items + 1
+
+        for index, monster in enumerate(self.monsters[start_index:]):
+            top = self.main_rect.top + index * self.item_height
+            item_rect = pg.FRect(
                 self.main_rect.left, top, self.item_width, self.item_height
             )
 
-            pg.draw.rect(self.screen, 'dark gray', self.item_rect)
+            if not item_rect.colliderect(self.main_rect):
+                continue
+
+            # colors
+            bg_color = COLORS['gray']
+            text_color = COLORS['light']
+
+            if self.selected_index == index + start_index:
+                bg_color = COLORS['light']
+                text_color = COLORS['gray']
+
+            pg.draw.rect(self.screen, bg_color, item_rect)
 
             monster_name = self.fonts['regular'].render(
-                monster.name, False, COLORS['white']
+                monster.name, False, text_color
             )
             monster_name_rect = monster_name.get_frect(
-                topleft=self.item_rect.topleft + vector(20, 20)
+                topleft=item_rect.topleft + vector(20, 20)
             )
-
-            self.screen.blit(monster_name, monster_name_rect)
 
             # todo: add shadow effect and border
             element = pg.Surface((60, 20), pg.SRCALPHA).convert_alpha()
@@ -54,19 +80,24 @@ class MonsterIndex:
                 monster.element, False, COLORS['black']
             )
 
-            element.blit(
+            icon_rect = monster.icon.get_rect(
+                midright=item_rect.midright + vector(-25, 0)
+            )
+
+            self.screen.blit(monster_name, monster_name_rect)
+
+            self.screen.blit(
                 element_text,
                 element_text.get_frect(center=element_rect.center)
             )
 
             self.screen.blit(element, element_rect)
 
-            icon_rect = monster.icon.get_rect(
-                midright=self.item_rect.midright + vector(-25, 0)
-            )
             self.screen.blit(monster.icon, icon_rect)
 
     def update(self, dt: float) -> None:
+        self._input()
+
         self.screen.blit(self.tint, (0, 0))
         pg.draw.rect(self.screen, 'black', self.main_rect)
         self.display_list(dt)
