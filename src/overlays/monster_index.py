@@ -81,7 +81,7 @@ class MonsterIndex:
             )
 
             icon_rect = monster.icon.get_rect(
-                midright=item_rect.midright + vector(-25, 0)
+                center=item_rect.midright + vector(-55, 0)
             )
 
             self.screen.blit(monster_name, monster_name_rect)
