@@ -120,7 +120,15 @@ class MonsterIndex:
                 bg_color = COLORS['light']
                 text_color = COLORS['gray']
 
-            pg.draw.rect(self.screen, bg_color, item_rect, border_radius=5)
+            if item_rect.collidepoint(self.main_rect.topleft):
+                pg.draw.rect(self.screen, bg_color, item_rect,
+                             border_top_left_radius=8)
+            elif item_rect.collidepoint(self.main_rect.bottomleft + vector(1, -1)):
+                # added vector offset to handle bug not detecting the collision
+                pg.draw.rect(self.screen, bg_color, item_rect,
+                             border_bottom_left_radius=8)
+            else:
+                pg.draw.rect(self.screen, bg_color, item_rect)
 
             _, monster_name_rect = self.draw_monster_name(
                 item_rect, monster, text_color
@@ -135,5 +143,5 @@ class MonsterIndex:
         self._input()
 
         self.screen.blit(self.tint, (0, 0))
-        pg.draw.rect(self.screen, 'black', self.main_rect)
+        pg.draw.rect(self.screen, 'black', self.main_rect, border_radius=8)
         self.draw_list(dt)
