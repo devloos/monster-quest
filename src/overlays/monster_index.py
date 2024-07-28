@@ -59,12 +59,14 @@ class MonsterIndex:
             monster.element, False, COLORS['black']
         )
 
+        self.screen.blit(element, element_rect)
+
         self.screen.blit(
             element_text,
-            element_text.get_frect(center=element_rect.center)
+            element_text.get_frect(
+                center=element_rect.center
+            )
         )
-
-        self.screen.blit(element, element_rect)
 
     def draw_selected_badge(self, item_rect: pg.FRect) -> None:
         center = item_rect.topright + vector(-13, 13)
