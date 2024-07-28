@@ -120,7 +120,7 @@ class MonsterIndex:
                 bg_color = COLORS['light']
                 text_color = COLORS['gray']
 
-            pg.draw.rect(self.screen, bg_color, item_rect)
+            pg.draw.rect(self.screen, bg_color, item_rect, border_radius=5)
 
             _, monster_name_rect = self.draw_monster_name(
                 item_rect, monster, text_color
