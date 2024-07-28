@@ -21,6 +21,7 @@ class MonsterIndex:
         self.item_width = self.main_rect.width * 0.3
         self.item_height = self.main_rect.height / self.visible_items
         self.hovered_index = 0
+        self.selected_index: int | None = None
 
     def _input(self) -> None:
         keys = pg.key.get_just_pressed()
@@ -30,6 +31,15 @@ class MonsterIndex:
 
         if keys[pg.K_DOWN]:
             self.hovered_index += 1
+
+        if keys[pg.K_SPACE]:
+            if self.selected_index != None:
+                temp_monster = self.monsters[self.hovered_index]
+                self.monsters[self.hovered_index] = self.monsters[self.selected_index]
+                self.monsters[self.selected_index] = temp_monster
+                self.selected_index = None
+            else:
+                self.selected_index = self.hovered_index
 
         self.hovered_index = self.hovered_index % len(self.monsters)
 
@@ -94,6 +104,13 @@ class MonsterIndex:
             self.screen.blit(element, element_rect)
 
             self.screen.blit(monster.icon, icon_rect)
+
+            if self.selected_index == index + start_index:
+                center = item_rect.topright + vector(-13, 13)
+
+                pg.draw.circle(
+                    self.screen, COLORS['gold'], center, radius=9, width=4
+                )
 
     def update(self, dt: float) -> None:
         self._input()
