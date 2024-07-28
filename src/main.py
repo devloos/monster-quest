@@ -49,7 +49,7 @@ class Game:
             Monster('Jacana', 39),
             Monster('Larvea', 23),
             Monster('Charmadillo', 30),
-            Monster('Finsta', 16)
+            # Monster('Finsta', 16)
         ]
 
         # overlay
@@ -214,6 +214,10 @@ class Game:
                         self.player, character, self.fonts['dialog']
                     )
 
+        if keys[pg.K_TAB]:
+            self.monster_index.opened = not self.monster_index.opened
+            self.player.blocked = not self.player.blocked
+
     def check_transitions(self) -> None:
         transition: TransitionTexture
 
@@ -264,6 +268,9 @@ class Game:
 
             if self.dialog_tree.in_dialog:
                 self.dialog_tree.update()
+
+            if self.monster_index.opened:
+                self.monster_index.update(dt)
 
             self.tint_screen(dt)
 

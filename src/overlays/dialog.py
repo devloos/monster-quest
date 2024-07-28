@@ -31,13 +31,13 @@ class DialogSprite(pg.sprite.Sprite):
         surf.fill((0, 0, 0, 0))
 
         # fill height minus 20 with pure white bg
-        rect = pg.Rect(surf.get_rect())
+        rect = pg.FRect(surf.get_rect())
         rect.height -= 14
 
         # add bubble thought
         pg.draw.rect(surf, COLORS['pure white'], rect, 0, 4)
 
-        rect = pg.Rect()
+        rect = pg.FRect()
         rect.midbottom = surf.get_rect().bottomleft + vector(width / 3, -10)
         rect = rect.inflate(15, 28)
 

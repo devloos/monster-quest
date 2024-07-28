@@ -65,7 +65,7 @@ def import_tilemap(cols, rows, *path) -> dict:
 
     for col in range(cols):
         for row in range(rows):
-            cutout_rect = pg.Rect(
+            cutout_rect = pg.FRect(
                 col * cell_width, row * cell_height, cell_width, cell_height
             )
             cutout_surf = pg.Surface((cell_width, cell_height)).convert_alpha()
