@@ -48,7 +48,7 @@ class MonsterIndex:
 
         self.hovered_index = self.hovered_index % len(self.monsters)
 
-    def draw_element_badge(self, rect: pg.FRect, monster: Monster) -> None:
+    def draw_list_element(self, rect: pg.FRect, monster: Monster) -> None:
         # todo: add shadow effect and border
         element = pg.Surface((60, 20), pg.SRCALPHA).convert_alpha()
         element_rect = element.get_rect(
@@ -74,7 +74,7 @@ class MonsterIndex:
         )
 
     def draw_selected_badge(self, item_rect: pg.FRect) -> None:
-        center = item_rect.topright + vector(-13, 13)
+        center = item_rect.topright + vector(-16, 13)
 
         pg.draw.circle(
             self.screen, COLORS['gold'], center, radius=9, width=4
@@ -95,7 +95,7 @@ class MonsterIndex:
 
         return monster_name, monster_name_rect
 
-    def draw_monster_icon(self, item_rect: pg.FRect, monster: Monster) -> None:
+    def draw_list_monster(self, item_rect: pg.FRect, monster: Monster) -> None:
         icon_rect = monster.icon.get_rect(
             center=item_rect.midright + vector(-55, 0)
         )
@@ -157,8 +157,8 @@ class MonsterIndex:
             _, monster_name_rect = self.draw_monster_name(
                 item_rect, monster, text_color
             )
-            self.draw_monster_icon(item_rect, monster)
-            self.draw_element_badge(monster_name_rect, monster)
+            self.draw_list_monster(item_rect, monster)
+            self.draw_list_element(monster_name_rect, monster)
 
             if self.selected_index == index + start_index:
                 self.draw_selected_badge(item_rect)
