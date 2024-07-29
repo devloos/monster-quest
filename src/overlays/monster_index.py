@@ -263,40 +263,7 @@ class MonsterIndex:
         monster_rect = monster_surf.get_frect(center=rect.center)
         self.screen.blit(monster_surf, monster_rect)
 
-    def draw_main(self, dt: float) -> None:
-        monster = self.monsters[self.hovered_index]
-
-        main_rect = pg.FRect(
-            self.monster_index_rect.left + self.item_width,
-            self.monster_index_rect.top, self.monster_index_rect.width - self.item_width,
-            self.monster_index_rect.height
-        )
-
-        pg.draw.rect(
-            self.screen, COLORS['dark'], main_rect, border_top_right_radius=8, border_bottom_right_radius=8
-        )
-
-        top_rect = pg.FRect(
-            main_rect.topleft, (main_rect.width, main_rect.height * 0.4)
-        )
-        pg.draw.rect(
-            self.screen, COLORS[monster.element], top_rect, border_top_right_radius=8
-        )
-
-        self.draw_main_monster(monster, top_rect, dt)
-        self.draw_main_name(monster, top_rect)
-        self.draw_main_level(monster, top_rect)
-        self.draw_main_element(monster, top_rect)
-        health_bar_rect = self.draw_main_health_bar(monster, top_rect)
-        self.draw_main_energy_bar(monster, top_rect)
-
-        stats_height = main_rect.bottom - health_bar_rect.bottom
-        stats_rect = pg.FRect(
-            (health_bar_rect.bottomleft), (health_bar_rect.width, stats_height)
-        ).inflate(0, -40)
-
-        # pg.draw.rect(self.screen, 'red', stats_rect)
-
+    def draw_main_stats(self, monster: Monster, stats_rect: pg.FRect) -> None:
         stats_text_surf = self.fonts['regular'].render(
             'Stats', False, COLORS['white']
         )
@@ -343,6 +310,40 @@ class MonsterIndex:
                 MAX_STATS[stat] * monster.level,
                 COLORS['black'], COLORS['white']
             )
+
+    def draw_main(self, dt: float) -> None:
+        monster = self.monsters[self.hovered_index]
+
+        main_rect = pg.FRect(
+            self.monster_index_rect.left + self.item_width,
+            self.monster_index_rect.top, self.monster_index_rect.width - self.item_width,
+            self.monster_index_rect.height
+        )
+
+        pg.draw.rect(
+            self.screen, COLORS['dark'], main_rect, border_top_right_radius=8, border_bottom_right_radius=8
+        )
+
+        top_rect = pg.FRect(
+            main_rect.topleft, (main_rect.width, main_rect.height * 0.4)
+        )
+        pg.draw.rect(
+            self.screen, COLORS[monster.element], top_rect, border_top_right_radius=8
+        )
+
+        self.draw_main_monster(monster, top_rect, dt)
+        self.draw_main_name(monster, top_rect)
+        self.draw_main_level(monster, top_rect)
+        self.draw_main_element(monster, top_rect)
+        health_bar_rect = self.draw_main_health_bar(monster, top_rect)
+        self.draw_main_energy_bar(monster, top_rect)
+
+        stats_height = main_rect.bottom - health_bar_rect.bottom
+        stats_rect = pg.FRect(
+            (health_bar_rect.bottomleft), (health_bar_rect.width, stats_height)
+        ).inflate(0, -40)
+
+        self.draw_main_stats(monster, stats_rect)
 
     def update(self, dt: float) -> None:
         self._input()
