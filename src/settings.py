@@ -71,3 +71,12 @@ BATTLE_CHOICES = {
         'switch': {'pos': vector(30, 40), 'icon': 'arrows'}
     }
 }
+
+MAX_STATS = {
+    'health': 30,
+    'energy': 28,
+    'attack': 8,
+    'defense': 20,
+    'recovery': 10,
+    'speed': 3
+}

@@ -26,7 +26,7 @@ def import_folder(*path):
     return frames
 
 
-def import_folder_dict(*path):
+def import_folder_dict(*path) -> dict[str, pg.Surface]:
     frames = {}
     for folder_path, sub_folders, image_names in walk(join(*path)):
         for image_name in image_names:

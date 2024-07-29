@@ -1,6 +1,7 @@
 from settings import *
 from monster import Monster
 from util.draw import draw_bar
+from util.imports import import_folder_dict
 
 
 class MonsterIndex:
@@ -10,6 +11,7 @@ class MonsterIndex:
         self.screen = pg.display.get_surface()
         self.monsters = monsters
         self.monster_frames = monster_frames
+        self.ui_icons = import_folder_dict('graphics', 'ui')
         self.fonts = fonts
         self.opened = False
 
@@ -51,7 +53,7 @@ class MonsterIndex:
     def draw_list_element(self, rect: pg.FRect, monster: Monster) -> None:
         # todo: add shadow effect and border
         element = pg.Surface((60, 20), pg.SRCALPHA).convert_alpha()
-        element_rect = element.get_rect(
+        element_rect = element.get_frect(
             topleft=rect.bottomleft + vector(0, 10)
         )
 
@@ -96,7 +98,7 @@ class MonsterIndex:
         return monster_name, monster_name_rect
 
     def draw_list_monster(self, item_rect: pg.FRect, monster: Monster) -> None:
-        icon_rect = monster.icon.get_rect(
+        icon_rect = monster.icon.get_frect(
             center=item_rect.midright + vector(-55, 0)
         )
 
@@ -220,12 +222,12 @@ class MonsterIndex:
             f'EP: {monster.energy}/{monster.get_stat('max_energy')}',
             False, COLORS['white']
         )
-        energy_bar_text_rect = energy_bar_text_surf.get_rect(
+        energy_bar_text_rect = energy_bar_text_surf.get_frect(
             midleft=energy_bar_rect.midleft + vector(10, 0),
         )
         self.screen.blit(energy_bar_text_surf, energy_bar_text_rect)
 
-    def draw_main_health_bar(self, monster: Monster, rect: pg.FRect) -> None:
+    def draw_main_health_bar(self, monster: Monster, rect: pg.FRect) -> pg.FRect:
         health_bar_rect = pg.FRect(
             rect.left + 15, rect.bottom + 15,
             rect.width * 0.45, 30
@@ -241,10 +243,12 @@ class MonsterIndex:
             f'HP: {monster.health}/{monster.get_stat('max_health')}',
             False, COLORS['white']
         )
-        health_bar_text_rect = health_bar_text_surf.get_rect(
+        health_bar_text_rect = health_bar_text_surf.get_frect(
             midleft=health_bar_rect.midleft + vector(10, 0),
         )
         self.screen.blit(health_bar_text_surf, health_bar_text_rect)
+
+        return health_bar_rect
 
     def draw_main_monster(self, monster: Monster, rect: pg.FRect, dt: float) -> None:
         self.frame_index += ANIMATION_SPEED * dt
@@ -283,8 +287,62 @@ class MonsterIndex:
         self.draw_main_name(monster, top_rect)
         self.draw_main_level(monster, top_rect)
         self.draw_main_element(monster, top_rect)
-        self.draw_main_health_bar(monster, top_rect)
+        health_bar_rect = self.draw_main_health_bar(monster, top_rect)
         self.draw_main_energy_bar(monster, top_rect)
+
+        stats_height = main_rect.bottom - health_bar_rect.bottom
+        stats_rect = pg.FRect(
+            (health_bar_rect.bottomleft), (health_bar_rect.width, stats_height)
+        ).inflate(0, -40)
+
+        # pg.draw.rect(self.screen, 'red', stats_rect)
+
+        stats_text_surf = self.fonts['regular'].render(
+            'Stats', False, COLORS['white']
+        )
+        stats_text_rect = stats_text_surf.get_frect(topleft=stats_rect.topleft)
+        self.screen.blit(stats_text_surf, stats_text_rect)
+
+        monster_stats = monster.get_stats()
+        normalized_stats_height = stats_rect.height - stats_text_rect.height
+        stat_height = normalized_stats_height / len(monster_stats)
+
+        for index, (stat, value) in enumerate(monster_stats.items()):
+            item_rect = pg.FRect(
+                stats_rect.left, stats_text_rect.bottom + stat_height * index,
+                stats_rect.width, stat_height
+            )
+
+            # icon
+            icon_surf = self.ui_icons[stat]
+            icon_rect = icon_surf.get_frect(
+                midleft=item_rect.midleft + vector(8, 0)
+            )
+            self.screen.blit(icon_surf, icon_rect)
+
+            # text
+            stat_text = self.fonts['regular'].render(
+                stat, False, COLORS['white']
+            )
+            stat_text_rect = stat_text.get_frect(
+                top=item_rect.top,
+                left=icon_rect.right + 25
+            )
+            self.screen.blit(stat_text, stat_text_rect)
+
+            # bar
+            stat_bar_rect = pg.FRect(
+                (stat_text_rect.bottomleft + vector(0, 2)),
+                (item_rect.width - icon_rect.width - 33, 4)
+            )
+
+            # max stat defines the potential a monster
+            # can reach, it is a setting var in settings
+            draw_bar(
+                self.screen, stat_bar_rect, value,
+                MAX_STATS[stat] * monster.level,
+                COLORS['black'], COLORS['white']
+            )
 
     def update(self, dt: float) -> None:
         self._input()
