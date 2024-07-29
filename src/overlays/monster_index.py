@@ -206,16 +206,19 @@ class MonsterIndex:
         )
         self.screen.blit(name_surf, name_rect)
 
-    def draw_main_energy_bar(self, rect: pg.FRect) -> None:
+    def draw_main_energy_bar(self, monster: Monster, rect: pg.FRect) -> None:
         energy_bar_rect = pg.FRect((0, 0), (rect.width * 0.45, 30))
         energy_bar_rect.topright = rect.bottomright + vector(-15, 15)
 
         draw_bar(
-            self.screen, energy_bar_rect, 60, 100, COLORS['black'], COLORS['blue'], 2
+            self.screen, energy_bar_rect,
+            monster.energy, monster.get_stat('max_energy'),
+            COLORS['black'], COLORS['blue'], 2
         )
 
         energy_bar_text_surf = self.fonts['regular'].render(
-            'EP: 60/100', False, COLORS['white']
+            f'EP: {monster.energy}/{monster.get_stat('max_energy')}',
+            False, COLORS['white']
         )
         energy_bar_text_rect = energy_bar_text_surf.get_rect(
             left=energy_bar_rect.left + 10,
@@ -223,18 +226,21 @@ class MonsterIndex:
         )
         self.screen.blit(energy_bar_text_surf, energy_bar_text_rect)
 
-    def draw_main_health_bar(self, rect: pg.FRect) -> None:
+    def draw_main_health_bar(self, monster: Monster, rect: pg.FRect) -> None:
         health_bar_rect = pg.FRect(
             rect.left + 15, rect.bottom + 15,
             rect.width * 0.45, 30
         )
 
         draw_bar(
-            self.screen, health_bar_rect, 25, 100, COLORS['black'], COLORS['red'], 2
+            self.screen, health_bar_rect,
+            monster.health, monster.get_stat('max_health'),
+            COLORS['black'], COLORS['red'], 2
         )
 
         health_bar_text_surf = self.fonts['regular'].render(
-            'HP: 25/100', False, COLORS['white']
+            f'HP: {monster.health}/{monster.get_stat('max_health')}',
+            False, COLORS['white']
         )
         health_bar_text_rect = health_bar_text_surf.get_rect(
             left=health_bar_rect.left + 10,
@@ -279,8 +285,8 @@ class MonsterIndex:
         self.draw_main_name(monster, top_rect)
         self.draw_main_level(monster, top_rect)
         self.draw_main_element(monster, top_rect)
-        self.draw_main_health_bar(top_rect)
-        self.draw_main_energy_bar(top_rect)
+        self.draw_main_health_bar(monster, top_rect)
+        self.draw_main_energy_bar(monster, top_rect)
 
     def update(self, dt: float) -> None:
         self._input()
