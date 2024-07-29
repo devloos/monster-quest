@@ -16,14 +16,14 @@ class MonsterIndex:
         self.tint = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.tint.set_alpha(200)
 
-        self.main_rect = pg.FRect(
+        self.monster_index_rect = pg.FRect(
             0, 0, WINDOW_WIDTH * 0.7, WINDOW_HEIGHT * 0.8
         )
-        self.main_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+        self.monster_index_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
         self.visible_items = 6
-        self.item_width = self.main_rect.width * 0.3
-        self.item_height = self.main_rect.height / self.visible_items
+        self.item_width = self.monster_index_rect.width * 0.3
+        self.item_height = self.monster_index_rect.height / self.visible_items
         self.hovered_index = 0
         self.selected_index: int | None = None
         self.frame_index = 0
@@ -106,7 +106,8 @@ class MonsterIndex:
 
         # draw list background
         bg_rect = pg.Rect(
-            self.main_rect.topleft, (self.item_width, self.main_rect.height)
+            self.monster_index_rect.topleft, (self.item_width,
+                                              self.monster_index_rect.height)
         )
 
         pg.draw.rect(
@@ -121,12 +122,12 @@ class MonsterIndex:
             start_index = self.hovered_index - self.visible_items + 1
 
         for index, monster in enumerate(self.monsters[start_index:]):
-            top = self.main_rect.top + index * self.item_height
+            top = self.monster_index_rect.top + index * self.item_height
             item_rect = pg.FRect(
-                self.main_rect.left, top, self.item_width, self.item_height
+                self.monster_index_rect.left, top, self.item_width, self.item_height
             )
 
-            if not item_rect.colliderect(self.main_rect):
+            if not item_rect.colliderect(self.monster_index_rect):
                 continue
 
             # colors
@@ -140,12 +141,12 @@ class MonsterIndex:
             divider_rect = pg.FRect(0, 0, self.item_width, 2)
             divider_rect.bottomleft = item_rect.bottomleft
 
-            if item_rect.collidepoint(self.main_rect.topleft):
+            if item_rect.collidepoint(self.monster_index_rect.topleft):
                 pg.draw.rect(
                     self.screen, bg_color, item_rect, border_top_left_radius=8
                 )
                 pg.draw.rect(self.screen, COLORS['light-gray'], divider_rect)
-            elif item_rect.collidepoint(self.main_rect.bottomleft + vector(1, -1)):
+            elif item_rect.collidepoint(self.monster_index_rect.bottomleft + vector(1, -1)):
                 # added vector offset to handle bug not detecting the collision
                 pg.draw.rect(
                     self.screen, bg_color, item_rect, border_bottom_left_radius=8
@@ -163,11 +164,12 @@ class MonsterIndex:
             if self.selected_index == index + start_index:
                 self.draw_selected_badge(item_rect)
 
-        shadow = pg.Surface((4, self.main_rect.height))
+        shadow = pg.Surface((4, self.monster_index_rect.height))
         shadow.set_alpha(100)
         self.screen.blit(
             shadow,
-            (self.main_rect.left + self.item_width - 4, self.main_rect.top)
+            (self.monster_index_rect.left +
+             self.item_width - 4, self.monster_index_rect.top)
         )
 
     def draw_main_level(self, monster: Monster, rect: pg.FRect) -> None:
@@ -204,6 +206,42 @@ class MonsterIndex:
         )
         self.screen.blit(name_surf, name_rect)
 
+    def draw_main_energy_bar(self, rect: pg.FRect) -> None:
+        energy_bar_rect = pg.FRect((0, 0), (rect.width * 0.45, 30))
+        energy_bar_rect.topright = rect.bottomright + vector(-15, 15)
+
+        draw_bar(
+            self.screen, energy_bar_rect, 60, 100, COLORS['black'], COLORS['blue'], 2
+        )
+
+        energy_bar_text_surf = self.fonts['regular'].render(
+            'EP: 60/100', False, COLORS['white']
+        )
+        energy_bar_text_rect = energy_bar_text_surf.get_rect(
+            left=energy_bar_rect.left + 10,
+            centery=energy_bar_rect.centery
+        )
+        self.screen.blit(energy_bar_text_surf, energy_bar_text_rect)
+
+    def draw_main_health_bar(self, rect: pg.FRect) -> None:
+        health_bar_rect = pg.FRect(
+            rect.left + 15, rect.bottom + 15,
+            rect.width * 0.45, 30
+        )
+
+        draw_bar(
+            self.screen, health_bar_rect, 25, 100, COLORS['black'], COLORS['red'], 2
+        )
+
+        health_bar_text_surf = self.fonts['regular'].render(
+            'HP: 25/100', False, COLORS['white']
+        )
+        health_bar_text_rect = health_bar_text_surf.get_rect(
+            left=health_bar_rect.left + 10,
+            centery=health_bar_rect.centery
+        )
+        self.screen.blit(health_bar_text_surf, health_bar_text_rect)
+
     def draw_main_monster(self, monster: Monster, rect: pg.FRect, dt: float) -> None:
         self.frame_index += ANIMATION_SPEED * dt
         length = len(self.monster_frames[monster.name]['idle'])
@@ -220,17 +258,19 @@ class MonsterIndex:
     def draw_main(self, dt: float) -> None:
         monster = self.monsters[self.hovered_index]
 
-        rect = pg.FRect(
-            self.main_rect.left + self.item_width,
-            self.main_rect.top, self.main_rect.width - self.item_width,
-            self.main_rect.height
+        main_rect = pg.FRect(
+            self.monster_index_rect.left + self.item_width,
+            self.monster_index_rect.top, self.monster_index_rect.width - self.item_width,
+            self.monster_index_rect.height
         )
 
         pg.draw.rect(
-            self.screen, COLORS['dark'], rect, border_top_right_radius=8, border_bottom_right_radius=8
+            self.screen, COLORS['dark'], main_rect, border_top_right_radius=8, border_bottom_right_radius=8
         )
 
-        top_rect = pg.FRect(rect.topleft, (rect.width, rect.height * 0.4))
+        top_rect = pg.FRect(
+            main_rect.topleft, (main_rect.width, main_rect.height * 0.4)
+        )
         pg.draw.rect(
             self.screen, COLORS[monster.element], top_rect, border_top_right_radius=8
         )
@@ -239,6 +279,8 @@ class MonsterIndex:
         self.draw_main_name(monster, top_rect)
         self.draw_main_level(monster, top_rect)
         self.draw_main_element(monster, top_rect)
+        self.draw_main_health_bar(top_rect)
+        self.draw_main_energy_bar(top_rect)
 
     def update(self, dt: float) -> None:
         self._input()
