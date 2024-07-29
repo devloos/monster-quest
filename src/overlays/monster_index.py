@@ -1,11 +1,15 @@
 from settings import *
 from monster import Monster
+from util.draw import draw_bar
 
 
 class MonsterIndex:
-    def __init__(self, monsters: list[Monster], fonts: dict[str, pg.Font]) -> None:
+    def __init__(
+        self, monsters: list[Monster], monster_frames: dict[str, dict[str, list[pg.Surface]]], fonts: dict[str, pg.Font]
+    ) -> None:
         self.screen = pg.display.get_surface()
         self.monsters = monsters
+        self.monster_frames = monster_frames
         self.fonts = fonts
         self.opened = False
 
@@ -22,6 +26,7 @@ class MonsterIndex:
         self.item_height = self.main_rect.height / self.visible_items
         self.hovered_index = 0
         self.selected_index: int | None = None
+        self.frame_index = 0
 
     def _input(self) -> None:
         keys = pg.key.get_just_pressed()
@@ -165,6 +170,53 @@ class MonsterIndex:
             (self.main_rect.left + self.item_width - 4, self.main_rect.top)
         )
 
+    def draw_main_level(self, monster: Monster, rect: pg.FRect) -> None:
+        level_surf = self.fonts['regular'].render(
+            f'lvl: {monster.level}', False, COLORS['white']
+        )
+        level_rect = level_surf.get_frect(
+            bottomleft=rect.bottomleft + vector(10, -16)
+        )
+        self.screen.blit(level_surf, level_rect)
+
+        draw_bar(
+            self.screen, pg.FRect(level_rect.bottomleft, (100, 4)),
+            monster.xp, monster.level_up,
+            COLORS['dark'], COLORS['white']
+        )
+
+    def draw_main_element(self, monster: Monster, rect: pg.FRect) -> None:
+        # draw element
+        element_surf = self.fonts['regular'].render(
+            monster.element, False, COLORS['white']
+        )
+        element_rect = element_surf.get_frect(
+            bottomright=rect.bottomright + vector(-10, -10)
+        )
+        self.screen.blit(element_surf, element_rect)
+
+    def draw_main_name(self, monster: Monster, rect: pg.FRect) -> None:
+        name_surf = self.fonts['bold'].render(
+            monster.name, False, COLORS['white']
+        )
+        name_rect = name_surf.get_frect(
+            topleft=rect.topleft + vector(10, 10)
+        )
+        self.screen.blit(name_surf, name_rect)
+
+    def draw_main_monster(self, monster: Monster, rect: pg.FRect, dt: float) -> None:
+        self.frame_index += ANIMATION_SPEED * dt
+        length = len(self.monster_frames[monster.name]['idle'])
+
+        if self.frame_index > length:
+            self.frame_index = 0
+
+        monster_surf = self.monster_frames[monster.name]['idle'][
+            int(self.frame_index) % length
+        ]
+        monster_rect = monster_surf.get_frect(center=rect.center)
+        self.screen.blit(monster_surf, monster_rect)
+
     def draw_main(self, dt: float) -> None:
         monster = self.monsters[self.hovered_index]
 
@@ -182,6 +234,11 @@ class MonsterIndex:
         pg.draw.rect(
             self.screen, COLORS[monster.element], top_rect, border_top_right_radius=8
         )
+
+        self.draw_main_monster(monster, top_rect, dt)
+        self.draw_main_name(monster, top_rect)
+        self.draw_main_level(monster, top_rect)
+        self.draw_main_element(monster, top_rect)
 
     def update(self, dt: float) -> None:
         self._input()

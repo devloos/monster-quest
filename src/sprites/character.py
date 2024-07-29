@@ -3,7 +3,7 @@ from __future__ import annotations
 from settings import *
 from sprites.player import Player
 from sprites.entity import Entity
-from util.support import check_connection
+from util.collisions import check_connection
 from typing import TYPE_CHECKING
 from random import choice
 from util.timer import Timer

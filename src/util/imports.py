@@ -1,14 +1,7 @@
-from __future__ import annotations
-
 from settings import *
 from os.path import join
 from os import walk
 from pytmx.util_pygame import load_pygame
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from sprites.entity import Entity
 
 
 def import_image(*path, alpha=True, format='png') -> pg.Surface:
@@ -153,28 +146,22 @@ def import_tmx_maps(*path) -> dict:
     return tmx_dict
 
 
-def check_connection(radius: float, entity: Entity, character: Entity, tolerance: float = 30):
-    relation = vector(entity.rect.center) - vector(character.rect.center)
+def import_monster_frames(cols, rows, *path) -> dict:
+    monster_frames = {}
 
-    if relation.length() > radius:
-        return False
+    for _, _, image_names in walk(join(*path)):
+        image_name: str
 
-    state = entity.state
+        for image_name in image_names:
+            image_name = image_name.split('.')[0]
+            frame_dict = import_tilemap(cols, rows, *path, image_name)
+            monster_frames[image_name] = {}
 
-    # check if on the right side and facing left
-    if state == 'left' and relation.x > 0 and abs(relation.y) < tolerance:
-        return True
+            for row, state in enumerate(('idle', 'attack')):
+                monster_frames[image_name][state] = []
+                for col in range(cols):
+                    monster_frames[image_name][state].append(
+                        frame_dict[(col, row)]
+                    )
 
-    # check if on the left side and facing right
-    if state == 'right' and relation.x < 0 and abs(relation.y) < tolerance:
-        return True
-
-    # check if on the bottom side and facing up
-    if state == 'up' and relation.y > 0 and abs(relation.x) < tolerance:
-        return True
-
-    # check if on top side and facing down
-    if state == 'down' and relation.y < 0 and abs(relation.x) < tolerance:
-        return True
-
-    return False
+    return monster_frames

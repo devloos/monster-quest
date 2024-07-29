@@ -9,4 +9,4 @@ class MonsterPatchTexture(Texture):
         self.biome = biome
 
     def get_y_sort(self) -> float:
-        return self.rect.centery - 40
+        return self.rect.centery - 50

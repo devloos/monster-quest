@@ -1,6 +1,6 @@
 from settings import *
-from util.support import *
-from pytmx.util_pygame import load_pygame
+from util.imports import *
+from util.collisions import check_connection
 from pytmx import TiledMap, TiledObject
 from os.path import join
 from textures.texture import Texture
@@ -48,16 +48,18 @@ class Game:
             Monster('Friolera', 4),
             Monster('Jacana', 39),
             Monster('Larvea', 23),
-            # Monster('Charmadillo', 30),
-            # Monster('Finsta', 16),
-            # Monster('Charmadillo', 30),
-            # Monster('Larvea', 23),
-            # Monster('Finsta', 16)
+            Monster('Charmadillo', 30),
+            Monster('Finsta', 16),
+            Monster('Charmadillo', 30),
+            Monster('Larvea', 23),
+            Monster('Finsta', 16)
         ]
 
         # overlay
         self.dialog_tree = DialogTree(self.render_group)
-        self.monster_index = MonsterIndex(self.player_monsters, self.fonts)
+        self.monster_index = MonsterIndex(
+            self.player_monsters, self.monster_frames, self.fonts
+        )
 
         # essentially start game
         self.setup(self.tmx_maps['world'], 'house')
@@ -75,8 +77,12 @@ class Game:
             'dialog': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 30),
             'regular': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 20),
             'small': pg.Font(join('graphics', 'fonts', 'PixeloidSans.ttf'), 14),
-            'bold': pg.Font(join('graphics', 'fonts', 'dogicapixelbold.otf'), 30),
+            'bold': pg.Font(join('graphics', 'fonts', 'dogicapixelbold.otf'), 22),
         }
+
+        self.monster_frames = import_monster_frames(
+            4, 2, 'graphics', 'monsters'
+        )
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         self.render_group.empty()
