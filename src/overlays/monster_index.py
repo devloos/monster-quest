@@ -221,8 +221,7 @@ class MonsterIndex:
             False, COLORS['white']
         )
         energy_bar_text_rect = energy_bar_text_surf.get_rect(
-            left=energy_bar_rect.left + 10,
-            centery=energy_bar_rect.centery
+            midleft=energy_bar_rect.midleft + vector(10, 0),
         )
         self.screen.blit(energy_bar_text_surf, energy_bar_text_rect)
 
@@ -243,8 +242,7 @@ class MonsterIndex:
             False, COLORS['white']
         )
         health_bar_text_rect = health_bar_text_surf.get_rect(
-            left=health_bar_rect.left + 10,
-            centery=health_bar_rect.centery
+            midleft=health_bar_rect.midleft + vector(10, 0),
         )
         self.screen.blit(health_bar_text_surf, health_bar_text_rect)
 
