@@ -2,6 +2,7 @@ from settings import *
 from monster import Monster
 from util.draw import draw_bar
 from util.imports import import_folder_dict
+from game_data import ATTACK_DATA
 
 
 class MonsterIndex:
@@ -208,7 +209,7 @@ class MonsterIndex:
         )
         self.screen.blit(name_surf, name_rect)
 
-    def draw_main_energy_bar(self, monster: Monster, rect: pg.FRect) -> None:
+    def draw_main_energy_bar(self, monster: Monster, rect: pg.FRect) -> pg.FRect:
         energy_bar_rect = pg.FRect((0, 0), (rect.width * 0.45, 30))
         energy_bar_rect.topright = rect.bottomright + vector(-15, 15)
 
@@ -226,6 +227,8 @@ class MonsterIndex:
             midleft=energy_bar_rect.midleft + vector(10, 0),
         )
         self.screen.blit(energy_bar_text_surf, energy_bar_text_rect)
+
+        return energy_bar_rect
 
     def draw_main_health_bar(self, monster: Monster, rect: pg.FRect) -> pg.FRect:
         health_bar_rect = pg.FRect(
@@ -264,19 +267,19 @@ class MonsterIndex:
         self.screen.blit(monster_surf, monster_rect)
 
     def draw_main_stats(self, monster: Monster, stats_rect: pg.FRect) -> None:
-        stats_text_surf = self.fonts['regular'].render(
+        title_surf = self.fonts['regular'].render(
             'Stats', False, COLORS['white']
         )
-        stats_text_rect = stats_text_surf.get_frect(topleft=stats_rect.topleft)
-        self.screen.blit(stats_text_surf, stats_text_rect)
+        title_rect = title_surf.get_frect(topleft=stats_rect.topleft)
+        self.screen.blit(title_surf, title_rect)
 
         monster_stats = monster.get_stats()
-        normalized_stats_height = stats_rect.height - stats_text_rect.height
+        normalized_stats_height = stats_rect.height - title_rect.height
         stat_height = normalized_stats_height / len(monster_stats)
 
         for index, (stat, value) in enumerate(monster_stats.items()):
             item_rect = pg.FRect(
-                stats_rect.left, stats_text_rect.bottom + stat_height * index,
+                stats_rect.left, title_rect.bottom + stat_height * index,
                 stats_rect.width, stat_height
             )
 
@@ -336,7 +339,7 @@ class MonsterIndex:
         self.draw_main_level(monster, top_rect)
         self.draw_main_element(monster, top_rect)
         health_bar_rect = self.draw_main_health_bar(monster, top_rect)
-        self.draw_main_energy_bar(monster, top_rect)
+        energy_bar_rect = self.draw_main_energy_bar(monster, top_rect)
 
         stats_height = main_rect.bottom - health_bar_rect.bottom
         stats_rect = pg.FRect(
@@ -344,6 +347,58 @@ class MonsterIndex:
         ).inflate(0, -40)
 
         self.draw_main_stats(monster, stats_rect)
+
+        abilities_rect = stats_rect.copy().move_to(left=energy_bar_rect.left)
+
+        title_surf = self.fonts['regular'].render(
+            'Abilities', False, COLORS['white']
+        )
+        title_rect = title_surf.get_frect(topleft=abilities_rect.topleft)
+        self.screen.blit(title_surf, title_rect)
+
+        # what do we need
+        # previous element, check collision, draw under title offset by index
+
+        # calculated before hand, this also includes row padding
+        ability_height = 40
+        previous_ability_rect: pg.FRect | None = None
+        row = 0
+
+        for name in monster.get_abilities():
+            ability_surf = self.fonts['regular'].render(
+                name, False, COLORS['black']
+            )
+
+            ability_bg_rect = ability_surf.get_frect().inflate(20, 6)
+
+            # if first element
+            if previous_ability_rect == None:
+                ability_bg_rect.topleft = title_rect.bottomleft
+            else:
+                ability_bg_rect.midleft = previous_ability_rect.midright + \
+                    vector(10, 0)
+
+                collision_rect = pg.FRect(
+                    abilities_rect.topright, (2, abilities_rect.height)
+                )
+
+                if ability_bg_rect.colliderect(collision_rect):
+                    row += 1
+
+                    ability_bg_rect.topleft = title_rect.bottomleft + \
+                        vector(0, row * ability_height)
+
+            pg.draw.rect(
+                self.screen, COLORS[ATTACK_DATA[name]['element']],
+                ability_bg_rect, border_radius=12
+            )
+
+            ability_rect = ability_surf.get_frect(
+                center=ability_bg_rect.center)
+
+            self.screen.blit(ability_surf, ability_rect)
+
+            previous_ability_rect = ability_bg_rect
 
     def update(self, dt: float) -> None:
         self._input()

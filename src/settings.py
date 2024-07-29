@@ -21,6 +21,7 @@ COLORS = {
     'fire': '#f8a060',
     'water': '#50b0d8',
     'plant': '#64a990',
+    'normal': '#ffffff',
     'black': '#000000',
     'red': '#f03131',
     'blue': '#66d7ee',

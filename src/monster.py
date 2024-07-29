@@ -10,6 +10,7 @@ class Monster:
 
         self.element = MONSTER_DATA[self.name]['stats']['element']
         self.base_stats = MONSTER_DATA[self.name]['stats']
+        self.abilities: dict[int, str] = MONSTER_DATA[self.name]['abilities']
         self.health = self.base_stats['max_health'] * self.level
         self.health -= randint(0, 150)
         self.health = max(0, self.health)
@@ -35,3 +36,12 @@ class Monster:
             'speed': self.get_stat('speed'),
             'recovery': self.get_stat('recovery'),
         }
+
+    def get_abilities(self) -> list[str]:
+        available_abilities = []
+
+        for lvl, name in self.abilities.items():
+            if self.level >= lvl:
+                available_abilities.append(name)
+
+        return available_abilities
