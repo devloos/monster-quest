@@ -31,12 +31,22 @@ class Battle:
                 self.create_monster(index, monster, index, entity)
 
     def create_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> None:
-        frames = self.monster_frames[monster.name]
+        frames: dict[str, list[pg.Surface]] = self.monster_frames[monster.name]
         groups = [self.battle_sprites]
         pos = NEW_BATTLE_POSITIONS[entity][pos_index]
 
         if entity == PLAYER:
             groups.append(self.player_sprites)
+
+            state: str
+            frame_surfs: list[pg.Surface]
+            for state, frame_surfs in self.monster_frames[monster.name].items():
+                frames[state] = []
+
+                for frame_surf in frame_surfs:
+                    frames[state].append(
+                        pg.transform.flip(frame_surf, True, False)
+                    )
         else:
             groups.append(self.enemy_sprites)
 

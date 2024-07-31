@@ -1,5 +1,5 @@
-from typing import Any
 from settings import *
+from random import uniform
 
 
 class MonsterSprite(pg.sprite.Sprite):
@@ -11,25 +11,23 @@ class MonsterSprite(pg.sprite.Sprite):
         self.frame_index = 0
         self.state = 'idle'
         self.entity = entity
+        self.animation_speed = ANIMATION_SPEED + uniform(-1, 1)
 
-        self.compute_image()
+        self.image = self.frames[self.state][self.frame_index]
         self.rect = self.image.get_rect(center=pos)
 
     def frame_length(self) -> int:
         return len(self.frames[self.state])
 
-    def compute_image(self):
-        self.image = self.frames[self.state][
-            int(self.frame_index) % self.frame_length()
-        ]
-
-        if self.entity == PLAYER:
-            self.image = pg.transform.flip(self.image, True, False)
-
-    def update(self, dt: float) -> None:
-        self.frame_index += ANIMATION_SPEED * dt
+    def animate(self, dt: float) -> None:
+        self.frame_index += self.animation_speed * dt
 
         if self.frame_index > self.frame_length():
             self.frame_index = 0
 
-        self.compute_image()
+        self.image = self.frames[self.state][
+            int(self.frame_index) % self.frame_length()
+        ]
+
+    def update(self, dt: float) -> None:
+        self.animate(dt)
