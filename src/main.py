@@ -68,7 +68,7 @@ class Game:
         )
         self.battle: Battle | None = Battle(
             self.player_monsters, self.dummy_monsters, self.monster_frames,
-            self.battle_backgrounds['forest'], self.fonts
+            self.battle_backgrounds['sand'], self.fonts
         )
 
         # self.battle = None

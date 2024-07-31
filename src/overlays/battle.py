@@ -1,6 +1,17 @@
 from settings import *
 from monster import Monster
-from sprites.monster import MonsterSprite
+from sprites.battle_monster import BattleMonster
+
+
+class BattleGroup(pg.sprite.Group):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def draw(self) -> None:
+        sprite: BattleMonster
+
+        for sprite in self:
+            sprite.draw()
 
 
 class Battle:
@@ -18,9 +29,9 @@ class Battle:
         self.bg_surf = bg_surf
         self.fonts = fonts
 
-        self.player_sprites = pg.sprite.Group()
-        self.battle_sprites = pg.sprite.Group()
-        self.enemy_sprites = pg.sprite.Group()
+        self.player_sprites = BattleGroup()
+        self.battle_sprites = BattleGroup()
+        self.enemy_sprites = BattleGroup()
 
         self.setup()
 
@@ -50,10 +61,10 @@ class Battle:
         else:
             groups.append(self.enemy_sprites)
 
-        MonsterSprite(id, pos, frames, entity, groups)
+        BattleMonster(id, pos, monster, frames, entity, self.fonts, groups)
 
     def update(self, dt: float) -> None:
         self.screen.blit(self.bg_surf, (0, 0))
 
         self.battle_sprites.update(dt)
-        self.battle_sprites.draw(self.screen)
+        self.battle_sprites.draw()
