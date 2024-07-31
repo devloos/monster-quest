@@ -14,6 +14,7 @@ from groups import RenderGroup
 from game_data import *
 from overlays.dialog import DialogTree
 from overlays.monster_index import MonsterIndex
+from overlays.battle import Battle
 from monster import Monster
 
 
@@ -45,10 +46,16 @@ class Game:
 
         self.player_monsters = [
             Monster('Atrox', 16),
-            Monster('Friolera', 4),
-            Monster('Jacana', 39),
             Monster('Larvea', 23),
+            Monster('Jacana', 39),
+            Monster('Friolera', 4),
             Monster('Charmadillo', 30),
+            Monster('Finsta', 16),
+            Monster('Charmadillo', 16),
+            Monster('Friolera', 28)
+        ]
+
+        self.dummy_monsters = [
             Monster('Finsta', 16),
             Monster('Charmadillo', 16),
             Monster('Friolera', 28)
@@ -59,6 +66,12 @@ class Game:
         self.monster_index = MonsterIndex(
             self.player_monsters, self.monster_frames, self.fonts
         )
+        self.battle: Battle | None = Battle(
+            self.player_monsters, self.dummy_monsters, self.monster_frames,
+            self.battle_backgrounds['forest'], self.fonts
+        )
+
+        # self.battle = None
 
         # essentially start game
         self.setup(self.tmx_maps['world'], 'house')
@@ -83,7 +96,10 @@ class Game:
             4, 2, 'graphics', 'monsters'
         )
 
+        self.battle_backgrounds = import_folder_dict('graphics', 'backgrounds')
+
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
+        # todo: correct player position after world change
         self.render_group.empty()
         self.collision_group.empty()
         self.character_group.empty()
@@ -205,7 +221,7 @@ class Game:
                 )
 
     def _input(self):
-        if self.dialog_tree.in_dialog:
+        if self.dialog_tree.in_dialog or self.battle:
             return
 
         keys = pg.key.get_just_pressed()
@@ -283,6 +299,9 @@ class Game:
 
             if self.monster_index.opened:
                 self.monster_index.update(dt)
+
+            if self.battle:
+                self.battle.update(dt)
 
             self.tint_screen(dt)
 

@@ -24,6 +24,9 @@ class Monster:
 
         self.icon = import_image('graphics', 'icons', self.name)
 
+    def __repr__(self) -> str:
+        return f'{self.name} - {self.level}'
+
     def get_stat(self, stat: str) -> float:
         return self.base_stats[stat] * self.level
 

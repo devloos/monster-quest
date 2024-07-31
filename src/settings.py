@@ -10,6 +10,9 @@ ANIMATION_SPEED = 6
 BATTLE_OUTLINE_WIDTH = 4
 DEBUG = True
 
+PLAYER = 'player'
+ENEMY = 'enemy'
+
 COLORS = {
     'white': '#f4fefa',
     'pure white': '#ffffff',
@@ -48,6 +51,19 @@ BATTLE_POSITIONS = {
         'center': (1110, 390),
         'bottom': (900, 550)
     }
+}
+
+NEW_BATTLE_POSITIONS = {
+    'player': [
+        (360, 260),
+        (190, 400),
+        (410, 520)
+    ],
+    'enemy': [
+        (900, 260),
+        (1110, 390),
+        (900, 550)
+    ]
 }
 
 BATTLE_LAYERS = {
