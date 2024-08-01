@@ -116,7 +116,7 @@ class Battle:
             self.screen.blit(icon_surf, icon_rect)
 
     def draw_attacks(self) -> None:
-        abilities = self.current_monster.monster.get_abilities()
+        abilities = self.current_monster.monster.get_abilities(account_ep=True)
         visible_attacks = 4
         rect_height = 220
         rect_width = 180
@@ -237,7 +237,7 @@ class Battle:
                 length = len(BATTLE_CHOICES['full'])
 
             case SelectionMode.Attacks:
-                length = len(self.current_monster.monster.get_abilities())
+                length = len(self.current_monster.monster.get_abilities(account_ep=True))
 
         keys = pg.key.get_just_pressed()
 

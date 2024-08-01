@@ -1,6 +1,7 @@
 from game_data import MONSTER_DATA
 from util.imports import import_image
 from random import randint
+from game_data import ATTACK_DATA
 
 
 class Monster:
@@ -43,12 +44,15 @@ class Monster:
             'recovery': self.get_stat('recovery'),
         }
 
-    def get_abilities(self) -> list[str]:
+    def get_abilities(self, account_ep=False) -> list[str]:
         available_abilities = []
 
         for lvl, name in self.abilities.items():
             if self.level >= lvl:
                 available_abilities.append(name)
+
+            if account_ep and self.energy < ATTACK_DATA[name]['cost']:
+                available_abilities.pop()
 
         return available_abilities
 
