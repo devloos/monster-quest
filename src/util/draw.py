@@ -11,6 +11,4 @@ def draw_bar(
     progress_rect = pg.FRect(rect.topleft, (progress, rect.height))
 
     pg.draw.rect(surface, bg_color, rect, border_radius=border_radius)
-    pg.draw.rect(
-        surface, progress_color, progress_rect, border_radius=border_radius
-    )
+    pg.draw.rect(surface, progress_color, progress_rect, border_radius=border_radius)

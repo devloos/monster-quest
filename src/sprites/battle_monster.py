@@ -63,9 +63,7 @@ class BattleMonster(pg.sprite.Sprite):
         level_bg_rect = pg.FRect(
             (name_bg_rect.bottomleft), (MAIN_RECT_WIDTH, level_surf.height + 8)
         )
-        level_rect = level_surf.get_rect(
-            midleft=level_bg_rect.midleft + vector(8, 0)
-        )
+        level_rect = level_surf.get_rect(midleft=level_bg_rect.midleft + vector(8, 0))
 
         pg.draw.rect(
             self.screen, COLORS['battle'], level_bg_rect,
@@ -77,7 +75,7 @@ class BattleMonster(pg.sprite.Sprite):
 
     def draw_health(self, stats_bg_rect: pg.FRect) -> pg.FRect:
         health_text = self.fonts['small'].render(
-            f'hp: {self.monster.health}/{self.monster.get_stat('max_health')}',
+            f'hp: {int(self.monster.health)}/{self.monster.get_stat('max_health')}',
             False, COLORS['dark']
         )
         health_text_rect = health_text.get_frect(
@@ -99,7 +97,7 @@ class BattleMonster(pg.sprite.Sprite):
 
     def draw_energy(self, health_bar_rect: pg.FRect, stats_bg_rect: pg.FRect) -> None:
         energy_text = self.fonts['small'].render(
-            f'ep: {self.monster.energy}/{self.monster.get_stat('max_energy')}',
+            f'ep: {int(self.monster.energy)}/{self.monster.get_stat('max_energy')}',
             False, COLORS['dark']
         )
         energy_text_rect = energy_text.get_frect(
@@ -120,13 +118,9 @@ class BattleMonster(pg.sprite.Sprite):
     def draw_stats(self, frame_rect: pg.FRect) -> None:
         # stat rect
         stats_height = self.main_rect.bottom - frame_rect.bottom
-        stats_bg_rect = pg.FRect(
-            (0, 0), (MAIN_RECT_WIDTH, stats_height)
-        )
+        stats_bg_rect = pg.FRect((0, 0), (MAIN_RECT_WIDTH, stats_height))
         stats_bg_rect.bottomleft = self.main_rect.bottomleft
-        pg.draw.rect(
-            self.screen, COLORS['battle'], stats_bg_rect, border_radius=5
-        )
+        pg.draw.rect(self.screen, COLORS['battle'], stats_bg_rect, border_radius=5)
 
         border_rect = stats_bg_rect.copy()
         pg.draw.rect(
@@ -147,9 +141,7 @@ class BattleMonster(pg.sprite.Sprite):
 
         # draw frame
         frame = self.frames[self.state][int(self.frame_index)]
-        frame_rect = frame.get_frect(
-            midtop=level_bg_rect.midbottom + vector(0, 2)
-        )
+        frame_rect = frame.get_frect(midtop=level_bg_rect.midbottom + vector(0, 2))
 
         self.screen.blit(frame, frame_rect)
 
