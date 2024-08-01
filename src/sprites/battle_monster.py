@@ -75,23 +75,7 @@ class BattleMonster(pg.sprite.Sprite):
 
         return level_bg_rect
 
-    def draw_stats(self, frame_rect: pg.FRect) -> None:
-        # stat rect
-        stats_height = self.main_rect.bottom - frame_rect.bottom
-        stats_bg_rect = pg.FRect(
-            (0, 0), (MAIN_RECT_WIDTH, stats_height)
-        )
-        stats_bg_rect.bottomleft = self.main_rect.bottomleft
-        pg.draw.rect(
-            self.screen, COLORS['battle'], stats_bg_rect, border_radius=5
-        )
-
-        border_rect = stats_bg_rect.copy()
-        pg.draw.rect(
-            self.screen, COLORS['dark'], border_rect, BORDER_WIDTH, 5
-        )
-
-        # draw health
+    def draw_health(self, stats_bg_rect: pg.FRect) -> pg.FRect:
         health_text = self.fonts['small'].render(
             f'hp: {self.monster.health}/{self.monster.get_stat('max_health')}',
             False, COLORS['dark']
@@ -111,7 +95,9 @@ class BattleMonster(pg.sprite.Sprite):
             COLORS['red'], 5
         )
 
-        # draw energy
+        return health_bar_rect
+
+    def draw_energy(self, health_bar_rect: pg.FRect, stats_bg_rect: pg.FRect) -> None:
         energy_text = self.fonts['small'].render(
             f'ep: {self.monster.energy}/{self.monster.get_stat('max_energy')}',
             False, COLORS['dark']
@@ -130,6 +116,25 @@ class BattleMonster(pg.sprite.Sprite):
             self.monster.get_stat('max_energy'), COLORS['black'],
             COLORS['blue'], 5
         )
+
+    def draw_stats(self, frame_rect: pg.FRect) -> None:
+        # stat rect
+        stats_height = self.main_rect.bottom - frame_rect.bottom
+        stats_bg_rect = pg.FRect(
+            (0, 0), (MAIN_RECT_WIDTH, stats_height)
+        )
+        stats_bg_rect.bottomleft = self.main_rect.bottomleft
+        pg.draw.rect(
+            self.screen, COLORS['battle'], stats_bg_rect, border_radius=5
+        )
+
+        border_rect = stats_bg_rect.copy()
+        pg.draw.rect(
+            self.screen, COLORS['dark'], border_rect, BORDER_WIDTH, 5
+        )
+
+        health_bar_rect = self.draw_health(stats_bg_rect)
+        self.draw_energy(health_bar_rect, stats_bg_rect)
 
     def draw(self) -> None:
         name_bg_rect = self.draw_name()
