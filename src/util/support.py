@@ -55,6 +55,7 @@ def calculate_monster_outlines(
                 white_frame = pg.mask.from_surface(frame).to_surface()
                 white_frame.set_colorkey('black')
 
+                # create an outline frame for each side
                 new_surf.blit(white_frame, (0, 0))
                 new_surf.blit(white_frame, (width, 0))
                 new_surf.blit(white_frame, (width * 2, 0))
@@ -63,6 +64,7 @@ def calculate_monster_outlines(
                 new_surf.blit(white_frame, (width, width * 2))
                 new_surf.blit(white_frame, (0, width * 2))
                 new_surf.blit(white_frame, (0, width))
+
                 outline_frames[monster][state].append(new_surf)
 
     return outline_frames
