@@ -34,7 +34,7 @@ class BattleMonster(pg.sprite.Sprite):
         self.highlight = False
         self.shine = False
         self.timers = {
-            'remove shine': Timer(250, False, False, self.remove_shine)
+            'remove_shine': Timer(250, False, False, self.remove_shine)
         }
 
     def set_highlight(self, value: bool) -> None:
@@ -42,7 +42,7 @@ class BattleMonster(pg.sprite.Sprite):
 
         if value:
             self.shine = True
-            self.timers['remove shine'].activate()
+            self.timers['remove_shine'].activate()
 
     def remove_shine(self) -> None:
         self.shine = False
