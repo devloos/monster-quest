@@ -19,7 +19,8 @@ class Monster:
         self.energy -= randint(0, 50)
         self.energy = max(0, self.energy)
 
-        self.recharge = randint(0, 100)
+        self.recharge = 0
+        self.paused = False
 
         self.xp = randint(0, 1000)
         self.level_up = self.level * 150
@@ -50,3 +51,7 @@ class Monster:
                 available_abilities.append(name)
 
         return available_abilities
+
+    def update(self, dt: float) -> None:
+        if not self.paused:
+            self.recharge += self.get_stat('speed') * dt

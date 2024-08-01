@@ -11,13 +11,15 @@ BORDER_WIDTH = 2
 class BattleMonster(pg.sprite.Sprite):
     def __init__(
         self, id: int, pos: tuple[float, float], monster: Monster,
-        frames: dict[str, list[pg.Surface]], entity: str, fonts: dict[str, pg.Font], groups
+        frames: dict[str, list[pg.Surface]], outlines: dict[str, list[pg.Surface]],
+        entity: str, fonts: dict[str, pg.Font], groups
     ) -> None:
         super().__init__(groups)
 
         self.screen = pg.display.get_surface()
         self.id = id
         self.monster = monster
+        self.outlines = outlines
         self.frames = frames
         self.frame_index = 0
         self.state = 'idle'
@@ -27,6 +29,8 @@ class BattleMonster(pg.sprite.Sprite):
 
         self.main_rect = pg.FRect((0, 0), (MAIN_RECT_WIDTH, MAIN_RECT_HEIGHT))
         self.main_rect.center = pos
+
+        self.highlight = False
 
     def frame_length(self) -> int:
         return len(self.frames[self.state])
@@ -161,9 +165,18 @@ class BattleMonster(pg.sprite.Sprite):
         frame = self.frames[self.state][int(self.frame_index)]
         frame_rect = frame.get_frect(midtop=level_bg_rect.midbottom + vector(0, 2))
 
+        if self.highlight:
+            outline = self.outlines[self.state][int(self.frame_index)]
+            outline_rect = outline.get_frect(
+                center=frame_rect.center
+            )
+
+            self.screen.blit(outline, outline_rect)
+
         self.screen.blit(frame, frame_rect)
 
         self.draw_stats(frame_rect)
 
     def update(self, dt: float) -> None:
+        self.monster.update(dt)
         self.animate(dt)

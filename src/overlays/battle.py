@@ -1,4 +1,5 @@
 from settings import *
+from util.support import calculate_monster_outlines, flip_surfaces
 from monster import Monster
 from sprites.battle_monster import BattleMonster
 
@@ -33,6 +34,10 @@ class Battle:
         self.battle_sprites = BattleGroup()
         self.enemy_sprites = BattleGroup()
 
+        self.current_monster: BattleMonster | None = None
+
+        self.monster_outlines = calculate_monster_outlines(self.monster_frames, 4)
+
         self.setup()
 
     def setup(self) -> None:
@@ -43,28 +48,43 @@ class Battle:
 
     def create_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> None:
         frames: dict[str, list[pg.Surface]] = self.monster_frames[monster.name]
+        outlines: dict[str, list[pg.Surface]] = self.monster_outlines[monster.name]
         groups = [self.battle_sprites]
         pos = NEW_BATTLE_POSITIONS[entity][pos_index]
 
         if entity == PLAYER:
             groups.append(self.player_sprites)
 
-            state: str
-            frame_surfs: list[pg.Surface]
-            for state, frame_surfs in self.monster_frames[monster.name].items():
-                frames[state] = []
+            for state, surfs in frames.items():
+                frames[state] = flip_surfaces(surfs, True, False)
 
-                for frame_surf in frame_surfs:
-                    frames[state].append(
-                        pg.transform.flip(frame_surf, True, False)
-                    )
+            for state, surfs in outlines.items():
+                outlines[state] = flip_surfaces(surfs, True, False)
+
         else:
             groups.append(self.enemy_sprites)
 
-        BattleMonster(id, pos, monster, frames, entity, self.fonts, groups)
+        BattleMonster(id, pos, monster, frames, outlines, entity, self.fonts, groups)
+
+    def update_battle_monsters(self, option) -> None:
+        paused = True if option == 'pause' else False
+
+        battle_monster: BattleMonster
+        for battle_monster in self.battle_sprites.sprites():
+            battle_monster.monster.paused = paused
+
+    def check_active(self) -> None:
+        battle_monster: BattleMonster
+        for battle_monster in self.battle_sprites.sprites():
+            if battle_monster.monster.recharge >= 100:
+                self.update_battle_monsters('pause')
+                battle_monster.monster.recharge = 0
+                battle_monster.highlight = True
+                self.current_monster = battle_monster
 
     def update(self, dt: float) -> None:
-        self.screen.blit(self.bg_surf, (0, 0))
-
         self.battle_sprites.update(dt)
+        self.check_active()
+
+        self.screen.blit(self.bg_surf, (0, 0))
         self.battle_sprites.draw()

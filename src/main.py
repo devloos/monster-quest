@@ -1,6 +1,6 @@
 from settings import *
 from util.imports import *
-from util.collisions import check_connection
+from util.support import check_connection
 from pytmx import TiledMap, TiledObject
 from os.path import join
 from textures.texture import Texture
