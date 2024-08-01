@@ -1,9 +1,10 @@
 from settings import *
 from random import uniform
 from monster import Monster
+from util.draw import draw_bar
 
 MAIN_RECT_WIDTH = 200
-MAIN_RECT_HEIGHT = 315
+MAIN_RECT_HEIGHT = 320
 BORDER_WIDTH = 2
 
 
@@ -54,9 +55,9 @@ class BattleMonster(pg.sprite.Sprite):
 
         return name_bg_rect
 
-    def draw_level(self, name_bg_rect: pg.FRect) -> None:
+    def draw_level(self, name_bg_rect: pg.FRect) -> pg.FRect:
         # draw level
-        level_surf = self.fonts['regular'].render(
+        level_surf = self.fonts['small'].render(
             f'Level: {self.monster.level}', False, COLORS['dark']
         )
         level_bg_rect = pg.FRect(
@@ -72,8 +73,11 @@ class BattleMonster(pg.sprite.Sprite):
         )
         self.screen.blit(level_surf, level_rect)
 
+        return level_bg_rect
+
     def draw_stats(self, frame_rect: pg.FRect) -> None:
-        stats_height = self.main_rect.bottom - frame_rect.bottom - 1
+        # stat rect
+        stats_height = self.main_rect.bottom - frame_rect.bottom
         stats_bg_rect = pg.FRect(
             (0, 0), (MAIN_RECT_WIDTH, stats_height)
         )
@@ -87,9 +91,49 @@ class BattleMonster(pg.sprite.Sprite):
             self.screen, COLORS['dark'], border_rect, BORDER_WIDTH, 5
         )
 
+        # draw health
+        health_text = self.fonts['small'].render(
+            f'hp: {self.monster.health}/{self.monster.get_stat('max_health')}',
+            False, COLORS['dark']
+        )
+        health_text_rect = health_text.get_frect(
+            topleft=stats_bg_rect.topleft + vector(8, 5)
+        )
+        self.screen.blit(health_text, health_text_rect)
+
+        health_bar_width = stats_bg_rect.right - health_text_rect.left - 8
+        health_bar_rect = pg.FRect(
+            (health_text_rect.bottomleft + vector(0, 2)), (health_bar_width, 5)
+        )
+        draw_bar(
+            self.screen, health_bar_rect, self.monster.health,
+            self.monster.get_stat('max_health'), COLORS['black'],
+            COLORS['red'], 5
+        )
+
+        # draw energy
+        energy_text = self.fonts['small'].render(
+            f'ep: {self.monster.energy}/{self.monster.get_stat('max_energy')}',
+            False, COLORS['dark']
+        )
+        energy_text_rect = energy_text.get_frect(
+            topleft=health_bar_rect.bottomleft + vector(0, 5)
+        )
+        self.screen.blit(energy_text, energy_text_rect)
+
+        energy_bar_width = stats_bg_rect.right - energy_text_rect.left - 8
+        energy_bar_rect = pg.FRect(
+            (energy_text_rect.bottomleft + vector(0, 2)), (energy_bar_width, 5)
+        )
+        draw_bar(
+            self.screen, energy_bar_rect, self.monster.energy,
+            self.monster.get_stat('max_energy'), COLORS['black'],
+            COLORS['blue'], 5
+        )
+
     def draw(self) -> None:
         name_bg_rect = self.draw_name()
-        self.draw_level(name_bg_rect)
+        level_bg_rect = self.draw_level(name_bg_rect)
 
         # name & level divider
         pg.draw.line(
@@ -98,7 +142,9 @@ class BattleMonster(pg.sprite.Sprite):
 
         # draw frame
         frame = self.frames[self.state][int(self.frame_index)]
-        frame_rect = frame.get_frect(center=self.main_rect.center)
+        frame_rect = frame.get_frect(
+            midtop=level_bg_rect.midbottom + vector(0, 2)
+        )
 
         self.screen.blit(frame, frame_rect)
 
