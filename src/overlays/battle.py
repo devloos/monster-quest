@@ -3,6 +3,7 @@ from util.support import calculate_monster_outlines, flip_surfaces
 from monster import Monster
 from sprites.battle_monster import BattleMonster
 from game_data import ATTACK_DATA
+from util.draw import draw_bar
 
 
 class SelectionMode(IntEnum):
@@ -62,9 +63,9 @@ class Battle:
         for entity in (PLAYER, ENEMY):
             for index, monster in enumerate(self.monster_data[entity][:3]):
                 # we use id as index
-                self.create_monster(index, monster, index, entity)
+                self.create_battle_monster(index, monster, index, entity)
 
-    def create_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> None:
+    def create_battle_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> BattleMonster:
         frames: dict[str, list[pg.Surface]] = self.monster_frames[monster.name]
         outlines: dict[str, list[pg.Surface]] = self.monster_outlines[monster.name]
         groups = [self.battle_sprites]
@@ -128,7 +129,7 @@ class Battle:
         starting_index = 0
 
         if self.indexes[SelectionMode.Attacks] >= visible_attacks:
-            starting_index += 1
+            starting_index = self.indexes[SelectionMode.Attacks] - visible_attacks + 1
 
         for index, ability in enumerate(abilities[starting_index:], starting_index):
             visible_index = index - starting_index
@@ -189,7 +190,85 @@ class Battle:
             self.screen.blit(ep_cost_surf, ep_cost_rect)
 
     def draw_switch(self) -> None:
-        pass
+        visible_monsters = 4
+        rect_height = 275
+        rect_width = 200
+        item_height = rect_height / visible_monsters
+
+        rect = pg.FRect((0, 0), (rect_width, rect_height))
+        rect.midleft = self.current_monster.main_rect.midright + vector(10, 0)
+
+        starting_index = 0
+
+        if self.indexes[SelectionMode.Switch] >= visible_monsters:
+            starting_index = self.indexes[SelectionMode.Switch] - visible_monsters + 1
+
+        monster: Monster
+
+        for index, monster in enumerate(self.monster_data[PLAYER][starting_index:], starting_index):
+            visible_index = index - starting_index
+            item_rect = pg.FRect(
+                rect.left, rect.top + item_height * visible_index, rect_width, item_height
+            )
+
+            if not item_rect.colliderect(rect):
+                continue
+
+            bg_color = COLORS['battle']
+            text_color = COLORS['dark']
+
+            if index == self.indexes[SelectionMode.Switch]:
+                bg_color = COLORS['battle-light']
+                text_color = COLORS['red']
+
+            divider_rect = pg.FRect((0, 0), (rect_width, 1))
+            divider_rect.bottomleft = item_rect.bottomleft
+
+            if item_rect.collidepoint(rect.midtop):
+                pg.draw.rect(
+                    self.screen, bg_color, item_rect,
+                    border_top_left_radius=5, border_top_right_radius=5
+                )
+                pg.draw.rect(self.screen, COLORS['dark'], divider_rect)
+            elif item_rect.collidepoint(rect.midbottom + vector(0, -1)):
+                pg.draw.rect(
+                    self.screen, bg_color, item_rect,
+                    border_bottom_left_radius=5, border_bottom_right_radius=5
+                )
+            else:
+                pg.draw.rect(self.screen, bg_color, item_rect)
+                pg.draw.rect(self.screen, COLORS['dark'], divider_rect)
+
+            icon_surf = pg.transform.scale(monster.icon, (35, 35))
+            icon_rect = icon_surf.get_frect(midleft=item_rect.midleft + vector(8, 0))
+
+            self.screen.blit(icon_surf, icon_rect)
+
+            name_surf = self.fonts['small'].render(
+                f'{monster.name} ({monster.level})', False, text_color
+            )
+            name_rect = name_surf.get_rect(
+                topleft=icon_rect.topright + vector(18, -8),
+            )
+            self.screen.blit(name_surf, name_rect)
+
+            health_bar_rect = pg.FRect(
+                (name_rect.bottomleft + vector(0, 5)), (rect_width * 0.5, 3)
+            )
+
+            draw_bar(
+                self.screen, health_bar_rect, monster.health,
+                monster.get_stat('max_health'), COLORS['dark'], COLORS['red']
+            )
+
+            energy_bar_rect = pg.FRect(
+                (health_bar_rect.bottomleft + vector(0, 3)), (rect_width * 0.5, 3)
+            )
+
+            draw_bar(
+                self.screen, energy_bar_rect, monster.energy,
+                monster.get_stat('max_energy'), COLORS['dark'], COLORS['blue']
+            )
 
     def draw_ui(self) -> None:
         if not self.current_monster:
@@ -211,7 +290,7 @@ class Battle:
         SWITCH = 2
         CATCH = 3
 
-        index = self.indexes[self.selection_mode]
+        index = self.indexes[SelectionMode.General]
 
         if index == ATTACKS:
             self.selection_mode = SelectionMode.Attacks
@@ -238,6 +317,9 @@ class Battle:
 
             case SelectionMode.Attacks:
                 length = len(self.current_monster.monster.get_abilities(account_ep=True))
+
+            case SelectionMode.Switch:
+                length = len(self.monster_data[PLAYER])
 
         keys = pg.key.get_just_pressed()
 
