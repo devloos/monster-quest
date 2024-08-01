@@ -2,6 +2,7 @@ from settings import *
 from util.support import calculate_monster_outlines, flip_surfaces
 from monster import Monster
 from sprites.battle_monster import BattleMonster
+from game_data import ATTACK_DATA
 
 
 class SelectionMode(IntEnum):
@@ -160,8 +161,32 @@ class Battle:
                 pg.draw.rect(self.screen, COLORS['dark'], divider_rect)
 
             ability_surf = self.fonts['regular'].render(ability, False, COLORS['dark'])
-            ability_rect = ability_surf.get_rect(center=item_rect.center)
+            ability_rect = ability_surf.get_rect(topleft=item_rect.topleft + vector(8, 3))
             self.screen.blit(ability_surf, ability_rect)
+
+            ability_data = ATTACK_DATA[ability]
+
+            element_surf = self.fonts['small'].render(
+                ability_data['element'], False, COLORS['dark']
+            )
+            element_rect = element_surf.get_rect()
+
+            element_bg_rect = element_rect.copy().inflate(15, 3)
+            element_bg_rect.topleft = ability_rect.bottomleft + vector(-1, 2)
+            element_rect.center = element_bg_rect.center
+
+            pg.draw.rect(
+                self.screen, COLORS[ability_data['element']],
+                element_bg_rect, border_radius=5
+            )
+            self.screen.blit(element_surf, element_rect)
+
+            ep_cost_surf = self.fonts['small'].render(
+                f'ep: {ability_data['cost']}', False, COLORS['dark']
+            )
+            ep_cost_rect = ep_cost_surf.get_rect()
+            ep_cost_rect.bottomright = item_rect.bottomright + vector(-8, -3)
+            self.screen.blit(ep_cost_surf, ep_cost_rect)
 
     def draw_switch(self) -> None:
         pass
