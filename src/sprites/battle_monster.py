@@ -63,10 +63,17 @@ class BattleMonster(pg.sprite.Sprite):
         level_bg_rect = pg.FRect(
             (name_bg_rect.bottomleft), (MAIN_RECT_WIDTH, level_surf.height + 8)
         )
+
         level_rect = level_surf.get_rect(midleft=level_bg_rect.midleft + vector(8, 0))
 
         pg.draw.rect(
             self.screen, COLORS['battle'], level_bg_rect,
+            border_bottom_left_radius=5, border_bottom_right_radius=5
+        )
+
+        draw_bar(
+            self.screen, level_bg_rect, self.monster.xp,
+            self.monster.level_up, COLORS['battle'], COLORS['battle-light'],
             border_bottom_left_radius=5, border_bottom_right_radius=5
         )
         self.screen.blit(level_surf, level_rect)
@@ -90,12 +97,12 @@ class BattleMonster(pg.sprite.Sprite):
         draw_bar(
             self.screen, health_bar_rect, self.monster.health,
             self.monster.get_stat('max_health'), COLORS['black'],
-            COLORS['red'], 5
+            COLORS['red'], border_radius=5
         )
 
         return health_bar_rect
 
-    def draw_energy(self, health_bar_rect: pg.FRect, stats_bg_rect: pg.FRect) -> None:
+    def draw_energy(self, health_bar_rect: pg.FRect, stats_bg_rect: pg.FRect) -> pg.FRect:
         energy_text = self.fonts['small'].render(
             f'ep: {int(self.monster.energy)}/{self.monster.get_stat('max_energy')}',
             False, COLORS['dark']
@@ -112,8 +119,10 @@ class BattleMonster(pg.sprite.Sprite):
         draw_bar(
             self.screen, energy_bar_rect, self.monster.energy,
             self.monster.get_stat('max_energy'), COLORS['black'],
-            COLORS['blue'], 5
+            COLORS['blue'], border_radius=5
         )
+
+        return energy_bar_rect
 
     def draw_stats(self, frame_rect: pg.FRect) -> None:
         # stat rect
@@ -128,7 +137,16 @@ class BattleMonster(pg.sprite.Sprite):
         )
 
         health_bar_rect = self.draw_health(stats_bg_rect)
-        self.draw_energy(health_bar_rect, stats_bg_rect)
+        energy_bar_rect = self.draw_energy(health_bar_rect, stats_bg_rect)
+
+        recharge_bar_width = stats_bg_rect.right - energy_bar_rect.left - 8
+        recharge_bar_rect = pg.FRect(
+            (energy_bar_rect.bottomleft + vector(0, 3)), (recharge_bar_width, 5)
+        )
+        draw_bar(
+            self.screen, recharge_bar_rect, self.monster.recharge, MAX_RECHARGE,
+            COLORS['white'], COLORS['dark'], border_radius=5
+        )
 
     def draw(self) -> None:
         name_bg_rect = self.draw_name()

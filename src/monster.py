@@ -19,6 +19,8 @@ class Monster:
         self.energy -= randint(0, 50)
         self.energy = max(0, self.energy)
 
+        self.recharge = randint(0, 100)
+
         self.xp = randint(0, 1000)
         self.level_up = self.level * 150
 

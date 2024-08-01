@@ -45,9 +45,9 @@ class Game:
         self.tint_progress = 0
 
         self.player_monsters = [
-            Monster('Atrox', 16),
-            Monster('Larvea', 23),
-            Monster('Jacana', 39),
+            Monster('Atrox', 19),
+            Monster('Larvea', 6),
+            Monster('Jacana', 12),
             Monster('Friolera', 4),
             Monster('Charmadillo', 30),
             Monster('Finsta', 16),
@@ -57,7 +57,7 @@ class Game:
 
         self.dummy_monsters = [
             Monster('Finsta', 16),
-            Monster('Charmadillo', 16),
+            Monster('Charmadillo', 29),
             Monster('Friolera', 28)
         ]
 

@@ -216,7 +216,7 @@ class MonsterIndex:
         draw_bar(
             self.screen, energy_bar_rect,
             monster.energy, monster.get_stat('max_energy'),
-            COLORS['black'], COLORS['blue'], 2
+            COLORS['black'], COLORS['blue'], border_radius=2
         )
 
         energy_bar_text_surf = self.fonts['regular'].render(
@@ -239,7 +239,7 @@ class MonsterIndex:
         draw_bar(
             self.screen, health_bar_rect,
             monster.health, monster.get_stat('max_health'),
-            COLORS['black'], COLORS['red'], 2
+            COLORS['black'], COLORS['red'], border_radius=2
         )
 
         health_bar_text_surf = self.fonts['regular'].render(

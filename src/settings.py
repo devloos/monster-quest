@@ -13,6 +13,8 @@ DEBUG = True
 PLAYER = 'player'
 ENEMY = 'enemy'
 
+MAX_RECHARGE = 100
+
 COLORS = {
     'white': '#f4fefa',
     'pure white': '#ffffff',
@@ -29,7 +31,8 @@ COLORS = {
     'red': '#f03131',
     'blue': '#66d7ee',
     'blue-700': '#1d4ed8',
-    'battle': '#F9F0DE'
+    'battle': '#F9F0DE',
+    'battle-light': '#dbd4c5'
 }
 
 
