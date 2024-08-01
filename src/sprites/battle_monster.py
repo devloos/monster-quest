@@ -2,6 +2,7 @@ from settings import *
 from random import uniform
 from monster import Monster
 from util.draw import draw_bar
+from util.timer import Timer
 
 MAIN_RECT_WIDTH = 200
 MAIN_RECT_HEIGHT = 320
@@ -31,6 +32,20 @@ class BattleMonster(pg.sprite.Sprite):
         self.main_rect.center = pos
 
         self.highlight = False
+        self.shine = False
+        self.timers = {
+            'remove shine': Timer(250, False, False, self.remove_shine)
+        }
+
+    def set_highlight(self, value: bool) -> None:
+        self.highlight = value
+
+        if value:
+            self.shine = True
+            self.timers['remove shine'].activate()
+
+    def remove_shine(self) -> None:
+        self.shine = False
 
     def frame_length(self) -> int:
         return len(self.frames[self.state])
@@ -173,10 +188,16 @@ class BattleMonster(pg.sprite.Sprite):
 
             self.screen.blit(outline, outline_rect)
 
-        self.screen.blit(frame, frame_rect)
+        if not self.shine:
+            self.screen.blit(frame, frame_rect)
 
         self.draw_stats(frame_rect)
 
+    def update_timers(self) -> None:
+        for timer in self.timers.values():
+            timer.update()
+
     def update(self, dt: float) -> None:
+        self.update_timers()
         self.monster.update(dt)
         self.animate(dt)

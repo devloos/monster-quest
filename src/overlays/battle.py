@@ -79,7 +79,7 @@ class Battle:
             if battle_monster.monster.recharge >= 100:
                 self.update_battle_monsters('pause')
                 battle_monster.monster.recharge = 0
-                battle_monster.highlight = True
+                battle_monster.set_highlight(True)
                 self.current_monster = battle_monster
 
     def update(self, dt: float) -> None:
