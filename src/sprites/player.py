@@ -20,7 +20,7 @@ class Player(Entity):
         self.blocked = False
         self.alerted = False
 
-    def _input(self):
+    def input(self):
         keys = pg.key.get_pressed()
         input_vector = vector()
 
@@ -106,7 +106,7 @@ class Player(Entity):
 
     def update(self, dt: float) -> None:
         if not self.blocked:
-            self._input()
+            self.input()
             self.move(dt)
 
         self.animate(dt)

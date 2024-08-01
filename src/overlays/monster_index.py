@@ -32,7 +32,7 @@ class MonsterIndex:
         self.selected_index: int | None = None
         self.frame_index = 0
 
-    def _input(self) -> None:
+    def input(self) -> None:
         keys = pg.key.get_just_pressed()
 
         if keys[pg.K_UP]:
@@ -402,7 +402,7 @@ class MonsterIndex:
             previous_ability_rect = ability_bg_rect
 
     def update(self, dt: float) -> None:
-        self._input()
+        self.input()
 
         self.screen.blit(self.tint, (0, 0))
         self.draw_list()

@@ -4,6 +4,14 @@ from monster import Monster
 from sprites.battle_monster import BattleMonster
 
 
+class SelectionMode(IntEnum):
+    General = 0,
+    Monster = 1,
+    Attacks = 2,
+    Switch = 3,
+    Target = 4
+
+
 class BattleGroup(pg.sprite.Group):
     def __init__(self) -> None:
         super().__init__()
@@ -36,6 +44,14 @@ class Battle:
         self.enemy_sprites = BattleGroup()
 
         self.current_monster: BattleMonster | None = None
+        self.selection_mode: SelectionMode | None = None
+        self.indexes = {
+            SelectionMode.General: 0,
+            SelectionMode.Monster: 0,
+            SelectionMode.Attacks: 0,
+            SelectionMode.Switch: 0,
+            SelectionMode.Target: 0,
+        }
 
         self.monster_outlines = calculate_monster_outlines(self.monster_frames, 4)
 
@@ -83,9 +99,145 @@ class Battle:
                 battle_monster.set_highlight(True)
                 self.current_monster = battle_monster
 
+                if battle_monster in self.player_sprites:
+                    self.selection_mode = SelectionMode.General
+
+    def draw_general(self) -> None:
+        for index, data in enumerate(BATTLE_CHOICES['full'].values()):
+            ui_name = data['icon']
+            if index == self.indexes[SelectionMode.General]:
+                ui_name += '_highlight'
+
+            icon_surf = self.ui_icons[ui_name]
+            icon_rect = icon_surf.get_frect(
+                center=self.current_monster.main_rect.midright + data['offset']
+            )
+            self.screen.blit(icon_surf, icon_rect)
+
+    def draw_attacks(self) -> None:
+        abilities = self.current_monster.monster.get_abilities()
+        visible_attacks = 4
+        rect_height = 220
+        rect_width = 180
+        item_height = rect_height / visible_attacks
+
+        rect = pg.FRect((0, 0), (rect_width, rect_height))
+        rect.midleft = self.current_monster.main_rect.midright + vector(10, 0)
+
+        starting_index = 0
+
+        if self.indexes[SelectionMode.Attacks] >= visible_attacks:
+            starting_index += 1
+
+        for index, ability in enumerate(abilities[starting_index:], starting_index):
+            visible_index = index - starting_index
+
+            item_rect = pg.FRect(
+                rect.left, rect.top + visible_index * item_height, rect_width, item_height
+            )
+
+            if not item_rect.colliderect(rect):
+                continue
+
+            bg_color = COLORS['battle-light'] if index == self.indexes[SelectionMode.Attacks] else COLORS['battle']
+
+            divider_rect = pg.FRect((0, 0), (rect_width, 1))
+            divider_rect.bottomleft = item_rect.bottomleft
+
+            if item_rect.collidepoint(rect.midtop):
+                pg.draw.rect(
+                    self.screen, bg_color, item_rect,
+                    border_top_left_radius=5, border_top_right_radius=5
+                )
+                pg.draw.rect(self.screen, COLORS['dark'], divider_rect)
+            elif item_rect.collidepoint(rect.midbottom + vector(0, -1)):
+                pg.draw.rect(
+                    self.screen, bg_color, item_rect,
+                    border_bottom_left_radius=5, border_bottom_right_radius=5
+                )
+            else:
+                pg.draw.rect(self.screen, bg_color, item_rect)
+                pg.draw.rect(self.screen, COLORS['dark'], divider_rect)
+
+            ability_surf = self.fonts['regular'].render(ability, False, COLORS['dark'])
+            ability_rect = ability_surf.get_rect(center=item_rect.center)
+            self.screen.blit(ability_surf, ability_rect)
+
+    def draw_switch(self) -> None:
+        pass
+
+    def draw_ui(self) -> None:
+        if not self.current_monster:
+            return
+
+        match self.selection_mode:
+            case SelectionMode.General:
+                self.draw_general()
+
+            case SelectionMode.Attacks:
+                self.draw_attacks()
+
+            case SelectionMode.Switch:
+                self.draw_switch()
+
+    def selected_general_option(self) -> None:
+        ATTACKS = 0
+        DEFEND = 1
+        SWITCH = 2
+        CATCH = 3
+
+        index = self.indexes[self.selection_mode]
+
+        if index == ATTACKS:
+            self.selection_mode = SelectionMode.Attacks
+        elif index == DEFEND:
+            self.current_monster.set_highlight(False)
+            self.current_monster = None
+            self.selection_mode = None
+            self.indexes[SelectionMode.General] = 0
+            self.update_battle_monsters('resume')
+        elif index == SWITCH:
+            self.selection_mode = SelectionMode.Switch
+        elif index == CATCH:
+            self.selection_mode = SelectionMode.Target
+
+    def input(self) -> None:
+        if self.current_monster == None or self.selection_mode == None:
+            return
+
+        length = 0
+
+        match self.selection_mode:
+            case SelectionMode.General:
+                length = len(BATTLE_CHOICES['full'])
+
+            case SelectionMode.Attacks:
+                length = len(self.current_monster.monster.get_abilities())
+
+        keys = pg.key.get_just_pressed()
+
+        if keys[pg.K_DOWN]:
+            self.indexes[self.selection_mode] += 1
+
+        if keys[pg.K_UP]:
+            self.indexes[self.selection_mode] -= 1
+
+        self.indexes[self.selection_mode] %= length
+
+        if keys[pg.K_SPACE]:
+            if self.selection_mode == SelectionMode.General:
+                self.selected_general_option()
+
+        # testing but could become useful feature
+        if keys[pg.K_ESCAPE]:
+            self.selection_mode = SelectionMode.General
+            self.indexes[SelectionMode.General] = 0
+
     def update(self, dt: float) -> None:
+        self.input()
         self.battle_sprites.update(dt)
         self.check_active()
 
         self.screen.blit(self.bg_surf, (0, 0))
         self.battle_sprites.draw()
+        self.draw_ui()

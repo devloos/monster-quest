@@ -45,8 +45,8 @@ class Game:
         self.tint_progress = 0
 
         self.player_monsters = [
-            Monster('Atrox', 19),
-            Monster('Larvea', 6),
+            Monster('Friolera', 28),
+            Monster('Larvea', 30),
             Monster('Jacana', 12),
             Monster('Friolera', 4),
             Monster('Charmadillo', 30),
@@ -57,8 +57,8 @@ class Game:
 
         self.dummy_monsters = [
             Monster('Finsta', 16),
-            Monster('Charmadillo', 29),
-            Monster('Friolera', 28)
+            Monster('Charmadillo', 13),
+            Monster('Atrox', 10),
         ]
 
         # overlay
@@ -222,7 +222,7 @@ class Game:
                     groups
                 )
 
-    def _input(self):
+    def input(self):
         if self.dialog_tree.in_dialog or self.battle:
             return
 
@@ -289,7 +289,7 @@ class Game:
 
             # handle game input
             self.check_transitions()
-            self._input()
+            self.input()
 
             # handle game logic
             self.render_group.update(dt)

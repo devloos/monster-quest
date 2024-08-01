@@ -80,16 +80,16 @@ BATTLE_LAYERS = {
 
 BATTLE_CHOICES = {
     'full': {
-        'fight':  {'pos': vector(30, -60), 'icon': 'sword'},
-        'defend': {'pos': vector(40, -20), 'icon': 'shield'},
-        'switch': {'pos': vector(40, 20), 'icon': 'arrows'},
-        'catch':  {'pos': vector(30, 60), 'icon': 'hand'}
+        'fight':  {'offset': vector(30, -60), 'icon': 'sword'},
+        'defend': {'offset': vector(40, -20), 'icon': 'shield'},
+        'switch': {'offset': vector(40, 20), 'icon': 'arrows'},
+        'catch':  {'offset': vector(30, 60), 'icon': 'hand'}
     },
 
     'limited': {
-        'fight':  {'pos': vector(30, -40), 'icon': 'sword'},
-        'defend': {'pos': vector(40, 0), 'icon': 'shield'},
-        'switch': {'pos': vector(30, 40), 'icon': 'arrows'}
+        'fight':  {'offset': vector(30, -40), 'icon': 'sword'},
+        'defend': {'offset': vector(40, 0), 'icon': 'shield'},
+        'switch': {'offset': vector(30, 40), 'icon': 'arrows'}
     }
 }
 

@@ -112,7 +112,7 @@ class DialogTree:
         self.await_next_tick = False
         self.timer = None
 
-    def _input(self) -> None:
+    def input(self) -> None:
         if self.await_next_tick:
             if not self.timer:
                 self.timer = Timer(500, False, True, self.reset_await)
@@ -129,7 +129,7 @@ class DialogTree:
             self.timer.update()
 
         if not self.blocked:
-            self._input()
+            self.input()
 
     def block(self) -> None:
         self.blocked = True
