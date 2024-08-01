@@ -18,8 +18,8 @@ class BattleGroup(pg.sprite.Group):
 class Battle:
     def __init__(
         self, player_monsters: list[Monster], enemy_monsters: list[Monster],
-        monster_frames: dict[str, dict[str, list[pg.Surface]]], bg_surf: pg.Surface,
-        fonts: dict[str, pg.Font]
+        monster_frames: dict[str, dict[str, list[pg.Surface]]],
+        ui_icons: dict[str, pg.Surface], bg_surf: pg.Surface, fonts: dict[str, pg.Font]
     ) -> None:
         self.screen = pg.display.get_surface()
         self.monster_data = {
@@ -27,6 +27,7 @@ class Battle:
             ENEMY: enemy_monsters
         }
         self.monster_frames = monster_frames
+        self.ui_icons = ui_icons
         self.bg_surf = bg_surf
         self.fonts = fonts
 

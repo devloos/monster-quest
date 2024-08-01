@@ -7,12 +7,13 @@ from game_data import ATTACK_DATA
 
 class MonsterIndex:
     def __init__(
-        self, monsters: list[Monster], monster_frames: dict[str, dict[str, list[pg.Surface]]], fonts: dict[str, pg.Font]
+        self, monsters: list[Monster], monster_frames: dict[str, dict[str, list[pg.Surface]]],
+        ui_icons: dict[str, pg.Surface], fonts: dict[str, pg.Font]
     ) -> None:
         self.screen = pg.display.get_surface()
         self.monsters = monsters
         self.monster_frames = monster_frames
-        self.ui_icons = import_folder_dict('graphics', 'ui')
+        self.ui_icons = ui_icons
         self.fonts = fonts
         self.opened = False
 

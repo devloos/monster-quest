@@ -64,11 +64,11 @@ class Game:
         # overlay
         self.dialog_tree = DialogTree(self.render_group)
         self.monster_index = MonsterIndex(
-            self.player_monsters, self.monster_frames, self.fonts
+            self.player_monsters, self.monster_frames, self.ui_icons, self.fonts
         )
         self.battle: Battle | None = Battle(
             self.player_monsters, self.dummy_monsters, self.monster_frames,
-            self.battle_backgrounds['sand'], self.fonts
+            self.ui_icons, self.battle_backgrounds['sand'], self.fonts
         )
 
         # self.battle = None
@@ -95,6 +95,8 @@ class Game:
         self.monster_frames = import_monster_frames(
             4, 2, 'graphics', 'monsters'
         )
+
+        self.ui_icons = import_folder_dict('graphics', 'ui')
 
         self.battle_backgrounds = import_folder_dict('graphics', 'backgrounds')
 
