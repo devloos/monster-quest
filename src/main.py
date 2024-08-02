@@ -48,11 +48,10 @@ class Game:
             Monster('Friolera', 28),
             Monster('Larvea', 30),
             Monster('Jacana', 12),
-            Monster('Friolera', 4),
+            Monster('Pouch', 4),
             Monster('Charmadillo', 30),
             Monster('Finsta', 16),
-            Monster('Charmadillo', 16),
-            Monster('Friolera', 28)
+            Monster('Draem', 28)
         ]
 
         self.dummy_monsters = [

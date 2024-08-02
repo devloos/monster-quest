@@ -104,6 +104,23 @@ class Battle:
                 if battle_monster in self.player_sprites:
                     self.selection_mode = SelectionMode.General
 
+    def available_monsters(self) -> list[Monster]:
+        available_monsters = []
+        battle_monsters = []
+
+        battle_monster: BattleMonster
+
+        for battle_monster in self.player_sprites.sprites():
+            battle_monsters.append(battle_monster.monster)
+
+        for monster in self.monster_data[PLAYER]:
+            if monster.health <= 0 or monster in battle_monsters:
+                continue
+
+            available_monsters.append(monster)
+
+        return available_monsters
+
     def draw_general(self) -> None:
         for index, data in enumerate(BATTLE_CHOICES['full'].values()):
             ui_name = data['icon']
@@ -198,17 +215,12 @@ class Battle:
         rect = pg.FRect((0, 0), (rect_width, rect_height))
         rect.midleft = self.current_monster.main_rect.midright + vector(10, 0)
 
-        starting_index = 0
-
-        if self.indexes[SelectionMode.Switch] >= visible_monsters:
-            starting_index = self.indexes[SelectionMode.Switch] - visible_monsters + 1
-
         monster: Monster
 
-        for index, monster in enumerate(self.monster_data[PLAYER][starting_index:], starting_index):
-            visible_index = index - starting_index
+        for index, monster in enumerate(self.available_monsters()):
+
             item_rect = pg.FRect(
-                rect.left, rect.top + item_height * visible_index, rect_width, item_height
+                rect.left, rect.top + item_height * index, rect_width, item_height
             )
 
             if not item_rect.colliderect(rect):
@@ -319,7 +331,7 @@ class Battle:
                 length = len(self.current_monster.monster.get_abilities(account_ep=True))
 
             case SelectionMode.Switch:
-                length = len(self.monster_data[PLAYER])
+                length = len(self.available_monsters())
 
         keys = pg.key.get_just_pressed()
 
@@ -332,6 +344,17 @@ class Battle:
         self.indexes[self.selection_mode] %= length
 
         if keys[pg.K_SPACE]:
+            if self.selection_mode == SelectionMode.Switch:
+                id = self.current_monster.id
+                monsters = self.available_monsters()
+                self.create_battle_monster(
+                    id, monsters[self.indexes[SelectionMode.Switch]], id, PLAYER
+                )
+                self.current_monster.kill()
+                self.selection_mode = None
+                self.indexes[SelectionMode.Switch] = 0
+                self.update_battle_monsters('resume')
+
             if self.selection_mode == SelectionMode.General:
                 self.selected_general_option()
 
