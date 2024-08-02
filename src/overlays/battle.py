@@ -48,6 +48,7 @@ class Battle:
 
         self.current_monster: BattleMonster | None = None
         self.selection_mode: SelectionMode | None = None
+        self.ability_data: dict | None = None
         self.indexes = {
             SelectionMode.General: 0,
             SelectionMode.Monster: 0,
@@ -308,6 +309,7 @@ class Battle:
         self.current_monster = None
         self.indexes[selection] = 0
         self.selection_mode = None
+        self.ability_data = None
         self.update_battle_monsters('resume')
 
     def selected_general_option(self) -> None:
@@ -343,6 +345,18 @@ class Battle:
             case SelectionMode.Switch:
                 length = len(self.available_monsters())
 
+            case SelectionMode.Target:
+                battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
+
+                length = len(battle_monsters)
+
+                # reset highlight
+                for battle_monster in battle_monsters:
+                    battle_monster.set_highlight(False, False)
+
+                index = self.indexes[SelectionMode.Target]
+                battle_monsters[index].set_highlight(True, False)
+
         keys = pg.key.get_just_pressed()
 
         if keys[pg.K_DOWN]:
@@ -354,17 +368,28 @@ class Battle:
         self.indexes[self.selection_mode] %= length
 
         if keys[pg.K_SPACE]:
+            if self.selection_mode == SelectionMode.Target:
+                if self.ability_data != None:
+                    battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
+                    enemy_monster = battle_monsters[self.indexes[SelectionMode.Target]]
+
+                    attack_multiplier = self.current_monster.monster.get_stat('attack')
+                    amount = self.ability_data['amount'] * attack_multiplier
+
+                    enemy_monster.monster.health -= amount
+
+                    self.current_monster.monster.energy -= self.ability_data['cost']
+
+                    enemy_monster.set_highlight(False, False)
+                    self.indexes[SelectionMode.Target] = 0
+
+                self.reset_selection(SelectionMode.Attacks)
+
             if self.selection_mode == SelectionMode.Attacks:
                 abilities = self.current_monster.monster.get_abilities(account_ep=True)
                 ability = abilities[self.indexes[SelectionMode.Attacks]]
-                ability_data = ATTACK_DATA[ability]
-
-                enemy_monster: BattleMonster = self.enemy_sprites.sprites()[0]
-                enemy_monster.monster.health -= ability_data['amount']
-
-                self.current_monster.monster.energy -= ability_data['cost']
-
-                self.reset_selection(SelectionMode.Attacks)
+                self.ability_data = ATTACK_DATA[ability]
+                self.selection_mode = SelectionMode.Target
 
             if self.selection_mode == SelectionMode.Switch:
                 id = self.current_monster.id
