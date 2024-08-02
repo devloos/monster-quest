@@ -4,6 +4,7 @@ from monster import Monster
 from sprites.battle_monster import BattleMonster
 from game_data import ATTACK_DATA
 from util.draw import draw_bar
+from random import randint
 
 
 class SelectionMode(IntEnum):
@@ -215,12 +216,18 @@ class Battle:
         rect = pg.FRect((0, 0), (rect_width, rect_height))
         rect.midleft = self.current_monster.main_rect.midright + vector(10, 0)
 
+        starting_index = 0
+
+        if self.indexes[SelectionMode.Switch] >= visible_monsters:
+            starting_index = self.indexes[SelectionMode.Switch] - visible_monsters + 1
+
         monster: Monster
 
-        for index, monster in enumerate(self.available_monsters()):
+        for index, monster in enumerate(self.available_monsters()[starting_index:], starting_index):
+            visible_index = index - starting_index
 
             item_rect = pg.FRect(
-                rect.left, rect.top + item_height * index, rect_width, item_height
+                rect.left, rect.top + item_height * visible_index, rect_width, item_height
             )
 
             if not item_rect.colliderect(rect):
@@ -296,6 +303,13 @@ class Battle:
             case SelectionMode.Switch:
                 self.draw_switch()
 
+    def reset_selection(self, selection: SelectionMode) -> None:
+        self.current_monster.set_highlight(False)
+        self.current_monster = None
+        self.indexes[selection] = 0
+        self.selection_mode = None
+        self.update_battle_monsters('resume')
+
     def selected_general_option(self) -> None:
         ATTACKS = 0
         DEFEND = 1
@@ -307,11 +321,7 @@ class Battle:
         if index == ATTACKS:
             self.selection_mode = SelectionMode.Attacks
         elif index == DEFEND:
-            self.current_monster.set_highlight(False)
-            self.current_monster = None
-            self.selection_mode = None
-            self.indexes[SelectionMode.General] = 0
-            self.update_battle_monsters('resume')
+            self.reset_selection(SelectionMode.General)
         elif index == SWITCH:
             self.selection_mode = SelectionMode.Switch
         elif index == CATCH:
@@ -344,6 +354,18 @@ class Battle:
         self.indexes[self.selection_mode] %= length
 
         if keys[pg.K_SPACE]:
+            if self.selection_mode == SelectionMode.Attacks:
+                abilities = self.current_monster.monster.get_abilities(account_ep=True)
+                ability = abilities[self.indexes[SelectionMode.Attacks]]
+                ability_data = ATTACK_DATA[ability]
+
+                enemy_monster: BattleMonster = self.enemy_sprites.sprites()[0]
+                enemy_monster.monster.health -= ability_data['amount']
+
+                self.current_monster.monster.energy -= ability_data['cost']
+
+                self.reset_selection(SelectionMode.Attacks)
+
             if self.selection_mode == SelectionMode.Switch:
                 id = self.current_monster.id
                 monsters = self.available_monsters()
@@ -351,9 +373,8 @@ class Battle:
                     id, monsters[self.indexes[SelectionMode.Switch]], id, PLAYER
                 )
                 self.current_monster.kill()
-                self.selection_mode = None
-                self.indexes[SelectionMode.Switch] = 0
-                self.update_battle_monsters('resume')
+
+                self.reset_selection(SelectionMode.Switch)
 
             if self.selection_mode == SelectionMode.General:
                 self.selected_general_option()

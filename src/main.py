@@ -51,7 +51,9 @@ class Game:
             Monster('Pouch', 4),
             Monster('Charmadillo', 30),
             Monster('Finsta', 16),
-            Monster('Draem', 28)
+            Monster('Draem', 23),
+            Monster('Cleaf', 20),
+            Monster('Cindrill', 14)
         ]
 
         self.dummy_monsters = [
