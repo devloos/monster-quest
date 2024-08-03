@@ -51,7 +51,7 @@ class Battle:
 
         self.current_monster: BattleMonster | None = None
         self.selection_mode: SelectionMode | None = None
-        self.selection_side = 'player'
+        self.selection_side = PLAYER
         self.ability_data: dict | None = None
         self.indexes = {
             SelectionMode.General: 0,
@@ -101,7 +101,7 @@ class Battle:
             battle_monster.monster.paused = paused
 
     # logic
-    def perform_attack(self, battle_monster: BattleMonster, target_monster: BattleMonster, ability_data: dict) -> None:
+    def perform_ability(self, battle_monster: BattleMonster, target_monster: BattleMonster, ability_data: dict) -> None:
         battle_monster.animate_attack()
         target_monster.animate_attacked(ability_data['animation'])
 
@@ -125,7 +125,7 @@ class Battle:
     def enemy_attack_helper(
         self, battle_monster: BattleMonster, target_monster: BattleMonster, ability_data: dict
     ) -> None:
-        self.perform_attack(battle_monster, target_monster, ability_data)
+        self.perform_ability(battle_monster, target_monster, ability_data)
         battle_monster.set_highlight(False)
         self.current_monster = None
         self.update_battle_monsters('resume')
@@ -201,13 +201,13 @@ class Battle:
         for battle_monster in battle_monsters:
             battle_monster.set_highlight(False, False)
 
-    def kill_enemy_monster(self, battle_monster: BattleMonster) -> None:
+    def force_replace_monster(self, battle_monster: BattleMonster, sprites: BattleGroup, entity: str) -> None:
         id = battle_monster.id
 
-        if self.available_monsters(self.enemy_sprites, ENEMY):
-            monster = self.available_monsters(self.enemy_sprites, ENEMY)[0]
+        if self.available_monsters(sprites, entity):
+            monster = self.available_monsters(sprites, entity)[0]
             monster.paused = True
-            self.create_battle_monster(id, monster, id, ENEMY)
+            self.create_battle_monster(id, monster, id, entity)
 
         battle_monster.kill()
 
@@ -220,11 +220,19 @@ class Battle:
 
             battle_monster.monster.health = 0
 
+            timer: Timer | None = None
             if battle_monster in self.player_sprites.sprites():
-                pass
+                timer = Timer(
+                    0.6, self.force_replace_monster,
+                    (battle_monster, self.player_sprites, PLAYER)
+                )
             else:
-                timer = Timer(0.6, self.kill_enemy_monster, (battle_monster,))
-                timer.start()
+                timer = Timer(
+                    0.6, self.force_replace_monster,
+                    (battle_monster, self.enemy_sprites, ENEMY)
+                )
+
+            timer.start()
 
     # draw ui
     def draw_general(self) -> None:
@@ -428,7 +436,7 @@ class Battle:
             case SelectionMode.Target:
                 battle_monsters: list[BattleMonster]
 
-                if self.selection_side == 'enemy':
+                if self.selection_side == ENEMY:
                     battle_monsters = self.enemy_sprites.sprites()
                 else:
                     battle_monsters = self.player_sprites.sprites()
@@ -454,14 +462,20 @@ class Battle:
         if keys[pg.K_SPACE]:
             if self.selection_mode == SelectionMode.Target:
                 if self.ability_data != None:
-                    battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
-                    enemy_monster = battle_monsters[self.indexes[SelectionMode.Target]]
+                    battle_monsters: list[BattleMonster]
 
-                    self.perform_attack(
-                        self.current_monster, enemy_monster, self.ability_data
+                    if self.selection_side == PLAYER:
+                        battle_monsters = self.player_sprites.sprites()
+                    else:
+                        battle_monsters = self.enemy_sprites.sprites()
+
+                    target_monster = battle_monsters[self.indexes[SelectionMode.Target]]
+
+                    self.perform_ability(
+                        self.current_monster, target_monster, self.ability_data
                     )
 
-                    enemy_monster.set_highlight(False, False)
+                    target_monster.set_highlight(False, False)
                     self.indexes[SelectionMode.Target] = 0
 
                 self.reset_selection(SelectionMode.Attacks)
@@ -492,7 +506,7 @@ class Battle:
             self.selection_mode = SelectionMode.General
             self.indexes[SelectionMode.General] = 0
             self.ability_data = None
-            self.selection_side = 'player'
+            self.selection_side = PLAYER
             self.reset_monster_highlight(self.player_sprites.sprites())
             self.reset_monster_highlight(self.battle_sprites.sprites())
             self.current_monster.set_highlight(True, False)
