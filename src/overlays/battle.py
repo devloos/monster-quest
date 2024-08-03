@@ -338,6 +338,14 @@ class Battle:
         for battle_monster in battle_monsters:
             battle_monster.set_highlight(False, False)
 
+    def check_death(self) -> None:
+        battle_monster: BattleMonster
+        for battle_monster in self.battle_sprites.sprites():
+            if battle_monster in self.player_sprites.sprites():
+                pass
+            else:
+                battle_monster.kill()
+
     def input(self) -> None:
         if self.current_monster == None or self.selection_mode == None:
             return
@@ -403,6 +411,8 @@ class Battle:
                     enemy_monster.monster.health -= amount * attack_multiplier
 
                     self.current_monster.monster.energy -= self.ability_data['cost']
+
+                    self.check_death()
 
                     enemy_monster.set_highlight(False, False)
                     self.indexes[SelectionMode.Target] = 0
