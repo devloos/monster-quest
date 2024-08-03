@@ -4,7 +4,7 @@ from monster import Monster
 from sprites.battle_monster import BattleMonster
 from game_data import ABILITY_DATA, ELEMENT_DATA
 from util.draw import draw_bar
-from random import randint
+from random import choice, uniform
 from threading import Timer
 
 
@@ -101,6 +101,35 @@ class Battle:
             battle_monster.monster.paused = paused
 
     # logic
+    def perform_attack(self, battle_monster: BattleMonster, target_monster: BattleMonster, ability_data: dict) -> None:
+        battle_monster.animate_attack()
+        target_monster.animate_attacked(ability_data['animation'])
+
+        attack_element = ability_data['element']
+        target_element = target_monster.monster.element
+
+        amount = ability_data['amount']
+
+        if target_element in ELEMENT_DATA[attack_element]['buff']:
+            amount *= 2
+        elif target_element in ELEMENT_DATA[attack_element]['nerf']:
+            amount /= 2
+
+        attack_multiplier = battle_monster.monster.get_stat('attack')
+        target_monster.monster.health -= amount * attack_multiplier
+
+        battle_monster.monster.energy -= ability_data['cost']
+
+        self.check_death()
+
+    def enemy_attack_helper(
+        self, battle_monster: BattleMonster, target_monster: BattleMonster, ability_data: dict
+    ) -> None:
+        self.perform_attack(battle_monster, target_monster, ability_data)
+        battle_monster.set_highlight(False)
+        self.current_monster = None
+        self.update_battle_monsters('resume')
+
     def check_active(self) -> None:
         battle_monster: BattleMonster
         for battle_monster in self.battle_sprites.sprites():
@@ -112,6 +141,19 @@ class Battle:
 
                 if battle_monster in self.player_sprites:
                     self.selection_mode = SelectionMode.General
+                else:
+                    ability = choice(
+                        battle_monster.monster.get_abilities(account_ep=True)
+                    )
+                    target_monster: BattleMonster = choice(self.player_sprites.sprites())
+
+                    ability_data = ABILITY_DATA[ability]
+
+                    timer = Timer(
+                        uniform(0.5, 1.5), self.enemy_attack_helper,
+                        (battle_monster, target_monster, ability_data)
+                    )
+                    timer.start()
 
     def available_monsters(self, battle_sprites: BattleGroup, entity: str) -> list[Monster]:
         available_monsters = []
@@ -415,25 +457,9 @@ class Battle:
                     battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
                     enemy_monster = battle_monsters[self.indexes[SelectionMode.Target]]
 
-                    self.current_monster.animate_attack()
-                    enemy_monster.animate_attacked(self.ability_data['animation'])
-
-                    attack_element = self.ability_data['element']
-                    target_element = enemy_monster.monster.element
-
-                    amount = self.ability_data['amount']
-
-                    if target_element in ELEMENT_DATA[attack_element]['buff']:
-                        amount *= 2
-                    elif target_element in ELEMENT_DATA[attack_element]['nerf']:
-                        amount /= 2
-
-                    attack_multiplier = enemy_monster.monster.get_stat('attack')
-                    enemy_monster.monster.health -= amount * attack_multiplier
-
-                    self.current_monster.monster.energy -= self.ability_data['cost']
-
-                    self.check_death()
+                    self.perform_attack(
+                        self.current_monster, enemy_monster, self.ability_data
+                    )
 
                     enemy_monster.set_highlight(False, False)
                     self.indexes[SelectionMode.Target] = 0

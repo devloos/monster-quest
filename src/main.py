@@ -58,7 +58,7 @@ class Game:
 
         self.dummy_monsters = [
             Monster('Finsta', 16),
-            Monster('Charmadillo', 13),
+            Monster('Charmadillo', 25),
             Monster('Atrox', 10),
             Monster('Cindrill', 13),
         ]
