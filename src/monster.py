@@ -18,7 +18,7 @@ class Monster:
         self.recharge = 0
         self.paused = False
 
-        self.xp = randint(0, 1000)
+        self.xp = 0
         self.level_up = self.level * 150
 
         self.icon = import_image('graphics', 'icons', self.name)
@@ -50,6 +50,16 @@ class Monster:
                 available_abilities.pop()
 
         return available_abilities
+
+    def update_xp(self, amount: float) -> None:
+        # should we level up
+        if self.xp + amount > self.level_up:
+            self.level += 1
+            overflow_amount = (self.xp + amount) - self.level_up
+            self.xp = overflow_amount
+            self.level_up = self.level * 150
+        else:
+            self.xp += amount
 
     def update(self, dt: float) -> None:
         if not self.paused:

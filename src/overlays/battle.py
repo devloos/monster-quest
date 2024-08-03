@@ -232,6 +232,13 @@ class Battle:
                     (battle_monster, self.enemy_sprites, ENEMY)
                 )
 
+                # when enemy monster defeated add xp
+                amount = battle_monster.monster.level * 100 / len(self.player_sprites)
+
+                player_battle_monster: BattleMonster
+                for player_battle_monster in self.player_sprites.sprites():
+                    player_battle_monster.monster.update_xp(amount)
+
             timer.start()
 
     # draw ui
