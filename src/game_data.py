@@ -330,14 +330,14 @@ MONSTER_DATA = {
 }
 
 ATTACK_DATA = {
-    'burn':       {'target': 'opponent', 'amount': 2,    'cost': 15, 'element': 'fire',   'animation': 'fire'},
+    'burn':       {'target': 'enemy', 'amount': 2,    'cost': 15, 'element': 'fire',   'animation': 'fire'},
     'heal':       {'target': 'player',   'amount': -1.2, 'cost': 15, 'element': 'plant',  'animation': 'green'},
     'battlecry':  {'target': 'player',   'amount': 1.4,  'cost': 20, 'element': 'normal', 'animation': 'green'},
-    'spark':      {'target': 'opponent', 'amount': 1.1,  'cost': 20, 'element': 'fire',   'animation': 'fire'},
-    'scratch':    {'target': 'opponent', 'amount': 1.2,  'cost': 20, 'element': 'normal', 'animation': 'scratch'},
-    'splash':     {'target': 'opponent', 'amount': 2,    'cost': 15, 'element': 'water',  'animation': 'splash'},
-    'fire':       {'target': 'opponent', 'amount': 2,    'cost': 15, 'element': 'fire',   'animation': 'fire'},
-    'explosion':  {'target': 'opponent', 'amount': 2,    'cost': 90, 'element': 'fire',   'animation': 'explosion'},
-    'annihilate': {'target': 'opponent', 'amount': 2,    'cost': 15, 'element': 'fire',   'animation': 'explosion'},
-    'ice':        {'target': 'opponent', 'amount': 2,    'cost': 15, 'element': 'water',  'animation': 'ice'},
+    'spark':      {'target': 'enemy', 'amount': 1.1,  'cost': 20, 'element': 'fire',   'animation': 'fire'},
+    'scratch':    {'target': 'enemy', 'amount': 1.2,  'cost': 20, 'element': 'normal', 'animation': 'scratch'},
+    'splash':     {'target': 'enemy', 'amount': 2,    'cost': 15, 'element': 'water',  'animation': 'splash'},
+    'fire':       {'target': 'enemy', 'amount': 2,    'cost': 15, 'element': 'fire',   'animation': 'fire'},
+    'explosion':  {'target': 'enemy', 'amount': 2,    'cost': 90, 'element': 'fire',   'animation': 'explosion'},
+    'annihilate': {'target': 'enemy', 'amount': 2,    'cost': 15, 'element': 'fire',   'animation': 'explosion'},
+    'ice':        {'target': 'enemy', 'amount': 2,    'cost': 15, 'element': 'water',  'animation': 'ice'},
 }

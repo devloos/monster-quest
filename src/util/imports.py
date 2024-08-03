@@ -72,6 +72,19 @@ def import_tilemap(cols, rows, *path) -> dict:
     return frames
 
 
+def import_attacks(cols, rows, *path) -> dict[str, list[pg.Surface]]:
+    normalized_frames = {}
+
+    for _, __, image_names in walk(join(*path)):
+        image_name: str
+        for image_name in image_names:
+            name = image_name.split('.')[0]
+            frames = list(import_tilemap(cols, rows, *path, name).values())
+            normalized_frames[name] = frames
+
+    return normalized_frames
+
+
 def import_character_helper(cols, rows, *path) -> dict:
     # frames[(0, 0)] = Surface
     frames = import_tilemap(cols, rows, *path)

@@ -30,7 +30,8 @@ class Battle:
     def __init__(
         self, player_monsters: list[Monster], enemy_monsters: list[Monster],
         monster_frames: dict[str, dict[str, list[pg.Surface]]],
-        ui_icons: dict[str, pg.Surface], bg_surf: pg.Surface, fonts: dict[str, pg.Font]
+        ui_icons: dict[str, pg.Surface], attack_frames: dict[str, pg.Surface],
+        bg_surf: pg.Surface, fonts: dict[str, pg.Font]
     ) -> None:
         self.screen = pg.display.get_surface()
         self.monster_data = {
@@ -39,6 +40,7 @@ class Battle:
         }
         self.monster_frames = monster_frames
         self.ui_icons = ui_icons
+        self.attack_frames = attack_frames
         self.bg_surf = bg_surf
         self.fonts = fonts
 
@@ -48,6 +50,7 @@ class Battle:
 
         self.current_monster: BattleMonster | None = None
         self.selection_mode: SelectionMode | None = None
+        self.selection_side = 'player'
         self.ability_data: dict | None = None
         self.indexes = {
             SelectionMode.General: 0,
@@ -85,7 +88,9 @@ class Battle:
         else:
             groups.append(self.enemy_sprites)
 
-        BattleMonster(id, pos, monster, frames, outlines, entity, self.fonts, groups)
+        BattleMonster(
+            id, pos, monster, frames, self.attack_frames, outlines, entity, self.fonts, groups
+        )
 
     def update_battle_monsters(self, option) -> None:
         paused = True if option == 'pause' else False
@@ -329,6 +334,10 @@ class Battle:
         elif index == CATCH:
             self.selection_mode = SelectionMode.Target
 
+    def reset_monster_highlight(self, battle_monsters: list[BattleMonster]) -> None:
+        for battle_monster in battle_monsters:
+            battle_monster.set_highlight(False, False)
+
     def input(self) -> None:
         if self.current_monster == None or self.selection_mode == None:
             return
@@ -346,13 +355,17 @@ class Battle:
                 length = len(self.available_monsters())
 
             case SelectionMode.Target:
-                battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
+                battle_monsters: list[BattleMonster]
+
+                if self.selection_side == 'enemy':
+                    battle_monsters = self.enemy_sprites.sprites()
+                else:
+                    battle_monsters = self.player_sprites.sprites()
 
                 length = len(battle_monsters)
 
                 # reset highlight
-                for battle_monster in battle_monsters:
-                    battle_monster.set_highlight(False, False)
+                self.reset_monster_highlight(battle_monsters)
 
                 index = self.indexes[SelectionMode.Target]
                 battle_monsters[index].set_highlight(True, False)
@@ -373,6 +386,9 @@ class Battle:
                     battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
                     enemy_monster = battle_monsters[self.indexes[SelectionMode.Target]]
 
+                    self.current_monster.animate_attack()
+                    enemy_monster.animate_attacked(self.ability_data['animation'])
+
                     attack_multiplier = self.current_monster.monster.get_stat('attack')
                     amount = self.ability_data['amount'] * attack_multiplier
 
@@ -389,7 +405,9 @@ class Battle:
                 abilities = self.current_monster.monster.get_abilities(account_ep=True)
                 ability = abilities[self.indexes[SelectionMode.Attacks]]
                 self.ability_data = ATTACK_DATA[ability]
+
                 self.selection_mode = SelectionMode.Target
+                self.selection_side = self.ability_data['target']
 
             if self.selection_mode == SelectionMode.Switch:
                 id = self.current_monster.id
@@ -408,6 +426,11 @@ class Battle:
         if keys[pg.K_ESCAPE]:
             self.selection_mode = SelectionMode.General
             self.indexes[SelectionMode.General] = 0
+            self.ability_data = None
+            self.selection_side = 'player'
+            self.reset_monster_highlight(self.player_sprites.sprites())
+            self.reset_monster_highlight(self.battle_sprites.sprites())
+            self.current_monster.set_highlight(True, False)
 
     def update(self, dt: float) -> None:
         self.input()

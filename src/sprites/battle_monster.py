@@ -12,8 +12,8 @@ BORDER_WIDTH = 2
 class BattleMonster(pg.sprite.Sprite):
     def __init__(
         self, id: int, pos: tuple[float, float], monster: Monster,
-        frames: dict[str, list[pg.Surface]], outlines: dict[str, list[pg.Surface]],
-        entity: str, fonts: dict[str, pg.Font], groups
+        frames: dict[str, list[pg.Surface]], attack_frames: dict[str, list[pg.Surface]],
+        outlines: dict[str, list[pg.Surface]], entity: str, fonts: dict[str, pg.Font], groups
     ) -> None:
         super().__init__(groups)
 
@@ -30,6 +30,11 @@ class BattleMonster(pg.sprite.Sprite):
 
         self.main_rect = pg.FRect((0, 0), (MAIN_RECT_WIDTH, MAIN_RECT_HEIGHT))
         self.main_rect.center = pos
+
+        self.attacked = False
+        self.attack_frames = attack_frames
+        self.attack_animation = ''
+        self.attacked_frame_index = 0
 
         self.highlight = False
         self.shine = False
@@ -50,11 +55,30 @@ class BattleMonster(pg.sprite.Sprite):
     def frame_length(self) -> int:
         return len(self.frames[self.state])
 
+    def animate_attack(self) -> None:
+        self.state = 'attack'
+        self.frame_index = 0
+
+    def animate_attacked(self, attack_animation) -> None:
+        self.attack_animation = attack_animation
+        self.attacked = True
+        self.frame_index = 0
+
     def animate(self, dt: float) -> None:
         self.frame_index += self.animation_speed * dt
 
+        # only animate attack for one frame cycle
+        if self.state == 'attack' and self.frame_index >= self.frame_length():
+            self.state = 'idle'
+
         if self.frame_index > self.frame_length():
             self.frame_index = 0
+
+        if self.attacked:
+            self.attacked_frame_index += self.animation_speed * dt
+
+            if self.attacked_frame_index > len(self.attack_frames[self.attack_animation]):
+                self.attacked = False
 
     def draw_name(self) -> pg.FRect:
         # draw name
@@ -190,6 +214,12 @@ class BattleMonster(pg.sprite.Sprite):
 
         if not self.shine:
             self.screen.blit(frame, frame_rect)
+
+        if self.attacked:
+            index = int(self.attacked_frame_index)
+            attack_frame = self.attack_frames[self.attack_animation][index]
+            attack_frame_rect = attack_frame.get_rect(center=frame_rect.center)
+            self.screen.blit(attack_frame, attack_frame_rect)
 
         self.draw_stats(frame_rect)
 

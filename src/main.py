@@ -68,8 +68,9 @@ class Game:
             self.player_monsters, self.monster_frames, self.ui_icons, self.fonts
         )
         self.battle: Battle | None = Battle(
-            self.player_monsters, self.dummy_monsters, self.monster_frames,
-            self.ui_icons, self.battle_backgrounds['sand'], self.fonts
+            self.player_monsters, self.dummy_monsters,
+            self.monster_frames, self.ui_icons, self.attack_frames,
+            self.battle_backgrounds['sand'], self.fonts
         )
 
         # self.battle = None
@@ -100,6 +101,8 @@ class Game:
         self.ui_icons = import_folder_dict('graphics', 'ui')
 
         self.battle_backgrounds = import_folder_dict('graphics', 'backgrounds')
+
+        self.attack_frames = import_attacks(4, 1,  'graphics', 'attacks')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         # todo: correct player position after world change
