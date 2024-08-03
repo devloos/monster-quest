@@ -5,6 +5,7 @@ from sprites.battle_monster import BattleMonster
 from game_data import ABILITY_DATA, ELEMENT_DATA
 from util.draw import draw_bar
 from random import randint
+from threading import Timer
 
 
 class SelectionMode(IntEnum):
@@ -111,16 +112,16 @@ class Battle:
                 if battle_monster in self.player_sprites:
                     self.selection_mode = SelectionMode.General
 
-    def available_monsters(self) -> list[Monster]:
+    def available_monsters(self, battle_sprites: BattleGroup, entity: str) -> list[Monster]:
         available_monsters = []
         battle_monsters = []
 
         battle_monster: BattleMonster
 
-        for battle_monster in self.player_sprites.sprites():
+        for battle_monster in battle_sprites.sprites():
             battle_monsters.append(battle_monster.monster)
 
-        for monster in self.monster_data[PLAYER]:
+        for monster in self.monster_data[entity]:
             if monster.health <= 0 or monster in battle_monsters:
                 continue
 
@@ -229,7 +230,8 @@ class Battle:
 
         monster: Monster
 
-        for index, monster in enumerate(self.available_monsters()[starting_index:], starting_index):
+        available_monsters = self.available_monsters(self.player_sprites, PLAYER)
+        for index, monster in enumerate(available_monsters[starting_index:], starting_index):
             visible_index = index - starting_index
 
             item_rect = pg.FRect(
@@ -338,13 +340,27 @@ class Battle:
         for battle_monster in battle_monsters:
             battle_monster.set_highlight(False, False)
 
+    def kill_enemy_monster(self, battle_monster: BattleMonster) -> None:
+        id = battle_monster.id
+
+        if self.available_monsters(self.enemy_sprites, ENEMY):
+            monster = self.available_monsters(self.enemy_sprites, ENEMY)[0]
+            self.create_battle_monster(id, monster, id, ENEMY)
+
+        battle_monster.kill()
+
     def check_death(self) -> None:
         battle_monster: BattleMonster
         for battle_monster in self.battle_sprites.sprites():
+            # monster did not die keep moving
+            if battle_monster.monster.health > 0:
+                continue
+
             if battle_monster in self.player_sprites.sprites():
                 pass
             else:
-                battle_monster.kill()
+                timer = Timer(0.3, self.kill_enemy_monster, (battle_monster,))
+                timer.start()
 
     def input(self) -> None:
         if self.current_monster == None or self.selection_mode == None:
@@ -360,7 +376,7 @@ class Battle:
                 length = len(self.current_monster.monster.get_abilities(account_ep=True))
 
             case SelectionMode.Switch:
-                length = len(self.available_monsters())
+                length = len(self.available_monsters(self.player_sprites, PLAYER))
 
             case SelectionMode.Target:
                 battle_monsters: list[BattleMonster]
@@ -429,7 +445,7 @@ class Battle:
 
             if self.selection_mode == SelectionMode.Switch:
                 id = self.current_monster.id
-                monsters = self.available_monsters()
+                monsters = self.available_monsters(self.player_sprites, PLAYER)
                 self.create_battle_monster(
                     id, monsters[self.indexes[SelectionMode.Switch]], id, PLAYER
                 )

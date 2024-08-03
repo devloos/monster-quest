@@ -60,6 +60,7 @@ class Game:
             Monster('Finsta', 16),
             Monster('Charmadillo', 13),
             Monster('Atrox', 10),
+            Monster('Cindrill', 13),
         ]
 
         # overlay
