@@ -2,7 +2,7 @@ from settings import *
 from util.support import calculate_monster_outlines, flip_surfaces
 from monster import Monster
 from sprites.battle_monster import BattleMonster
-from game_data import ATTACK_DATA
+from game_data import ABILITY_DATA, ELEMENT_DATA
 from util.draw import draw_bar
 from random import randint
 
@@ -189,7 +189,7 @@ class Battle:
             ability_rect = ability_surf.get_rect(topleft=item_rect.topleft + vector(8, 3))
             self.screen.blit(ability_surf, ability_rect)
 
-            ability_data = ATTACK_DATA[ability]
+            ability_data = ABILITY_DATA[ability]
 
             element_surf = self.fonts['small'].render(
                 ability_data['element'], False, COLORS['dark']
@@ -389,10 +389,18 @@ class Battle:
                     self.current_monster.animate_attack()
                     enemy_monster.animate_attacked(self.ability_data['animation'])
 
-                    attack_multiplier = self.current_monster.monster.get_stat('attack')
-                    amount = self.ability_data['amount'] * attack_multiplier
+                    attack_element = self.ability_data['element']
+                    target_element = enemy_monster.monster.element
 
-                    enemy_monster.monster.health -= amount
+                    amount = self.ability_data['amount']
+
+                    if target_element in ELEMENT_DATA[attack_element]['buff']:
+                        amount *= 2
+                    elif target_element in ELEMENT_DATA[attack_element]['nerf']:
+                        amount /= 2
+
+                    attack_multiplier = enemy_monster.monster.get_stat('attack')
+                    enemy_monster.monster.health -= amount * attack_multiplier
 
                     self.current_monster.monster.energy -= self.ability_data['cost']
 
@@ -404,7 +412,7 @@ class Battle:
             if self.selection_mode == SelectionMode.Attacks:
                 abilities = self.current_monster.monster.get_abilities(account_ep=True)
                 ability = abilities[self.indexes[SelectionMode.Attacks]]
-                self.ability_data = ATTACK_DATA[ability]
+                self.ability_data = ABILITY_DATA[ability]
 
                 self.selection_mode = SelectionMode.Target
                 self.selection_side = self.ability_data['target']

@@ -1,7 +1,7 @@
 from game_data import MONSTER_DATA
 from util.imports import import_image
 from random import randint
-from game_data import ATTACK_DATA
+from game_data import ABILITY_DATA
 
 
 class Monster:
@@ -13,12 +13,7 @@ class Monster:
         self.base_stats = MONSTER_DATA[self.name]['stats']
         self.abilities: dict[int, str] = MONSTER_DATA[self.name]['abilities']
         self.health = self.base_stats['max_health'] * self.level
-        self.health -= randint(0, 150)
-        self.health = max(0, self.health)
-
         self.energy = self.base_stats['max_energy'] * self.level
-        self.energy -= randint(0, 50)
-        self.energy = max(0, self.energy)
 
         self.recharge = 0
         self.paused = False
@@ -51,7 +46,7 @@ class Monster:
             if self.level >= lvl:
                 available_abilities.append(name)
 
-            if account_ep and self.energy < ATTACK_DATA[name]['cost']:
+            if account_ep and self.energy < ABILITY_DATA[name]['cost']:
                 available_abilities.pop()
 
         return available_abilities

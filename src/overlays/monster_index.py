@@ -2,7 +2,7 @@ from settings import *
 from monster import Monster
 from util.draw import draw_bar
 from util.imports import import_folder_dict
-from game_data import ATTACK_DATA
+from game_data import ABILITY_DATA
 
 
 class MonsterIndex:
@@ -390,7 +390,7 @@ class MonsterIndex:
                         vector(0, row * ability_height)
 
             pg.draw.rect(
-                self.screen, COLORS[ATTACK_DATA[name]['element']],
+                self.screen, COLORS[ABILITY_DATA[name]['element']],
                 ability_bg_rect, border_radius=12
             )
 
