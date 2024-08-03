@@ -100,6 +100,7 @@ class Battle:
         for battle_monster in self.battle_sprites.sprites():
             battle_monster.monster.paused = paused
 
+    # logic
     def check_active(self) -> None:
         battle_monster: BattleMonster
         for battle_monster in self.battle_sprites.sprites():
@@ -129,6 +130,61 @@ class Battle:
 
         return available_monsters
 
+    def reset_selection(self, selection: SelectionMode) -> None:
+        self.current_monster.set_highlight(False)
+        self.current_monster = None
+        self.indexes[selection] = 0
+        self.selection_mode = None
+        self.ability_data = None
+        self.update_battle_monsters('resume')
+
+    def selected_general_option(self) -> None:
+        ATTACKS = 0
+        DEFEND = 1
+        SWITCH = 2
+        CATCH = 3
+
+        index = self.indexes[SelectionMode.General]
+
+        if index == ATTACKS:
+            self.selection_mode = SelectionMode.Attacks
+        elif index == DEFEND:
+            self.reset_selection(SelectionMode.General)
+        elif index == SWITCH:
+            self.selection_mode = SelectionMode.Switch
+        elif index == CATCH:
+            self.selection_mode = SelectionMode.Target
+
+    def reset_monster_highlight(self, battle_monsters: list[BattleMonster]) -> None:
+        for battle_monster in battle_monsters:
+            battle_monster.set_highlight(False, False)
+
+    def kill_enemy_monster(self, battle_monster: BattleMonster) -> None:
+        id = battle_monster.id
+
+        if self.available_monsters(self.enemy_sprites, ENEMY):
+            monster = self.available_monsters(self.enemy_sprites, ENEMY)[0]
+            monster.paused = True
+            self.create_battle_monster(id, monster, id, ENEMY)
+
+        battle_monster.kill()
+
+    def check_death(self) -> None:
+        battle_monster: BattleMonster
+        for battle_monster in self.battle_sprites.sprites():
+            # monster did not die keep moving
+            if battle_monster.monster.health > 0:
+                continue
+
+            battle_monster.monster.health = 0
+
+            if battle_monster in self.player_sprites.sprites():
+                pass
+            else:
+                timer = Timer(0.6, self.kill_enemy_monster, (battle_monster,))
+                timer.start()
+
+    # draw ui
     def draw_general(self) -> None:
         for index, data in enumerate(BATTLE_CHOICES['full'].values()):
             ui_name = data['icon']
@@ -310,57 +366,6 @@ class Battle:
 
             case SelectionMode.Switch:
                 self.draw_switch()
-
-    def reset_selection(self, selection: SelectionMode) -> None:
-        self.current_monster.set_highlight(False)
-        self.current_monster = None
-        self.indexes[selection] = 0
-        self.selection_mode = None
-        self.ability_data = None
-        self.update_battle_monsters('resume')
-
-    def selected_general_option(self) -> None:
-        ATTACKS = 0
-        DEFEND = 1
-        SWITCH = 2
-        CATCH = 3
-
-        index = self.indexes[SelectionMode.General]
-
-        if index == ATTACKS:
-            self.selection_mode = SelectionMode.Attacks
-        elif index == DEFEND:
-            self.reset_selection(SelectionMode.General)
-        elif index == SWITCH:
-            self.selection_mode = SelectionMode.Switch
-        elif index == CATCH:
-            self.selection_mode = SelectionMode.Target
-
-    def reset_monster_highlight(self, battle_monsters: list[BattleMonster]) -> None:
-        for battle_monster in battle_monsters:
-            battle_monster.set_highlight(False, False)
-
-    def kill_enemy_monster(self, battle_monster: BattleMonster) -> None:
-        id = battle_monster.id
-
-        if self.available_monsters(self.enemy_sprites, ENEMY):
-            monster = self.available_monsters(self.enemy_sprites, ENEMY)[0]
-            self.create_battle_monster(id, monster, id, ENEMY)
-
-        battle_monster.kill()
-
-    def check_death(self) -> None:
-        battle_monster: BattleMonster
-        for battle_monster in self.battle_sprites.sprites():
-            # monster did not die keep moving
-            if battle_monster.monster.health > 0:
-                continue
-
-            if battle_monster in self.player_sprites.sprites():
-                pass
-            else:
-                timer = Timer(0.3, self.kill_enemy_monster, (battle_monster,))
-                timer.start()
 
     def input(self) -> None:
         if self.current_monster == None or self.selection_mode == None:

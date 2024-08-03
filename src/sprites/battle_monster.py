@@ -62,7 +62,7 @@ class BattleMonster(pg.sprite.Sprite):
     def animate_attacked(self, attack_animation) -> None:
         self.attack_animation = attack_animation
         self.attacked = True
-        self.frame_index = 0
+        self.attacked_frame_index = 0
 
     def animate(self, dt: float) -> None:
         self.frame_index += self.animation_speed * dt
