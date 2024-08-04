@@ -3,6 +3,7 @@ from __future__ import annotations
 from settings import *
 from sprites.entity import Entity
 from typing import TYPE_CHECKING
+from monster import Monster
 
 if TYPE_CHECKING:
     from textures.texture import Texture
@@ -11,13 +12,13 @@ if TYPE_CHECKING:
 class Player(Entity):
     def __init__(
         self, pos, frames: dict, state: str,
-        shadow: pg.Surface, alert: pg.Surface,
+        shadow: pg.Surface, alert: pg.Surface, monsters: list[Monster],
         collision_group: list[pg.sprite.Sprite], groups
     ) -> None:
-        super().__init__(pos, frames, state, shadow, alert, groups)
+        super().__init__(pos, frames, state, shadow, alert, groups, 'player')
 
+        self.monsters = monsters
         self.collision_group = collision_group
-        self.blocked = False
         self.alerted = False
 
     def input(self):
@@ -117,9 +118,7 @@ class Player(Entity):
 
         return vector(x, y)
 
-    def block(self) -> None:
-        self.blocked = True
-        self.direction = vector()
-
-    def unblock(self) -> None:
-        self.blocked = False
+    def heal_monsters(self) -> None:
+        for monster in self.monsters:
+            monster.health = monster.get_stat('max_health')
+            monster.energy = monster.get_stat('max_energy')

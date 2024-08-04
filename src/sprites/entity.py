@@ -5,7 +5,7 @@ from abc import ABCMeta, abstractmethod
 class Entity(pg.sprite.Sprite):
     __metaclass__ = ABCMeta
 
-    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, shadow: pg.Surface, alert: pg.Surface, groups) -> None:
+    def __init__(self, pos, frames: dict[str, list[pg.Surface]], state: str, shadow: pg.Surface, alert: pg.Surface, groups, name: str) -> None:
         super().__init__(groups)
 
         self.screen = pg.display.get_surface()
@@ -15,6 +15,7 @@ class Entity(pg.sprite.Sprite):
 
         self.state = state
         self.direction = vector()
+        self.name = name
 
         self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(center=pos)
@@ -24,6 +25,8 @@ class Entity(pg.sprite.Sprite):
 
         self.z = WorldLayer.main
         self.hitbox = self.rect.inflate(-(self.rect.width / 2), -60)
+
+        self.blocked = False
 
     @abstractmethod
     def draw(self, offset: vector) -> None:
@@ -46,6 +49,13 @@ class Entity(pg.sprite.Sprite):
 
         index = int(self.frame_index) % len(self.frames[state])
         self.image = self.frames[state][index]
+
+    def block(self) -> None:
+        self.blocked = True
+        self.direction = vector()
+
+    def unblock(self) -> None:
+        self.blocked = False
 
     def get_y_sort(self) -> float:
         return self.rect.centery

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from random import choice
 from util.timer import Timer
 from time import time
+from monster import Monster
 
 if TYPE_CHECKING:
     from overlays.dialog import DialogTree
@@ -20,7 +21,7 @@ class Character(Entity):
         font: pg.Font, shadow: pg.Surface, alert: pg.Surface,
         collision_group: pg.sprite.Group, groups
     ) -> None:
-        super().__init__(pos, frames, state, shadow, alert, groups)
+        super().__init__(pos, frames, state, shadow, alert, groups, 'character')
 
         self.character_data = character_data
         self.radius = radius
@@ -28,8 +29,14 @@ class Character(Entity):
         self.dialog_tree = dialog_tree
         self.font = font
         self.has_moved = False
-        self.can_rotate = True
+        self.is_nurse = self.character_data['is_nurse']
         self.can_alert_player = self.character_data['can_alert_player']
+        self.biome = self.character_data['biome']
+
+        self.monsters: list[Monster] = []
+
+        for (monster_name, level) in self.character_data['monsters'].values():
+            self.monsters.append(Monster(monster_name, level))
 
         self.timers = {
             'look_around': Timer(
@@ -66,10 +73,12 @@ class Character(Entity):
         if check_connection(self.radius, self, self.player) and self.has_line_of_sight() and not self.has_moved:
             self.player.face_target_pos(self.rect.center)
             self.player.block()
+            self.block()
+
             self.dialog_tree.block()
             self.dialog_tree.in_dialog = True
             self.player.alerted = True
-            self.can_rotate = False
+
             self.start_move()
 
     def move(self, dt: float) -> None:
@@ -102,7 +111,7 @@ class Character(Entity):
         return True
 
     def choose_random_state(self) -> None:
-        if self.can_rotate:
+        if not self.blocked:
             self.state = choice(self.character_data['directions'])
 
     def update_timers(self) -> None:

@@ -221,7 +221,7 @@ class MonsterIndex:
         )
 
         energy_bar_text_surf = self.fonts['regular'].render(
-            f'EP: {monster.energy}/{monster.get_stat('max_energy')}',
+            f'EP: {int(monster.energy)}/{monster.get_stat('max_energy')}',
             False, COLORS['white']
         )
         energy_bar_text_rect = energy_bar_text_surf.get_frect(
@@ -244,7 +244,7 @@ class MonsterIndex:
         )
 
         health_bar_text_surf = self.fonts['regular'].render(
-            f'HP: {monster.health}/{monster.get_stat('max_health')}',
+            f'HP: {int(monster.health)}/{monster.get_stat('max_health')}',
             False, COLORS['white']
         )
         health_bar_text_rect = health_bar_text_surf.get_frect(

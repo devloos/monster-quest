@@ -49,32 +49,36 @@ class Game:
             Monster('Larvea', 30),
             Monster('Jacana', 12),
             Monster('Pouch', 4),
-            Monster('Charmadillo', 30),
-            Monster('Finsta', 16),
-            Monster('Draem', 23),
-            Monster('Cleaf', 20),
-            Monster('Cindrill', 14)
+            # Monster('Charmadillo', 30),
+            # Monster('Finsta', 16),
+            # Monster('Draem', 23),
+            # Monster('Cleaf', 20),
+            # Monster('Cindrill', 14)
         ]
 
-        self.dummy_monsters = [
-            Monster('Finsta', 16),
-            Monster('Charmadillo', 25),
-            Monster('Atrox', 10),
-            Monster('Cindrill', 13),
-        ]
+        for monster in self.player_monsters:
+            monster.health -= 30
+            monster.energy -= 20
+
+        # self.dummy_monsters = [
+        #     Monster('Finsta', 100),
+        #     Monster('Charmadillo', 100),
+        #     Monster('Atrox', 100),
+        #     Monster('Cindrill', 13),
+        # ]
 
         # overlay
-        self.dialog_tree = DialogTree(self.render_group)
+
         self.monster_index = MonsterIndex(
             self.player_monsters, self.monster_frames, self.ui_icons, self.fonts
         )
-        self.battle: Battle | None = Battle(
-            self.player_monsters, self.dummy_monsters,
+
+        self.battle = Battle(
             self.monster_frames, self.ui_icons, self.attack_frames,
-            self.battle_backgrounds['sand'], self.fonts
+            self.battle_backgrounds, self.fonts
         )
 
-        # self.battle = None
+        self.dialog_tree = DialogTree(self.battle, self.render_group)
 
         # essentially start game
         self.setup(self.tmx_maps['world'], 'house')
@@ -175,18 +179,6 @@ class Game:
             target = (obj.properties['target'], obj.properties['pos'])
             TransitionTexture(pos, size, target, self.transition_group)
 
-        # Monsters
-        for obj in tmx_map.get_layer_by_name('Monsters'):
-            z = WorldLayer.main
-            biome = obj.properties['biome']
-
-            if biome == 'sand':
-                z = WorldLayer.bg
-
-            MonsterPatchTexture(
-                (obj.x, obj.y), obj.image, z, biome, self.render_group
-            )
-
         SHADOW = import_image('graphics', 'other', 'shadow')
         ALERT = import_image('graphics', 'ui', 'alert')
         # Entities
@@ -202,6 +194,7 @@ class Game:
                     state,
                     SHADOW,
                     ALERT,
+                    self.player_monsters,
                     self.collision_group,
                     self.render_group
                 )
@@ -227,8 +220,23 @@ class Game:
                     groups
                 )
 
+        # Monsters
+        for obj in tmx_map.get_layer_by_name('Monsters'):
+            z = WorldLayer.main
+            biome = obj.properties['biome']
+            monster_names = str(obj.properties['monsters']).split(',')
+            level = obj.properties['level']
+
+            if biome == 'sand':
+                z = WorldLayer.bg
+
+            MonsterPatchTexture(
+                (obj.x, obj.y), obj.image, z, biome, self.player,
+                monster_names, level, self.battle, self.render_group
+            )
+
     def input(self):
-        if self.dialog_tree.in_dialog or self.battle:
+        if self.dialog_tree.in_dialog or self.battle.in_progress:
             return
 
         keys = pg.key.get_just_pressed()
@@ -238,9 +246,6 @@ class Game:
 
             for character in self.character_group:
                 if check_connection(200, self.player, character):
-                    self.player.block()
-                    character.face_target_pos(self.player.rect.center)
-
                     self.dialog_tree.setup(
                         self.player, character, self.fonts['dialog']
                     )
@@ -307,7 +312,7 @@ class Game:
             if self.monster_index.opened:
                 self.monster_index.update(dt)
 
-            if self.battle:
+            if self.battle.in_progress:
                 self.battle.update(dt)
 
             self.tint_screen(dt)

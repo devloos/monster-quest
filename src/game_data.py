@@ -6,6 +6,7 @@ TRAINER_DATA = {
             'defeated': ['You are very strong!', 'Let\'s fight again sometime?']},
         'directions': ['down'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -16,6 +17,7 @@ TRAINER_DATA = {
             'defeated': ['May the force be with you']},
         'directions': ['left', 'down'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -26,6 +28,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['left', 'right', 'up', 'down'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -36,6 +39,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -46,6 +50,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['up', 'right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -56,6 +61,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss', 'It\'s so cold in here']},
         'directions': ['down'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -66,6 +72,7 @@ TRAINER_DATA = {
             'defeated': ['Maybe I should check a vulcano...', 'It\'s so cold in here']},
         'directions': ['right'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -76,6 +83,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -86,6 +94,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -96,6 +105,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -106,6 +116,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -116,6 +127,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'forest'
     },
@@ -126,6 +138,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['left'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -136,6 +149,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -146,6 +160,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['left'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -156,6 +171,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -166,6 +182,7 @@ TRAINER_DATA = {
             'defeated': ['Good luck with the boss!']},
         'directions': ['left'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -176,6 +193,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['down'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'ice'
     },
@@ -186,6 +204,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -196,6 +215,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['right', 'left'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -206,6 +226,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['right', 'left'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -216,6 +237,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['up', 'right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -226,6 +248,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['left'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -236,6 +259,7 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['right'],
         'can_alert_player': True,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
@@ -246,13 +270,16 @@ TRAINER_DATA = {
             'defeated': ['Congratultion!']},
         'directions': ['down'],
         'can_alert_player': False,
+        'is_nurse': False,
         'defeated': False,
         'biome': 'sand'
     },
     'Nurse': {
+        'monsters': {},
         'direction': 'down',
         'radius': 0,
         'can_alert_player': False,
+        'is_nurse': True,
         'dialog': {
             'default': ['Welcome to the hospital', 'Your monsters have been healed'],
             'defeated': None},

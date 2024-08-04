@@ -6,6 +6,7 @@ from game_data import ABILITY_DATA, ELEMENT_DATA
 from util.draw import draw_bar
 from random import choice, uniform, randint
 from threading import Timer
+from typing import Callable
 
 
 class SelectionMode(IntEnum):
@@ -30,21 +31,32 @@ class BattleGroup(pg.sprite.Group):
 
 class Battle:
     def __init__(
-        self, player_monsters: list[Monster], enemy_monsters: list[Monster],
+        self,
         monster_frames: dict[str, dict[str, list[pg.Surface]]],
         ui_icons: dict[str, pg.Surface], attack_frames: dict[str, pg.Surface],
-        bg_surf: pg.Surface, fonts: dict[str, pg.Font]
+        bg_surfs: dict[str, pg.Surface], fonts: dict[str, pg.Font]
     ) -> None:
         self.screen = pg.display.get_surface()
-        self.monster_data = {
-            PLAYER: player_monsters,
-            ENEMY: enemy_monsters
-        }
         self.monster_frames = monster_frames
         self.ui_icons = ui_icons
         self.attack_frames = attack_frames
-        self.bg_surf = bg_surf
+        self.bg_surfs = bg_surfs
+        self.bg_surf: pg.Surface | None = None
         self.fonts = fonts
+
+        self.monster_outlines = calculate_monster_outlines(self.monster_frames, 4)
+
+        self.init()
+
+    def init(self) -> None:
+        self.end_battle_callback: Callable | None = None
+
+        self.in_progress = False
+
+        self.monster_data: dict[str, list[Monster]] = {
+            PLAYER: [],
+            ENEMY: []
+        }
 
         self.player_sprites = BattleGroup()
         self.battle_sprites = BattleGroup()
@@ -63,15 +75,27 @@ class Battle:
             SelectionMode.Catch: 0,
         }
 
-        self.monster_outlines = calculate_monster_outlines(self.monster_frames, 4)
+    def setup(
+        self, player_monsters: list[Monster], enemy_monsters: list[Monster],
+        biome: str, end_battle_callback: Callable | None = None
+    ) -> None:
+        self.init()
 
-        self.setup()
+        self.end_battle_callback = end_battle_callback
 
-    def setup(self) -> None:
+        self.monster_data = {
+            PLAYER: player_monsters,
+            ENEMY: enemy_monsters
+        }
+
+        self.bg_surf = self.bg_surfs[biome]
+
         for entity in (PLAYER, ENEMY):
             for index, monster in enumerate(self.monster_data[entity][:3]):
                 # we use id as index
                 self.create_battle_monster(index, monster, index, entity)
+
+        self.in_progress = True
 
     def create_battle_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> BattleMonster:
         frames: dict[str, list[pg.Surface]] = self.monster_frames[monster.name]
@@ -213,14 +237,14 @@ class Battle:
 
         battle_monster.kill()
 
+        print(self.player_sprites.sprites(), self.enemy_sprites.sprites())
+
     def check_death(self) -> None:
         battle_monster: BattleMonster
         for battle_monster in self.battle_sprites.sprites():
             # monster did not die keep moving
             if battle_monster.monster.health > 0:
                 continue
-
-            battle_monster.monster.health = 0
 
             timer: Timer | None = None
             if battle_monster in self.player_sprites.sprites():
@@ -243,7 +267,21 @@ class Battle:
 
             timer.start()
 
+    def check_end_battle(self) -> None:
+        if len(self.enemy_sprites) == 0 and self.in_progress:
+            self.in_progress = False
+
+            if self.end_battle_callback:
+                self.end_battle_callback()
+
+            print('Victory')
+
+        if len(self.player_sprites) == 0 and self.in_progress:
+            self.in_progress = False
+            print('You lost')
+
     # draw ui
+
     def draw_general(self) -> None:
         for index, data in enumerate(BATTLE_CHOICES['full'].values()):
             ui_name = data['icon']
@@ -489,6 +527,7 @@ class Battle:
 
                 if roll_dice < ten_percent_of_health:
                     self.monster_data[PLAYER].append(target_monster.monster)
+                    self.monster_data[ENEMY].remove(target_monster.monster)
 
                     timer = Timer(
                         0.6, self.force_replace_monster,
@@ -562,6 +601,11 @@ class Battle:
             self.current_monster.set_highlight(True, False)
 
     def update(self, dt: float) -> None:
+        self.check_end_battle()
+
+        if not self.in_progress:
+            return
+
         self.input()
         self.battle_sprites.update(dt)
         self.check_active()

@@ -212,7 +212,7 @@
    </properties>
    <point/>
   </object>
-  <object id="20" name="Player" x="4282.67" y="3466">
+  <object id="20" name="Player" x="4285.9" y="3449.85">
    <properties>
     <property name="direction" value="down"/>
     <property name="graphic" value="player"/>

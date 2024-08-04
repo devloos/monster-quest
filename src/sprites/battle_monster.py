@@ -48,6 +48,9 @@ class BattleMonster(pg.sprite.Sprite):
             'remove_missed_catch': Timer(600, False, False, lambda: self.set_missed_catch(False))
         }
 
+    def __repr__(self) -> str:
+        return f'BattleMonster {self.monster.name}'
+
     def set_highlight(self, value: bool, shine: bool = True) -> None:
         self.highlight = value
 

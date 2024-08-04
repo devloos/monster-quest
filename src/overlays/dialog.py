@@ -3,6 +3,7 @@ from __future__ import annotations
 from settings import *
 from util.timer import Timer
 from typing import TYPE_CHECKING
+from overlays.battle import Battle
 
 if TYPE_CHECKING:  # <-try this,
     from sprites.player import Player
@@ -59,7 +60,8 @@ class DialogSprite(pg.sprite.Sprite):
 
 
 class DialogTree:
-    def __init__(self, render_group: RenderGroup) -> None:
+    def __init__(self, battle: Battle, render_group: RenderGroup) -> None:
+        self.battle = battle
         self.render_group = render_group
 
         self.player: Player = None
@@ -78,6 +80,13 @@ class DialogTree:
     def setup(self, player: Player, character: Character, font: pg.Font) -> None:
         self.player = player
         self.character = character
+
+        self.player.block()
+        self.character.block()
+        # player faces character and character faces player
+        self.player.face_target_pos(self.character.rect.center)
+        self.character.face_target_pos(self.player.rect.center)
+
         self.font = font
 
         self.dialog = self.character.get_dialog()
@@ -92,6 +101,23 @@ class DialogTree:
         self.blocked = False
         self.await_next_tick = True
 
+    def end_battle_callback(self) -> None:
+        self.character.character_data['defeated'] = True
+        self.setup(self.player, self.character, self.font)
+
+    def end_dialog(self) -> None:
+        self.player.unblock()
+        self.character.unblock()
+        self.in_dialog = False
+
+        if self.character.is_nurse:
+            self.player.heal_monsters()
+        elif not self.character.character_data['defeated']:
+            self.battle.setup(
+                self.player.monsters, self.character.monsters,
+                self.character.biome, self.end_battle_callback
+            )
+
     def move_dialog(self) -> None:
         if (self.dialog_sprite):
             self.dialog_sprite.kill()
@@ -100,8 +126,7 @@ class DialogTree:
         self.dialog_index += 1
 
         if self.dialog_index >= len(self.dialog):
-            self.player.unblock()
-            self.in_dialog = False
+            self.end_dialog()
             return
 
         self.dialog_sprite = DialogSprite(

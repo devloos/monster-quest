@@ -44,7 +44,7 @@
    </properties>
    <point/>
   </object>
-  <object id="12" name="Character" x="286.984" y="356.13">
+  <object id="12" name="Character" x="286.984" y="391.466">
    <properties>
     <property name="character_id" value="Nurse"/>
     <property name="direction" value="down"/>

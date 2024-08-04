@@ -8,8 +8,8 @@ if TYPE_CHECKING:
     from sprites.entity import Entity
 
 
-def check_connection(radius: float, entity: Entity, character: Entity, tolerance: float = 30):
-    relation = vector(entity.rect.center) - vector(character.rect.center)
+def check_connection(radius: float, entity: Entity, target: Entity, tolerance: float = 30):
+    relation = vector(entity.rect.center) - vector(target.rect.center)
 
     if relation.length() > radius:
         return False

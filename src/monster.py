@@ -61,6 +61,12 @@ class Monster:
         else:
             self.xp += amount
 
+    def limit_stats(self) -> None:
+        self.health = max(0, min(self.health, self.get_stat('max_health')))
+        self.energy = max(0, min(self.energy, self.get_stat('max_energy')))
+
     def update(self, dt: float) -> None:
+        self.limit_stats()
+
         if not self.paused:
             self.recharge += self.get_stat('speed') * dt
