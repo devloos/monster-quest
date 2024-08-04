@@ -17,7 +17,12 @@ from overlays.monster_index import MonsterIndex
 from overlays.battle import Battle
 from overlays.transition import Transition
 from monster import Monster
-from copy import deepcopy
+
+
+class World:
+    def __init__(self, name: str, pos: str) -> None:
+        self.name = name
+        self.pos = pos
 
 
 class Game:
@@ -32,6 +37,7 @@ class Game:
 
         # transitions
         self.transition = Transition()
+        self.world = World('world', 'house')
 
         # import all assets
         self.import_assets()
@@ -67,7 +73,7 @@ class Game:
         self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
 
         # essentially start game
-        self.setup(self.tmx_maps['world'], 'house')
+        self.setup(self.tmx_maps[self.world.name], self.world.pos)
 
     def import_assets(self) -> None:
         self.tmx_maps = import_tmx_maps('data', 'maps')
@@ -96,6 +102,7 @@ class Game:
         self.attack_frames = import_attacks(4, 1,  'graphics', 'attacks')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
+        print(tmx_map, player_start_pos)
         # todo: correct player position after world change
         self.render_group.empty()
         self.collision_group.empty()
@@ -250,10 +257,11 @@ class Game:
 
         for world in self.world_group:
             if self.player.hitbox.colliderect(world.rect) and not self.transition.in_transition:
-                print(world.target)
+                self.world = World(world.target[0], world.target[1])
+
                 self.transition.start(
                     lambda: self.setup(
-                        self.tmx_maps[world.target[0]], world.target[1]
+                        self.tmx_maps[self.world.name], self.world.pos
                     )
                 )
 
