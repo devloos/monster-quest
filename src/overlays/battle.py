@@ -7,6 +7,7 @@ from util.draw import draw_bar
 from random import choice, uniform, randint
 from threading import Timer
 from typing import Callable
+from overlays.transition import Transition
 from copy import deepcopy
 
 
@@ -33,7 +34,7 @@ class BattleGroup(pg.sprite.Group):
 class Battle:
     def __init__(
         self,
-        monster_frames: dict[str, dict[str, list[pg.Surface]]],
+        monster_frames: dict[str, dict[str, list[pg.Surface]]], transition: Transition,
         ui_icons: dict[str, pg.Surface], attack_frames: dict[str, pg.Surface],
         bg_surfs: dict[str, pg.Surface], fonts: dict[str, pg.Font]
     ) -> None:
@@ -44,6 +45,7 @@ class Battle:
         self.bg_surfs = bg_surfs
         self.bg_surf: pg.Surface | None = None
         self.fonts = fonts
+        self.transition = transition
 
         self.monster_outlines = calculate_monster_outlines(self.monster_frames, 4)
 
@@ -97,6 +99,7 @@ class Battle:
                 self.create_battle_monster(index, monster, index, entity)
 
         self.in_progress = True
+        self.blocked = False
 
     def create_battle_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> BattleMonster:
         # since we reuse monster frames this should be a deep copy
@@ -270,18 +273,29 @@ class Battle:
 
             timer.start()
 
+    def player_won_helper(self) -> None:
+        self.in_progress = False
+
+        if self.end_battle_callback:
+            self.end_battle_callback()
+
+        print('Victory')
+
     def check_end_battle(self) -> None:
-        if len(self.enemy_sprites) == 0 and self.in_progress:
-            self.in_progress = False
+        if not self.in_progress or self.transition.in_transition:
+            return
 
-            if self.end_battle_callback:
-                self.end_battle_callback()
+        if len(self.enemy_sprites) == 0:
+            self.transition.start(self.player_won_helper)
 
-            print('Victory')
-
-        if len(self.player_sprites) == 0 and self.in_progress:
+        if len(self.player_sprites) == 0:
             self.in_progress = False
             print('You lost')
+
+        if not self.in_progress:
+            for _, monsters in self.monster_data.items():
+                for monster in monsters:
+                    monster.recharge = 0
 
     # draw ui
 

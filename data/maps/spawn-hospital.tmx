@@ -68,7 +68,7 @@
  <objectgroup id="5" name="Transition">
   <object id="8" x="161.333" y="699.999" width="60" height="6.66667">
    <properties>
-    <property name="pos" value="hospital"/>
+    <property name="pos" value="spawn-hospital"/>
     <property name="target" value="world"/>
    </properties>
   </object>

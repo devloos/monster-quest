@@ -4,6 +4,7 @@ from settings import *
 from util.timer import Timer
 from typing import TYPE_CHECKING
 from overlays.battle import Battle
+from overlays.transition import Transition
 
 if TYPE_CHECKING:  # <-try this,
     from sprites.player import Player
@@ -60,8 +61,9 @@ class DialogSprite(pg.sprite.Sprite):
 
 
 class DialogTree:
-    def __init__(self, battle: Battle, render_group: RenderGroup) -> None:
+    def __init__(self, battle: Battle, transition: Transition, render_group: RenderGroup) -> None:
         self.battle = battle
+        self.transition = transition
         self.render_group = render_group
 
         self.player: Player = None
@@ -113,9 +115,11 @@ class DialogTree:
         if self.character.is_nurse:
             self.player.heal_monsters()
         elif not self.character.character_data['defeated']:
-            self.battle.setup(
-                self.player.monsters, self.character.monsters,
-                self.character.biome, self.end_battle_callback
+            self.transition.start(
+                lambda: self.battle.setup(
+                    self.player.monsters, self.character.monsters,
+                    self.character.biome, self.end_battle_callback
+                )
             )
 
     def move_dialog(self) -> None:

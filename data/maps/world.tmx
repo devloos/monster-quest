@@ -184,7 +184,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="Entities">
-  <object id="12" name="Player" x="4449.28" y="3823.81">
+  <object id="12" name="Player" x="4449.28" y="3853.87">
    <properties>
     <property name="direction" value="down"/>
     <property name="graphic" value="player"/>
@@ -212,11 +212,11 @@
    </properties>
    <point/>
   </object>
-  <object id="20" name="Player" x="4285.9" y="3449.85">
+  <object id="20" name="Player" x="4287.01" y="3488.82">
    <properties>
     <property name="direction" value="down"/>
     <property name="graphic" value="player"/>
-    <property name="pos" value="hospital"/>
+    <property name="pos" value="spawn-hospital"/>
    </properties>
    <point/>
   </object>
@@ -298,7 +298,7 @@
    <properties>
     <property name="direction" value="down"/>
     <property name="graphic" value="player"/>
-    <property name="pos" value="hospital2"/>
+    <property name="pos" value="ice-hospital"/>
    </properties>
    <point/>
   </object>

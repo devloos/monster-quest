@@ -2,6 +2,7 @@ from settings import *
 from pygame import Surface
 from textures.texture import Texture
 from overlays.battle import Battle
+from overlays.transition import Transition
 from sprites.player import Player
 from util.timer import Timer
 from monster import Monster
@@ -11,7 +12,8 @@ from random import random
 class MonsterPatchTexture(Texture):
     def __init__(
         self, pos: tuple[float, float], surf: Surface, z: WorldLayer, biome: str,
-        player: Player, monster_names: list[str], level: int, battle: Battle, groups
+        player: Player, monster_names: list[str], level: int, battle: Battle,
+        transition: Transition, groups
     ) -> None:
         super().__init__(pos, surf, z, groups)
         self.biome = biome
@@ -19,6 +21,7 @@ class MonsterPatchTexture(Texture):
         self.monster_names = monster_names
         self.level = level
         self.battle = battle
+        self.transition = transition
 
         self.timer = Timer(600, True, True, self.check_collision)
 
@@ -31,7 +34,9 @@ class MonsterPatchTexture(Texture):
             for monster_name in self.monster_names:
                 monsters.append(Monster(monster_name, self.level))
 
-            self.battle.setup(self.player.monsters, monsters, self.biome)
+            self.transition.start(
+                lambda: self.battle.setup(self.player.monsters, monsters, self.biome)
+            )
 
     def update(self, _) -> None:
         self.timer.update()

@@ -7,7 +7,7 @@ from textures.texture import Texture
 from textures.animated_texture import AnimatedTexture
 from textures.monster_patch_texture import MonsterPatchTexture
 from textures.collidable_texture import CollidableTexture
-from textures.transition_texture import TransitionTexture
+from textures.world_texture import WorldTexture
 from sprites.player import Player
 from sprites.character import Character
 from groups import RenderGroup
@@ -15,7 +15,9 @@ from game_data import *
 from overlays.dialog import DialogTree
 from overlays.monster_index import MonsterIndex
 from overlays.battle import Battle
+from overlays.transition import Transition
 from monster import Monster
+from copy import deepcopy
 
 
 class Game:
@@ -28,6 +30,9 @@ class Game:
         pg.display.set_caption('Monster Quest')
         self.clock = pg.time.Clock()
 
+        # transitions
+        self.transition = Transition()
+
         # import all assets
         self.import_assets()
 
@@ -35,14 +40,7 @@ class Game:
         self.render_group = RenderGroup()
         self.collision_group = pg.sprite.Group()
         self.character_group = pg.sprite.Group()
-        self.transition_group = pg.sprite.Group()
-
-        # transitions / tint
-        self.transition_map: str
-        self.transition_pos: str
-        self.tint = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.tint_mode = 'untint'
-        self.tint_progress = 0
+        self.world_group = pg.sprite.Group()
 
         self.player_monsters = [
             Monster('Friolera', 28),
@@ -56,29 +54,17 @@ class Game:
             # Monster('Cindrill', 14)
         ]
 
-        for monster in self.player_monsters:
-            monster.health -= 30
-            monster.energy -= 20
-
-        # self.dummy_monsters = [
-        #     Monster('Finsta', 100),
-        #     Monster('Charmadillo', 100),
-        #     Monster('Atrox', 100),
-        #     Monster('Cindrill', 13),
-        # ]
-
         # overlay
-
         self.monster_index = MonsterIndex(
             self.player_monsters, self.monster_frames, self.ui_icons, self.fonts
         )
 
         self.battle = Battle(
-            self.monster_frames, self.ui_icons, self.attack_frames,
+            self.monster_frames, self.transition, self.ui_icons, self.attack_frames,
             self.battle_backgrounds, self.fonts
         )
 
-        self.dialog_tree = DialogTree(self.battle, self.render_group)
+        self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
 
         # essentially start game
         self.setup(self.tmx_maps['world'], 'house')
@@ -114,7 +100,7 @@ class Game:
         self.render_group.empty()
         self.collision_group.empty()
         self.character_group.empty()
-        self.transition_group.empty()
+        self.world_group.empty()
 
         # Terrain
         for layer in ['Terrain', 'Terrain Top']:
@@ -172,12 +158,12 @@ class Game:
                 self.collision_group
             )
 
-        # Transitions
+        # Worlds
         for obj in tmx_map.get_layer_by_name('Transition'):
             pos = (obj.x, obj.y)
             size = (obj.width, obj.height)
             target = (obj.properties['target'], obj.properties['pos'])
-            TransitionTexture(pos, size, target, self.transition_group)
+            WorldTexture(pos, size, target, self.world_group)
 
         SHADOW = import_image('graphics', 'other', 'shadow')
         ALERT = import_image('graphics', 'ui', 'alert')
@@ -232,7 +218,8 @@ class Game:
 
             MonsterPatchTexture(
                 (obj.x, obj.y), obj.image, z, biome, self.player,
-                monster_names, level, self.battle, self.render_group
+                monster_names, level, self.battle,
+                self.transition, self.render_group
             )
 
     def input(self):
@@ -258,35 +245,17 @@ class Game:
             self.monster_index.opened = False
             self.player.blocked = False
 
-    def check_transitions(self) -> None:
-        transition: TransitionTexture
+    def check_world_change(self) -> None:
+        world: WorldTexture
 
-        for transition in self.transition_group:
-            if self.player.hitbox.colliderect(transition.rect):
-                self.player.block()
-                self.transition_map = transition.target[0]
-                self.transition_pos = transition.target[1]
-                self.tint_mode = 'tint'
-
-    def tint_screen(self, dt) -> None:
-        speed = 600
-
-        if self.tint_mode == 'tint':
-            self.tint_progress += speed * dt
-        elif self.tint_mode == 'untint':
-            self.tint_progress -= speed * dt
-
-        self.tint_progress = max(0, min(255, self.tint_progress))
-
-        if self.tint_progress == 255 and self.transition_map in self.tmx_maps:
-            self.setup(self.tmx_maps[self.transition_map], self.transition_pos)
-            self.tint_mode = 'untint'
-            self.transition_map = None
-            self.transition_pos = None
-
-        # keep tint progress between 0 and 255
-        self.tint.set_alpha(self.tint_progress)
-        self.screen.blit(self.tint, self.tint.get_rect())
+        for world in self.world_group:
+            if self.player.hitbox.colliderect(world.rect) and not self.transition.in_transition:
+                print(world.target)
+                self.transition.start(
+                    lambda: self.setup(
+                        self.tmx_maps[world.target[0]], world.target[1]
+                    )
+                )
 
     def run(self) -> None:
         while True:
@@ -298,7 +267,7 @@ class Game:
                     exit()
 
             # handle game input
-            self.check_transitions()
+            self.check_world_change()
             self.input()
 
             # handle game logic
@@ -315,7 +284,8 @@ class Game:
             if self.battle.in_progress:
                 self.battle.update(dt)
 
-            self.tint_screen(dt)
+            if self.transition.in_transition:
+                self.transition.update(dt)
 
             pg.display.update()
 
