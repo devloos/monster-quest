@@ -112,6 +112,8 @@ class Battle:
             for state, surfs in outlines.items():
                 outlines[state] = flip_surfaces(surfs, True, False)
 
+            print('its mee')
+
         else:
             groups.append(self.enemy_sprites)
 
