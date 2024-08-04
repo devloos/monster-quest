@@ -117,7 +117,7 @@ class DialogTree:
         elif not self.character.character_data['defeated']:
             self.transition.start(
                 lambda: self.battle.setup(
-                    self.player.monsters, self.character.monsters,
+                    self.player, self.character.monsters,
                     self.character.biome, self.end_battle_callback
                 )
             )
@@ -154,6 +154,9 @@ class DialogTree:
             self.move_dialog()
 
     def update(self) -> None:
+        if self.in_dialog and self.player:
+            self.player.block()
+
         if self.timer:
             self.timer.update()
 

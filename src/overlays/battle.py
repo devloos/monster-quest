@@ -9,6 +9,7 @@ from threading import Timer
 from typing import Callable
 from overlays.transition import Transition
 from copy import deepcopy
+from sprites.player import Player
 
 
 class SelectionMode(IntEnum):
@@ -52,6 +53,7 @@ class Battle:
         self.init()
 
     def init(self) -> None:
+        self.player: Player
         self.end_battle_callback: Callable | None = None
 
         self.in_progress = False
@@ -79,15 +81,16 @@ class Battle:
         }
 
     def setup(
-        self, player_monsters: list[Monster], enemy_monsters: list[Monster],
+        self, player: Player, enemy_monsters: list[Monster],
         biome: str, end_battle_callback: Callable | None = None
     ) -> None:
         self.init()
 
+        self.player = player
         self.end_battle_callback = end_battle_callback
 
         self.monster_data = {
-            PLAYER: player_monsters,
+            PLAYER: self.player.monsters,
             ENEMY: enemy_monsters
         }
 
@@ -622,6 +625,8 @@ class Battle:
 
         if not self.in_progress:
             return
+
+        self.player.block()
 
         self.input()
         self.battle_sprites.update(dt)

@@ -35,7 +35,7 @@ class MonsterPatchTexture(Texture):
                 monsters.append(Monster(monster_name, self.level))
 
             self.transition.start(
-                lambda: self.battle.setup(self.player.monsters, monsters, self.biome)
+                lambda: self.battle.setup(self.player, monsters, self.biome)
             )
 
     def update(self, _) -> None:
