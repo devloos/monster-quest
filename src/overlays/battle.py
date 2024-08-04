@@ -7,6 +7,7 @@ from util.draw import draw_bar
 from random import choice, uniform, randint
 from threading import Timer
 from typing import Callable
+from copy import deepcopy
 
 
 class SelectionMode(IntEnum):
@@ -98,8 +99,12 @@ class Battle:
         self.in_progress = True
 
     def create_battle_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> BattleMonster:
-        frames: dict[str, list[pg.Surface]] = self.monster_frames[monster.name]
-        outlines: dict[str, list[pg.Surface]] = self.monster_outlines[monster.name]
+        # since we reuse monster frames this should be a deep copy
+        # this is because we modify the surfaces
+        frames: dict[str, list[pg.Surface]] = deepcopy(self.monster_frames[monster.name])
+        outlines: dict[str, list[pg.Surface]] = deepcopy(
+            self.monster_outlines[monster.name]
+        )
         groups = [self.battle_sprites]
         pos = NEW_BATTLE_POSITIONS[entity][pos_index]
 
@@ -111,8 +116,6 @@ class Battle:
 
             for state, surfs in outlines.items():
                 outlines[state] = flip_surfaces(surfs, True, False)
-
-            print('its mee')
 
         else:
             groups.append(self.enemy_sprites)
@@ -238,8 +241,6 @@ class Battle:
             self.create_battle_monster(id, monster, id, entity)
 
         battle_monster.kill()
-
-        print(self.player_sprites.sprites(), self.enemy_sprites.sprites())
 
     def check_death(self) -> None:
         battle_monster: BattleMonster
