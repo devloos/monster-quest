@@ -3,6 +3,7 @@ from random import uniform
 from monster import Monster
 from util.draw import draw_bar
 from util.timer import Timer
+from util.imports import import_image
 
 MAIN_RECT_WIDTH = 200
 MAIN_RECT_HEIGHT = 320
@@ -38,8 +39,13 @@ class BattleMonster(pg.sprite.Sprite):
 
         self.highlight = False
         self.shine = False
+
+        self.missed_catch_frame = import_image('graphics', 'ui', 'cross')
+        self.missed_catch = False
+
         self.timers = {
-            'remove_shine': Timer(250, False, False, self.remove_shine)
+            'remove_shine': Timer(250, False, False, self.remove_shine),
+            'remove_missed_catch': Timer(600, False, False, lambda: self.set_missed_catch(False))
         }
 
     def set_highlight(self, value: bool, shine: bool = True) -> None:
@@ -63,6 +69,12 @@ class BattleMonster(pg.sprite.Sprite):
         self.attack_animation = attack_animation
         self.attacked = True
         self.attacked_frame_index = 0
+
+    def set_missed_catch(self, value: bool) -> None:
+        self.missed_catch = value
+
+        if self.missed_catch:
+            self.timers['remove_missed_catch'].activate()
 
     def animate(self, dt: float) -> None:
         self.frame_index += self.animation_speed * dt
@@ -220,6 +232,10 @@ class BattleMonster(pg.sprite.Sprite):
             attack_frame = self.attack_frames[self.attack_animation][index]
             attack_frame_rect = attack_frame.get_rect(center=frame_rect.center)
             self.screen.blit(attack_frame, attack_frame_rect)
+
+        if self.missed_catch:
+            missed_catch_rect = self.missed_catch_frame.get_rect(center=frame_rect.center)
+            self.screen.blit(self.missed_catch_frame, missed_catch_rect)
 
         self.draw_stats(frame_rect)
 

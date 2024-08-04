@@ -4,7 +4,7 @@ from monster import Monster
 from sprites.battle_monster import BattleMonster
 from game_data import ABILITY_DATA, ELEMENT_DATA
 from util.draw import draw_bar
-from random import choice, uniform
+from random import choice, uniform, randint
 from threading import Timer
 
 
@@ -13,7 +13,8 @@ class SelectionMode(IntEnum):
     Monster = 1,
     Attacks = 2,
     Switch = 3,
-    Target = 4
+    AttackTarget = 4
+    Catch = 5
 
 
 class BattleGroup(pg.sprite.Group):
@@ -58,7 +59,8 @@ class Battle:
             SelectionMode.Monster: 0,
             SelectionMode.Attacks: 0,
             SelectionMode.Switch: 0,
-            SelectionMode.Target: 0,
+            SelectionMode.AttackTarget: 0,
+            SelectionMode.Catch: 0,
         }
 
         self.monster_outlines = calculate_monster_outlines(self.monster_frames, 4)
@@ -195,7 +197,7 @@ class Battle:
         elif index == SWITCH:
             self.selection_mode = SelectionMode.Switch
         elif index == CATCH:
-            self.selection_mode = SelectionMode.Target
+            self.selection_mode = SelectionMode.Catch
 
     def reset_monster_highlight(self, battle_monsters: list[BattleMonster]) -> None:
         for battle_monster in battle_monsters:
@@ -440,7 +442,7 @@ class Battle:
             case SelectionMode.Switch:
                 length = len(self.available_monsters(self.player_sprites, PLAYER))
 
-            case SelectionMode.Target:
+            case SelectionMode.AttackTarget:
                 battle_monsters: list[BattleMonster]
 
                 if self.selection_side == ENEMY:
@@ -453,7 +455,16 @@ class Battle:
                 # reset highlight
                 self.reset_monster_highlight(battle_monsters)
 
-                index = self.indexes[SelectionMode.Target]
+                index = self.indexes[SelectionMode.AttackTarget]
+                battle_monsters[index].set_highlight(True, False)
+
+            case SelectionMode.Catch:
+                battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
+                length = len(battle_monsters)
+
+                self.reset_monster_highlight(battle_monsters)
+                self.selection_side = ENEMY
+                index = self.indexes[SelectionMode.Catch]
                 battle_monsters[index].set_highlight(True, False)
 
         keys = pg.key.get_just_pressed()
@@ -467,7 +478,30 @@ class Battle:
         self.indexes[self.selection_mode] %= length
 
         if keys[pg.K_SPACE]:
-            if self.selection_mode == SelectionMode.Target:
+            if self.selection_mode == SelectionMode.Catch:
+                battle_monsters: list[BattleMonster] = self.enemy_sprites.sprites()
+                target_monster = battle_monsters[self.indexes[SelectionMode.Catch]]
+
+                ten_percent_of_health = int(
+                    target_monster.monster.get_stat('max_health') * 0.1
+                )
+                roll_dice = randint(0, int(target_monster.monster.health))
+
+                if roll_dice < ten_percent_of_health:
+                    self.monster_data[PLAYER].append(target_monster.monster)
+
+                    timer = Timer(
+                        0.6, self.force_replace_monster,
+                        (target_monster, self.enemy_sprites, ENEMY)
+                    )
+                    timer.start()
+                else:
+                    target_monster.set_missed_catch(True)
+
+                target_monster.set_highlight(False, False)
+                self.reset_selection(SelectionMode.Catch)
+
+            if self.selection_mode == SelectionMode.AttackTarget:
                 if self.ability_data != None:
                     battle_monsters: list[BattleMonster]
 
@@ -476,14 +510,14 @@ class Battle:
                     else:
                         battle_monsters = self.enemy_sprites.sprites()
 
-                    target_monster = battle_monsters[self.indexes[SelectionMode.Target]]
+                    target_monster = battle_monsters[self.indexes[SelectionMode.AttackTarget]]
 
                     self.perform_ability(
                         self.current_monster, target_monster, self.ability_data
                     )
 
                     target_monster.set_highlight(False, False)
-                    self.indexes[SelectionMode.Target] = 0
+                    self.indexes[SelectionMode.AttackTarget] = 0
 
                 self.reset_selection(SelectionMode.Attacks)
 
@@ -492,7 +526,7 @@ class Battle:
                 ability = abilities[self.indexes[SelectionMode.Attacks]]
                 self.ability_data = ABILITY_DATA[ability]
 
-                self.selection_mode = SelectionMode.Target
+                self.selection_mode = SelectionMode.AttackTarget
                 self.selection_side = self.ability_data['target']
 
             if self.selection_mode == SelectionMode.Switch:
@@ -507,6 +541,15 @@ class Battle:
 
             if self.selection_mode == SelectionMode.General:
                 self.selected_general_option()
+
+            self.indexes = {
+                SelectionMode.General: 0,
+                SelectionMode.Monster: 0,
+                SelectionMode.Attacks: 0,
+                SelectionMode.Switch: 0,
+                SelectionMode.AttackTarget: 0,
+                SelectionMode.Catch: 0,
+            }
 
         # testing but could become useful feature
         if keys[pg.K_ESCAPE]:
