@@ -102,7 +102,6 @@ class Game:
         self.attack_frames = import_attacks(4, 1,  'graphics', 'attacks')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
-        print(tmx_map, player_start_pos)
         # todo: correct player position after world change
         self.render_group.empty()
         self.collision_group.empty()
