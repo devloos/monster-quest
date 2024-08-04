@@ -7,7 +7,7 @@ from textures.texture import Texture
 from textures.animated_texture import AnimatedTexture
 from textures.monster_patch_texture import MonsterPatchTexture
 from textures.collidable_texture import CollidableTexture
-from textures.world_texture import WorldTexture
+from textures.world_texture import WorldTransition
 from sprites.player import Player
 from sprites.character import Character
 from groups import RenderGroup
@@ -20,9 +20,9 @@ from monster import Monster
 
 
 class World:
-    def __init__(self, name: str, pos: str) -> None:
+    def __init__(self, name: str, player_start_pos: str) -> None:
         self.name = name
-        self.pos = pos
+        self.player_start_pos = player_start_pos
 
 
 class Game:
@@ -36,7 +36,7 @@ class Game:
         self.clock = pg.time.Clock()
 
         # transitions
-        self.transition = Transition()
+        self.transition = Transition(self.block_player, self.unblock_player)
         self.world = World('world', 'house')
 
         # import all assets
@@ -46,7 +46,7 @@ class Game:
         self.render_group = RenderGroup()
         self.collision_group = pg.sprite.Group()
         self.character_group = pg.sprite.Group()
-        self.world_group = pg.sprite.Group()
+        self.world_transitions = pg.sprite.Group()
 
         self.player_monsters = [
             Monster('Friolera', 28),
@@ -73,7 +73,7 @@ class Game:
         self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
 
         # essentially start game
-        self.setup(self.tmx_maps[self.world.name], self.world.pos)
+        self.setup(self.tmx_maps[self.world.name], self.world.player_start_pos)
 
     def import_assets(self) -> None:
         self.tmx_maps = import_tmx_maps('data', 'maps')
@@ -106,7 +106,7 @@ class Game:
         self.render_group.empty()
         self.collision_group.empty()
         self.character_group.empty()
-        self.world_group.empty()
+        self.world_transitions.empty()
 
         # Terrain
         for layer in ['Terrain', 'Terrain Top']:
@@ -169,7 +169,7 @@ class Game:
             pos = (obj.x, obj.y)
             size = (obj.width, obj.height)
             target = (obj.properties['target'], obj.properties['pos'])
-            WorldTexture(pos, size, target, self.world_group)
+            WorldTransition(pos, size, target, self.world_transitions)
 
         SHADOW = import_image('graphics', 'other', 'shadow')
         ALERT = import_image('graphics', 'ui', 'alert')
@@ -228,6 +228,12 @@ class Game:
                 self.transition, self.render_group
             )
 
+    def block_player(self) -> None:
+        self.player.block()
+
+    def unblock_player(self) -> None:
+        self.player.unblock()
+
     def input(self):
         if self.dialog_tree.in_dialog or self.battle.in_progress:
             return
@@ -252,15 +258,15 @@ class Game:
             self.player.blocked = False
 
     def check_world_change(self) -> None:
-        world: WorldTexture
+        world: WorldTransition
 
-        for world in self.world_group:
+        for world in self.world_transitions:
             if self.player.hitbox.colliderect(world.rect) and not self.transition.in_transition:
                 self.world = World(world.target[0], world.target[1])
 
                 self.transition.start(
                     lambda: self.setup(
-                        self.tmx_maps[self.world.name], self.world.pos
+                        self.tmx_maps[self.world.name], self.world.player_start_pos
                     )
                 )
 
