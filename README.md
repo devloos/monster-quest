@@ -1,3 +1,7 @@
+### Demo
+
+### Summary
+
 An RPG made in Python that was inspired by Pokemon and the older Final Fantasy games.
 
 ### Getting Started
@@ -11,6 +15,8 @@ An RPG made in Python that was inspired by Pokemon and the older Final Fantasy g
 7. `python src/main.py`
 
 If you are developing make sure to toggle DEBUG true in `src/settings.py`
+
+### Contributions
 
 ### Support
 
@@ -27,12 +33,3 @@ Crack sounds: https://opengameart.org/content/5-break-crunch-impacts
 Overworld music: https://opengameart.org/content/nes-overworld-theme  
 Notice sound: https://opengameart.org/content/10-8bit-coin-sounds  
 Battle music: https://opengameart.org/content/boss-battle-1-8-bit-re-upload
-
-### Todos
-
-- readme revamp
-- post on itch io
-- trailer
-- code clean up
-- requirements.txt
-- persist data
