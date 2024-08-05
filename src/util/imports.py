@@ -178,3 +178,19 @@ def import_monster_frames(cols, rows, *path) -> dict:
                     )
 
     return monster_frames
+
+
+def import_audio(*path) -> dict[str, pg.mixer.Sound]:
+    audio: dict[str, pg.mixer.Sound] = {}
+
+    for _, _, audio_names in walk(join(*path)):
+        audio_name: str
+
+        for audio_name in audio_names:
+            normalized_name = audio_name.split('.')[0]
+            audio[normalized_name] = pg.mixer.Sound(join(*path, audio_name))
+
+            volume = 0.1 if DEBUG else 0.4
+            audio[normalized_name].set_volume(volume)
+
+    return audio

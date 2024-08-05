@@ -6,13 +6,15 @@ from util.timer import Timer
 
 class Evolution:
     def __init__(
-        self, monster_frames: dict[str, dict[str, list[pg.Surface]]], star_frames: list[pg.Surface], font: pg.Font
+        self, monster_frames: dict[str, dict[str, list[pg.Surface]]],
+        star_frames: list[pg.Surface], evolution_sound: pg.mixer.Sound, font: pg.Font
     ) -> None:
         self.screen = pg.display.get_surface()
         self.monster_frames = monster_frames
         self.star_frames = star_frames
         self.font = font
         self.in_evolution = False
+        self.evolution_sound = evolution_sound
 
         self.monster: Monster | None
         self.monster_evolution = {
@@ -64,6 +66,7 @@ class Evolution:
         )
 
         self.timers['start'].activate()
+        self.evolution_sound.play()
 
     def start_finish_timer(self) -> None:
         self.timers['finish'].activate()
@@ -84,6 +87,7 @@ class Evolution:
 
         self.monster_frame = None
         self.monster_evolution_frame = None
+        self.evolution_sound.stop()
 
     def draw_star_animation(self, dt: float) -> None:
         self.star_frame_index += 24 * dt

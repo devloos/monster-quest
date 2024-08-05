@@ -37,7 +37,7 @@ class Battle:
         self,
         monster_frames: dict[str, dict[str, list[pg.Surface]]], transition: Transition,
         ui_icons: dict[str, pg.Surface], attack_frames: dict[str, pg.Surface],
-        bg_surfs: dict[str, pg.Surface], fonts: dict[str, pg.Font]
+        bg_surfs: dict[str, pg.Surface], audio: dict[str, pg.mixer.Sound], fonts: dict[str, pg.Font]
     ) -> None:
         self.screen = pg.display.get_surface()
         self.monster_frames = monster_frames
@@ -45,6 +45,7 @@ class Battle:
         self.attack_frames = attack_frames
         self.bg_surfs = bg_surfs
         self.bg_surf: pg.Surface | None = None
+        self.audio = audio
         self.fonts = fonts
         self.transition = transition
 
@@ -81,13 +82,14 @@ class Battle:
         }
 
     def setup(
-        self, player: Player, enemy_monsters: list[Monster],
+        self, player: Player, enemy_monsters: list[Monster], monster_battle: bool,
         biome: str, end_battle_callback: Callable | None = None
     ) -> None:
         self.init()
 
         self.player = player
         self.end_battle_callback = end_battle_callback
+        self.monster_battle = monster_battle
 
         self.monster_data = {
             PLAYER: self.player.monsters,
@@ -103,6 +105,8 @@ class Battle:
 
         self.in_progress = True
         self.blocked = False
+        self.audio['overworld'].stop()
+        self.audio['battle'].play(-1)
 
     def create_battle_monster(self, id: int, monster: Monster, pos_index: int, entity: str) -> BattleMonster:
         # since we reuse monster frames this should be a deep copy
@@ -142,6 +146,8 @@ class Battle:
         battle_monster.animate_attack()
         target_monster.animate_attacked(ability_data['animation'])
 
+        self.audio[ability_data['animation']].play()
+
         attack_element = ability_data['element']
         target_element = target_monster.monster.element
 
@@ -170,7 +176,7 @@ class Battle:
     def check_active(self) -> None:
         battle_monster: BattleMonster
         for battle_monster in self.battle_sprites.sprites():
-            if battle_monster.monster.recharge >= 100:
+            if not self.current_monster and battle_monster.monster.recharge >= 100 and battle_monster.monster.health > 0:
                 self.update_battle_monsters('pause')
                 battle_monster.monster.recharge = 0
                 battle_monster.set_highlight(True)
@@ -220,7 +226,7 @@ class Battle:
     def selected_general_option(self) -> None:
         ATTACKS = 0
         DEFEND = 1
-        SWITCH = 2
+        SWITCH_OR_CATCH = 2
         CATCH = 3
 
         index = self.indexes[SelectionMode.General]
@@ -228,9 +234,13 @@ class Battle:
         if index == ATTACKS:
             self.selection_mode = SelectionMode.Attacks
         elif index == DEFEND:
+            # todo implement defend
             self.reset_selection(SelectionMode.General)
-        elif index == SWITCH:
-            self.selection_mode = SelectionMode.Switch
+        elif index == SWITCH_OR_CATCH:
+            if 'switch' in self.get_battle_choices():
+                self.selection_mode = SelectionMode.Switch
+            else:
+                self.selection_mode = SelectionMode.Catch
         elif index == CATCH:
             self.selection_mode = SelectionMode.Catch
 
@@ -276,41 +286,57 @@ class Battle:
 
             timer.start()
 
-    def player_won_helper(self) -> None:
+    def get_battle_choices(self) -> dict:
+        battle_choices = {
+            'fight':  {'icon': 'sword'},
+            'defend': {'icon': 'shield'},
+        }
+
+        if self.available_monsters(self.player_sprites, PLAYER):
+            battle_choices['switch'] = {'icon': 'arrows'}
+
+        if self.monster_battle:
+            battle_choices['catch'] = {'icon': 'hand'}
+
+        return battle_choices
+
+    def end_battle(self) -> None:
         self.in_progress = False
 
         if self.end_battle_callback:
             self.end_battle_callback()
 
-        print('Victory')
-
-    def check_end_battle(self) -> None:
-        if not self.in_progress or self.transition.in_transition:
-            return
-
-        if len(self.enemy_sprites) == 0:
-            self.transition.start(self.player_won_helper)
-
-        if len(self.player_sprites) == 0:
-            self.in_progress = False
-            print('You lost')
+        self.audio['battle'].stop()
 
         if not self.in_progress:
             for _, monsters in self.monster_data.items():
                 for monster in monsters:
                     monster.recharge = 0
 
+    def check_end_battle(self) -> None:
+        if not self.in_progress or self.transition.in_transition:
+            return
+
+        if len(self.enemy_sprites) == 0:
+            self.transition.start(self.end_battle)
+            print('Victory')
+
+        if len(self.player_sprites) == 0:
+            self.transition.start(self.end_battle)
+            print('You lost')
+
     # draw ui
 
     def draw_general(self) -> None:
-        for index, data in enumerate(BATTLE_CHOICES['full'].values()):
+
+        for index, data in enumerate(self.get_battle_choices().values()):
             ui_name = data['icon']
             if index == self.indexes[SelectionMode.General]:
                 ui_name += '_highlight'
 
             icon_surf = self.ui_icons[ui_name]
             icon_rect = icon_surf.get_frect(
-                center=self.current_monster.main_rect.midright + data['offset']
+                topleft=self.current_monster.main_rect.topright + vector(30, index * 40),
             )
             self.screen.blit(icon_surf, icon_rect)
 
@@ -492,7 +518,7 @@ class Battle:
 
         match self.selection_mode:
             case SelectionMode.General:
-                length = len(BATTLE_CHOICES['full'])
+                length = len(self.get_battle_choices())
 
             case SelectionMode.Attacks:
                 length = len(self.current_monster.monster.get_abilities(account_ep=True))
@@ -623,14 +649,12 @@ class Battle:
     def update(self, dt: float) -> None:
         self.check_end_battle()
 
-        if not self.in_progress:
-            return
+        if self.in_progress and not self.transition.in_transition:
+            self.player.block()
 
-        self.player.block()
-
-        self.input()
-        self.battle_sprites.update(dt)
-        self.check_active()
+            self.input()
+            self.battle_sprites.update(dt)
+            self.check_active()
 
         self.screen.blit(self.bg_surf, (0, 0))
         self.battle_sprites.draw()

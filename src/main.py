@@ -50,8 +50,8 @@ class Game:
         self.world_transitions = pg.sprite.Group()
 
         self.player_monsters = [
-            Monster('Friolera', 28),
-            Monster('Larvea', 4),
+            Monster('Friolera', 30),
+            Monster('Larvea', 1),
             Monster('Jacana', 12),
             Monster('Pouch', 4),
             # Monster('Charmadillo', 30),
@@ -68,12 +68,12 @@ class Game:
 
         self.battle = Battle(
             self.monster_frames, self.transition, self.ui_icons, self.attack_frames,
-            self.battle_backgrounds, self.fonts
+            self.battle_backgrounds, self.audio, self.fonts
         )
 
         self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
         self.evolution = Evolution(
-            self.monster_frames, self.star_frames, self.fonts['dialog']
+            self.monster_frames, self.star_frames, self.audio['evolution'], self.fonts['dialog']
         )
 
         # essentially start game
@@ -106,6 +106,8 @@ class Game:
         self.attack_frames = import_attacks(4, 1,  'graphics', 'attacks')
 
         self.star_frames = import_folder('graphics', 'other', 'star-animation')
+
+        self.audio = import_audio('audio')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         # todo: correct player position after world change
@@ -216,6 +218,7 @@ class Game:
                     SHADOW,
                     ALERT,
                     self.collision_group,
+                    self.audio['notice'],
                     groups
                 )
 
@@ -234,6 +237,8 @@ class Game:
                 monster_names, level, self.battle,
                 self.transition, self.render_group
             )
+
+        self.audio['overworld'].play(-1)
 
     def block_player(self) -> None:
         self.player.block()
@@ -282,6 +287,7 @@ class Game:
         index = self.player_monsters.index(monster)
         self.player_monsters[index] = monster_evolution
         self.player.unblock()
+        self.audio['overworld'].play(-1)
 
     def check_evolution(self) -> None:
         if self.evolution.in_evolution:
@@ -289,6 +295,7 @@ class Game:
 
         for monster in self.player_monsters:
             if monster.should_evolve():
+                self.audio['overworld'].stop()
                 self.player.block()
                 self.evolution.setup(monster, self.end_evolution)
 

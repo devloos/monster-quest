@@ -79,21 +79,6 @@ BATTLE_LAYERS = {
     'overlay': 4
 }
 
-BATTLE_CHOICES = {
-    'full': {
-        'fight':  {'offset': vector(30, -60), 'icon': 'sword'},
-        'defend': {'offset': vector(40, -20), 'icon': 'shield'},
-        'switch': {'offset': vector(40, 20), 'icon': 'arrows'},
-        'catch':  {'offset': vector(30, 60), 'icon': 'hand'}
-    },
-
-    'limited': {
-        'fight':  {'offset': vector(30, -40), 'icon': 'sword'},
-        'defend': {'offset': vector(40, 0), 'icon': 'shield'},
-        'switch': {'offset': vector(30, 40), 'icon': 'arrows'}
-    }
-}
-
 MAX_STATS = {
     'health': 30,
     'energy': 28,

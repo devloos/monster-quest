@@ -19,7 +19,7 @@ class Character(Entity):
         self, pos, frames: dict, state: str, character_data: dict,
         radius: float, player: Player, dialog_tree: DialogTree,
         font: pg.Font, shadow: pg.Surface, alert: pg.Surface,
-        collision_group: pg.sprite.Group, groups
+        collision_group: pg.sprite.Group, notice_sound: pg.mixer.Sound, groups
     ) -> None:
         super().__init__(pos, frames, state, shadow, alert, groups, 'character')
 
@@ -32,6 +32,7 @@ class Character(Entity):
         self.is_nurse = self.character_data['is_nurse']
         self.can_alert_player = self.character_data['can_alert_player']
         self.biome = self.character_data['biome']
+        self.notice_sound = notice_sound
 
         self.monsters: list[Monster] = []
 
@@ -71,6 +72,7 @@ class Character(Entity):
             return
 
         if check_connection(self.radius, self, self.player) and self.has_line_of_sight() and not self.has_moved:
+            self.notice_sound.play()
             self.player.face_target_pos(self.rect.center)
             self.player.block()
             self.block()

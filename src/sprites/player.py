@@ -28,16 +28,13 @@ class Player(Entity):
         if keys[pg.K_UP]:
             self.state = 'up'
             input_vector.y -= 1
-
-        if keys[pg.K_DOWN]:
+        elif keys[pg.K_DOWN]:
             self.state = 'down'
             input_vector.y += 1
-
-        if keys[pg.K_LEFT]:
+        elif keys[pg.K_LEFT]:
             self.state = 'left'
             input_vector.x -= 1
-
-        if keys[pg.K_RIGHT]:
+        elif keys[pg.K_RIGHT]:
             self.state = 'right'
             input_vector.x += 1
 
