@@ -1,8 +1,6 @@
 ### Demo
 
-https://github.com/user-attachments/assets/024a4c37-43bb-42ae-9a4a-d09bd99493de
-
-
+https://github.com/user-attachments/assets/4d35c507-c0d2-448b-9343-ef59a8a907a8
 
 ### Summary
 
