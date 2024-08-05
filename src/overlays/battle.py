@@ -234,7 +234,6 @@ class Battle:
         if index == ATTACKS:
             self.selection_mode = SelectionMode.Attacks
         elif index == DEFEND:
-            # todo implement defend
             self.reset_selection(SelectionMode.General)
         elif index == SWITCH_OR_CATCH:
             if 'switch' in self.get_battle_choices():

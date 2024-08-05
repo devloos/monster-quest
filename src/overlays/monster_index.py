@@ -53,7 +53,6 @@ class MonsterIndex:
         self.hovered_index = self.hovered_index % len(self.monsters)
 
     def draw_list_element(self, rect: pg.FRect, monster: Monster) -> None:
-        # todo: add shadow effect and border
         element = pg.Surface((60, 20), pg.SRCALPHA).convert_alpha()
         element_rect = element.get_frect(
             topleft=rect.bottomleft + vector(0, 10)

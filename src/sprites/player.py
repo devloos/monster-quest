@@ -100,8 +100,6 @@ class Player(Entity):
             self.image, self.rect.topleft + offset
         )
 
-        # todo: make monster patch better by overlaying leaf pedals
-
     def update(self, dt: float) -> None:
         if not self.blocked:
             self.input()

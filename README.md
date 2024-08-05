@@ -19,7 +19,6 @@ https://opengameart.org/content/jay-the-doggo-music
 
 ### Todos
 
-- make all todos issues LOL
 - readme revamp
 - post on itch io
 - trailer

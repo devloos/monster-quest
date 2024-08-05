@@ -105,7 +105,6 @@ class Game:
         self.audio = import_audio('audio')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
-        # todo: correct player position after world change
         self.render_group.empty()
         self.collision_group.empty()
         self.character_group.empty()
