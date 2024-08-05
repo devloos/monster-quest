@@ -5,23 +5,32 @@ from util.timer import Timer
 
 
 class Evolution:
-    def __init__(self, monster_frames: dict[str, dict[str, list[pg.Surface]]], font: pg.Font) -> None:
+    def __init__(
+        self, monster_frames: dict[str, dict[str, list[pg.Surface]]], star_frames: list[pg.Surface], font: pg.Font
+    ) -> None:
         self.screen = pg.display.get_surface()
         self.monster_frames = monster_frames
+        self.star_frames = star_frames
         self.font = font
         self.in_evolution = False
 
         self.monster: Monster | None
-        self.monster_evolution = dict | None
+        self.monster_evolution = {
+            'name': '',
+            'level': 0
+        }
         self.callback: Callable | None
         self.monster_frame: pg.Surface | None
         self.monster_frame_rect: pg.FRect | None
         self.monster_evolution_frame: pg.Surface | None
         self.monster_evolution_frame_rect: pg.FRect | None
 
+        self.monster_mask_frame: pg.Surface | None = None
+        self.monster_mask_alpha = 0
+
         self.timers = {
-            'start': Timer(1200, False, False, self.start_finish_timer),
-            'finish': Timer(1800, False, False, self.end_evolution)
+            'start': Timer(2000, False, False, self.start_finish_timer),
+            'finish': Timer(2000, False, False, self.end_evolution)
         }
 
         self.bg_tint_surf = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -35,9 +44,16 @@ class Evolution:
 
         self.monster_frame = self.monster_frames[self.monster.name]['idle'][0]
         self.monster_frame = pg.transform.scale2x(self.monster_frame)
+
+        self.monster_mask_frame = pg.mask.from_surface(self.monster_frame).to_surface()
+        self.monster_mask_frame.set_colorkey('black')
+        self.monster_mask_frame.set_alpha(0)
+
         self.monster_frame_rect = self.monster_frame.get_rect(
             center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
         )
+
+        self.monster_mask_alpha = 0
 
         self.monster_evolution_frame = self.monster_frames[self.monster_evolution['name']]['idle'][0]
         self.monster_evolution_frame = pg.transform.scale2x(self.monster_evolution_frame)
@@ -61,6 +77,9 @@ class Evolution:
         self.monster_evolution_frame_rect = None
         self.callback = None
 
+        self.monster_mask_frame = None
+        self.monster_mask_alpha = 0
+
         self.monster_frame = None
         self.monster_evolution_frame = None
 
@@ -75,8 +94,33 @@ class Evolution:
 
         if self.timers['start'].active:
             self.screen.blit(self.monster_frame, self.monster_frame_rect)
+            self.screen.blit(self.monster_mask_frame, self.monster_frame_rect)
+
+            text_surf = self.font.render(
+                f'{self.monster.name} is evolving', False, COLORS['black']
+            )
+            bg_rect = text_surf.get_rect().inflate(75, 15)
+            bg_rect.midtop = self.monster_frame_rect.midbottom + vector(0, 10)
+            text_rect = text_surf.get_rect(center=bg_rect.center)
+
+            pg.draw.rect(self.screen, COLORS['white'], bg_rect, border_radius=5)
+            self.screen.blit(text_surf, text_rect)
+
+            self.monster_mask_alpha += 100 * dt
+            self.monster_mask_frame.set_alpha(self.monster_mask_alpha)
 
         if self.timers['finish'].active:
             self.screen.blit(
                 self.monster_evolution_frame, self.monster_evolution_frame_rect
             )
+
+            text_surf = self.font.render(
+                f'{self.monster.name} evolved into {self.monster_evolution['name']}',
+                False, COLORS['black']
+            )
+            bg_rect = text_surf.get_rect().inflate(75, 15)
+            bg_rect.midtop = self.monster_evolution_frame_rect.midbottom + vector(0, 10)
+            text_rect = text_surf.get_rect(center=bg_rect.center)
+
+            pg.draw.rect(self.screen, COLORS['white'], bg_rect, border_radius=5)
+            self.screen.blit(text_surf, text_rect)

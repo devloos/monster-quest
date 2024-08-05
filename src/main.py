@@ -51,7 +51,7 @@ class Game:
 
         self.player_monsters = [
             Monster('Friolera', 28),
-            Monster('Larvea', 3),
+            Monster('Larvea', 4),
             Monster('Jacana', 12),
             Monster('Pouch', 4),
             # Monster('Charmadillo', 30),
@@ -72,7 +72,7 @@ class Game:
         )
 
         self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
-        self.evolution = Evolution(self.monster_frames, self.fonts['regular'])
+        self.evolution = Evolution(self.monster_frames, self.fonts['dialog'])
 
         # essentially start game
         self.setup(self.tmx_maps[self.world.name], self.world.player_start_pos)
