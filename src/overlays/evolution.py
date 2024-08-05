@@ -28,9 +28,11 @@ class Evolution:
         self.monster_mask_frame: pg.Surface | None = None
         self.monster_mask_alpha = 0
 
+        self.star_frame_index = 0
+
         self.timers = {
             'start': Timer(2000, False, False, self.start_finish_timer),
-            'finish': Timer(2000, False, False, self.end_evolution)
+            'finish': Timer(2300, False, False, self.end_evolution)
         }
 
         self.bg_tint_surf = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -83,6 +85,18 @@ class Evolution:
         self.monster_frame = None
         self.monster_evolution_frame = None
 
+    def draw_star_animation(self, dt: float) -> None:
+        self.star_frame_index += 24 * dt
+
+        if self.star_frame_index > len(self.star_frames):
+            return
+
+        star_frame = pg.transform.scale2x(self.star_frames[int(self.star_frame_index)])
+        star_frame_rect = star_frame.get_rect(
+            center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+        )
+        self.screen.blit(star_frame, star_frame_rect)
+
     def update_timers(self) -> None:
         for timer in self.timers.values():
             timer.update()
@@ -124,3 +138,5 @@ class Evolution:
 
             pg.draw.rect(self.screen, COLORS['white'], bg_rect, border_radius=5)
             self.screen.blit(text_surf, text_rect)
+
+            self.draw_star_animation(dt)

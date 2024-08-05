@@ -72,7 +72,9 @@ class Game:
         )
 
         self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
-        self.evolution = Evolution(self.monster_frames, self.fonts['dialog'])
+        self.evolution = Evolution(
+            self.monster_frames, self.star_frames, self.fonts['dialog']
+        )
 
         # essentially start game
         self.setup(self.tmx_maps[self.world.name], self.world.player_start_pos)
@@ -102,6 +104,8 @@ class Game:
         self.battle_backgrounds = import_folder_dict('graphics', 'backgrounds')
 
         self.attack_frames = import_attacks(4, 1,  'graphics', 'attacks')
+
+        self.star_frames = import_folder('graphics', 'other', 'star-animation')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         # todo: correct player position after world change
