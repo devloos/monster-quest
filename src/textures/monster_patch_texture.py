@@ -29,7 +29,11 @@ class MonsterPatchTexture(Texture):
         return self.rect.centery - 50
 
     def check_collision(self):
-        if not self.battle.in_progress and self.rect.collidepoint(self.player.rect.midbottom) and random() < 0.2:
+        # if moving, no battle, colliding, and random chance
+        if self.player.direction and \
+           not self.battle.in_progress and \
+           self.rect.collidepoint(self.player.rect.midbottom) \
+           and random() < 0.2:
             monsters: list[Monster] = []
             for monster_name in self.monster_names:
                 monsters.append(Monster(monster_name, self.level))

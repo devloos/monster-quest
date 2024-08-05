@@ -21,6 +21,14 @@ class Monster:
         self.xp = 0
         self.level_up = self.level * 150
 
+        self.evolution: dict | None = None
+
+        if MONSTER_DATA[self.name]['evolve']:
+            self.evolution = {
+                'name': MONSTER_DATA[self.name]['evolve'][0],
+                'level': MONSTER_DATA[self.name]['evolve'][1]
+            }
+
         self.icon = import_image('graphics', 'icons', self.name)
 
     def __repr__(self) -> str:
@@ -50,6 +58,12 @@ class Monster:
                 available_abilities.pop()
 
         return available_abilities
+
+    def should_evolve(self) -> bool:
+        if self.evolution == None:
+            return False
+
+        return self.level >= self.evolution['level']
 
     def update_xp(self, amount: float) -> None:
         # should we level up

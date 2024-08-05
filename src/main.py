@@ -16,6 +16,7 @@ from overlays.dialog import DialogTree
 from overlays.monster_index import MonsterIndex
 from overlays.battle import Battle
 from overlays.transition import Transition
+from overlays.evolution import Evolution
 from monster import Monster
 
 
@@ -50,7 +51,7 @@ class Game:
 
         self.player_monsters = [
             Monster('Friolera', 28),
-            Monster('Larvea', 30),
+            Monster('Larvea', 3),
             Monster('Jacana', 12),
             Monster('Pouch', 4),
             # Monster('Charmadillo', 30),
@@ -71,6 +72,7 @@ class Game:
         )
 
         self.dialog_tree = DialogTree(self.battle, self.transition, self.render_group)
+        self.evolution = Evolution(self.monster_frames, self.fonts['regular'])
 
         # essentially start game
         self.setup(self.tmx_maps[self.world.name], self.world.player_start_pos)
@@ -173,6 +175,7 @@ class Game:
 
         SHADOW = import_image('graphics', 'other', 'shadow')
         ALERT = import_image('graphics', 'ui', 'alert')
+
         # Entities
         for obj in tmx_map.get_layer_by_name('Entities'):
             frames = self.overworld_frames['characters'][obj.properties['graphic']]
@@ -270,6 +273,21 @@ class Game:
                     )
                 )
 
+    def end_evolution(self, monster: Monster) -> None:
+        monster_evolution = Monster(monster.evolution['name'], monster.evolution['level'])
+        index = self.player_monsters.index(monster)
+        self.player_monsters[index] = monster_evolution
+        self.player.unblock()
+
+    def check_evolution(self) -> None:
+        if self.evolution.in_evolution:
+            return
+
+        for monster in self.player_monsters:
+            if monster.should_evolve():
+                self.player.block()
+                self.evolution.setup(monster, self.end_evolution)
+
     def run(self) -> None:
         while True:
             dt = self.clock.tick() / 1000
@@ -281,6 +299,12 @@ class Game:
 
             # handle game input
             self.check_world_change()
+
+            if not self.transition.in_transition and \
+               not self.battle.in_progress and \
+               not self.dialog_tree.in_dialog:
+                self.check_evolution()
+
             self.input()
 
             # handle game logic
@@ -296,6 +320,13 @@ class Game:
 
             if self.battle.in_progress:
                 self.battle.update(dt)
+
+            if self.evolution.in_evolution and \
+               not self.transition.in_transition and \
+               not self.dialog_tree.in_dialog and \
+               not self.battle.in_progress:
+
+                self.evolution.update(dt)
 
             if self.transition.in_transition:
                 self.transition.update(dt)
