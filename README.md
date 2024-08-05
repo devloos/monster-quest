@@ -18,6 +18,9 @@ If you are developing make sure to toggle DEBUG true in `src/settings.py`
 
 ### Contributions
 
+Contributions are welcomed! Make sure to follow existing patterns and code style.
+For formatting I use: [autopep8](https://marketplace.visualstudio.com/items?itemName=ms-python.autopep8)
+
 ### Support
 
 Huge thank you to [Clear Code](https://github.com/clear-code-projects) for laying the foundation.
