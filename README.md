@@ -4,7 +4,9 @@ https://github.com/user-attachments/assets/eea73d39-4e30-40ec-a589-e1f196c36fdc
 
 ### Summary
 
-An RPG made in Python that was inspired by Pokemon and the older Final Fantasy games.
+This RPG, created in Python, draws inspiration from Pokémon and classic Final Fantasy games.
+Developed using pygame-ce, an SDL wrapper, it's a project for self-education rather than a serious release.
+I aim to upload it on itch.io for a more accessible demo experience.
 
 ### Getting Started
 
