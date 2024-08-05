@@ -307,6 +307,7 @@ class Battle:
             self.end_battle_callback()
 
         self.audio['battle'].stop()
+        self.audio['overworld'].play(-1)
 
         if not self.in_progress:
             for _, monsters in self.monster_data.items():

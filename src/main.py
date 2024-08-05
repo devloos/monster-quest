@@ -51,14 +51,9 @@ class Game:
 
         self.player_monsters = [
             Monster('Friolera', 30),
-            Monster('Larvea', 1),
+            Monster('Larvea', 3),
             Monster('Jacana', 12),
             Monster('Pouch', 4),
-            # Monster('Charmadillo', 30),
-            # Monster('Finsta', 16),
-            # Monster('Draem', 23),
-            # Monster('Cleaf', 20),
-            # Monster('Cindrill', 14)
         ]
 
         # overlay
@@ -238,7 +233,10 @@ class Game:
                 self.transition, self.render_group
             )
 
-        self.audio['overworld'].play(-1)
+        self.audio['overworld'].stop()
+
+        if self.world.name == 'world':
+            self.audio['overworld'].play(-1)
 
     def block_player(self) -> None:
         self.player.block()

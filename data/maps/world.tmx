@@ -1725,42 +1725,42 @@
   <object id="34" gid="242" x="4096" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="35" gid="242" x="4032" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="36" gid="242" x="3968" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="37" gid="242" x="3968" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="38" gid="242" x="4032" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="39" gid="242" x="4096" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
@@ -2404,112 +2404,112 @@
   <object id="611" gid="242" x="4288" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="612" gid="242" x="4224" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="613" gid="242" x="4160" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="614" gid="242" x="4160" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="615" gid="242" x="4224" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="616" gid="242" x="4288" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="617" gid="242" x="4480" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="618" gid="242" x="4416" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="619" gid="242" x="4352" y="4096" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="620" gid="242" x="4352" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="621" gid="242" x="4416" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="622" gid="242" x="4480" y="4160" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="623" gid="242" x="4288" y="4032" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="624" gid="242" x="4480" y="4032" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="625" gid="242" x="4416" y="4032" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
   <object id="626" gid="242" x="4352" y="4032" width="64" height="64">
    <properties>
     <property name="biome" value="forest"/>
-    <property name="level" type="int" value="40"/>
+    <property name="level" type="int" value="10"/>
     <property name="monsters" value="Atrox,Pouch"/>
    </properties>
   </object>
