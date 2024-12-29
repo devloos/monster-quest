@@ -1,9 +1,9 @@
-from settings import *
+from src.settings import *
 from random import uniform
-from monster import Monster
-from util.draw import draw_bar
-from util.timer import Timer
-from util.imports import import_image
+from src.monster import Monster
+from src.util.draw import draw_bar
+from src.util.timer import Timer
+from src.util.imports import import_image
 
 MAIN_RECT_WIDTH = 200
 MAIN_RECT_HEIGHT = 320
@@ -100,8 +100,10 @@ class BattleMonster(pg.sprite.Sprite):
         name_surf = self.fonts['regular'].render(
             self.monster.name, False, COLORS['dark']
         )
+        name_rect = name_surf.get_frect()
+
         name_bg_rect = pg.FRect(
-            (self.main_rect.topleft), (MAIN_RECT_WIDTH, name_surf.height + 3)
+            (self.main_rect.topleft), (MAIN_RECT_WIDTH, name_rect.height + 3)
         )
         name_rect = name_surf.get_rect(center=name_bg_rect.center)
 
@@ -118,8 +120,11 @@ class BattleMonster(pg.sprite.Sprite):
         level_surf = self.fonts['small'].render(
             f'Level: {self.monster.level}', False, COLORS['dark']
         )
+
+        level_rect = level_surf.get_frect()
+
         level_bg_rect = pg.FRect(
-            (name_bg_rect.bottomleft), (MAIN_RECT_WIDTH, level_surf.height + 8)
+            (name_bg_rect.bottomleft), (MAIN_RECT_WIDTH, level_rect.height + 8)
         )
 
         level_rect = level_surf.get_rect(midleft=level_bg_rect.midleft + vector(8, 0))

@@ -1,7 +1,7 @@
-from game_data import MONSTER_DATA
-from util.imports import import_image
+from src.game_data import MONSTER_DATA
+from src.util.imports import import_image
 from random import randint
-from game_data import ABILITY_DATA
+from src.game_data import ABILITY_DATA
 
 
 class Monster:

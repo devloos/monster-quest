@@ -1,6 +1,6 @@
 
 from __future__ import annotations
-from settings import *
+from src.settings import *
 
 from typing import TYPE_CHECKING
 

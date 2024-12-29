@@ -1,15 +1,15 @@
-from settings import *
-from util.support import calculate_monster_outlines, flip_surfaces
-from monster import Monster
-from sprites.battle_monster import BattleMonster
-from game_data import ABILITY_DATA, ELEMENT_DATA
-from util.draw import draw_bar
+from src.settings import *
+from src.util.support import calculate_monster_outlines, flip_surfaces
+from src.monster import Monster
+from src.sprites.battle_monster import BattleMonster
+from src.game_data import ABILITY_DATA, ELEMENT_DATA
+from src.util.draw import draw_bar
 from random import choice, uniform, randint
 from threading import Timer
 from typing import Callable
-from overlays.transition import Transition
+from src.overlays.transition import Transition
 from copy import deepcopy
-from sprites.player import Player
+from src.sprites.player import Player
 
 
 class SelectionMode(IntEnum):

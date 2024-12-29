@@ -1,7 +1,6 @@
 from pygame import Surface
-from settings import *
-from settings import WorldLayer
-from textures.texture import Texture
+from src.settings import *
+from src.textures.texture import Texture
 
 
 class WorldTransition(Texture):

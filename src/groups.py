@@ -1,11 +1,11 @@
 from __future__ import annotations
-from settings import *
+from src.settings import *
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # <-try this,
-    from sprites.entity import Entity
-    from textures.texture import Texture
-    from overlays.dialog import DialogSprite
+    from src.sprites.entity import Entity
+    from src.textures.texture import Texture
+    from src.overlays.dialog import DialogSprite
 
 
 class RenderGroup(pg.sprite.Group):

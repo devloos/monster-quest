@@ -1,4 +1,4 @@
-from settings import *
+from src.settings import *
 from os.path import join
 from os import walk
 from pytmx.util_pygame import load_pygame
@@ -188,7 +188,7 @@ def import_audio(*path) -> dict[str, pg.mixer.Sound]:
 
         for audio_name in audio_names:
             normalized_name = audio_name.split('.')[0]
-            audio[normalized_name] = pg.mixer.Sound(join(*path, audio_name))
+            audio[normalized_name] = pg.mixer.Sound(join(*path, 'battle.ogg'))
 
             volume = 0.1 if DEBUG else 0.4
             audio[normalized_name].set_volume(volume)

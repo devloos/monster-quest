@@ -1,6 +1,6 @@
-from settings import *
+from src.settings import *
 from pygame import Surface
-from textures.texture import Texture
+from src.textures.texture import Texture
 
 
 class AnimatedTexture(Texture):

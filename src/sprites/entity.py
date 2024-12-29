@@ -1,4 +1,4 @@
-from settings import *
+from src.settings import *
 from abc import ABCMeta, abstractmethod
 
 

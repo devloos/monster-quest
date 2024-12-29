@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from settings import *
-from util.timer import Timer
+from src.settings import *
+from src.util.timer import Timer
 from typing import TYPE_CHECKING
-from overlays.battle import Battle
-from overlays.transition import Transition
+from src.overlays.battle import Battle
+from src.overlays.transition import Transition
 
 if TYPE_CHECKING:  # <-try this,
-    from sprites.player import Player
-    from sprites.character import Character
-    from groups import RenderGroup
+    from src.sprites.player import Player
+    from src.sprites.character import Character
+    from src.groups import RenderGroup
 
 
 class DialogSprite(pg.sprite.Sprite):
@@ -21,10 +21,11 @@ class DialogSprite(pg.sprite.Sprite):
         self.z = WorldLayer.top
 
         font_surf = font.render(message, False, COLORS['black'])
+        font_rect = font_surf.get_frect()
         padding = 30
 
-        width = max(30, font_surf.width + padding)
-        height = font_surf.height + padding
+        width = max(30, font_rect.width + padding)
+        height = font_rect.height + padding
 
         # plus 20 to support thought bubble
         surf = pg.Surface((width, height + 14), pg.SRCALPHA)

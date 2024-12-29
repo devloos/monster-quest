@@ -1,8 +1,8 @@
-from settings import *
-from monster import Monster
-from util.draw import draw_bar
-from util.imports import import_folder_dict
-from game_data import ABILITY_DATA
+from src.settings import *
+from src.monster import Monster
+from src.util.draw import draw_bar
+from src.util.imports import import_folder_dict
+from src.game_data import ABILITY_DATA
 
 
 class MonsterIndex:

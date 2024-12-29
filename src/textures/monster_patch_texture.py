@@ -1,11 +1,11 @@
-from settings import *
+from src.settings import *
 from pygame import Surface
-from textures.texture import Texture
-from overlays.battle import Battle
-from overlays.transition import Transition
-from sprites.player import Player
-from util.timer import Timer
-from monster import Monster
+from src.textures.texture import Texture
+from src.overlays.battle import Battle
+from src.overlays.transition import Transition
+from src.sprites.player import Player
+from src.util.timer import Timer
+from src.monster import Monster
 from random import random
 
 

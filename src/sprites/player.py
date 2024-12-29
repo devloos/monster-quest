@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from settings import *
-from sprites.entity import Entity
+from src.settings import *
+from src.sprites.entity import Entity
 from typing import TYPE_CHECKING
-from monster import Monster
+from src.monster import Monster
 
 if TYPE_CHECKING:
     from textures.texture import Texture

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from settings import *
-from sprites.player import Player
-from sprites.entity import Entity
-from util.support import check_connection
+from src.settings import *
+from src.sprites.player import Player
+from src.sprites.entity import Entity
+from src.util.support import check_connection
 from typing import TYPE_CHECKING
 from random import choice
-from util.timer import Timer
+from src.util.timer import Timer
 from time import time
-from monster import Monster
+from src.monster import Monster
 
 if TYPE_CHECKING:
     from overlays.dialog import DialogTree

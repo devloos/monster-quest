@@ -1,7 +1,7 @@
-from settings import *
-from monster import Monster
+from src.settings import *
+from src.monster import Monster
 from typing import Callable
-from util.timer import Timer
+from src.util.timer import Timer
 
 
 class Evolution:
