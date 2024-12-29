@@ -16,9 +16,15 @@ I aim to upload it on itch.io for a more accessible demo experience.
 4. `git clone https://github.com/devloos/monster-quest.git`
 5. `cd monster-quest`
 6. `pip install -r requirements.txt`
-7. `python src/main.py`
+7. `python main.py`
 
 If you are developing make sure to toggle DEBUG true in `src/settings.py`
+
+### Browser Deployment
+
+1. `pip install -r requirements.txt`
+2. `pygbag --ume_block 0 --can_close 1 --build --archive .`
+3. Take zip in build to itch.io
 
 ### Contributions
 
