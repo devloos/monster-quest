@@ -1,3 +1,4 @@
+import sys
 from src.settings import *
 from src.util.imports import *
 from src.util.support import check_connection
@@ -104,7 +105,10 @@ class Game:
 
         self.star_frames = import_folder('graphics', 'other', 'star-animation')
 
-        self.audio = import_audio('audio')
+        if sys.platform == "emscripten":
+            self.audio = import_audio('audio/browser')
+        else:
+            self.audio = import_audio('audio/os')
 
     def setup(self, tmx_map: TiledMap, player_start_pos) -> None:
         self.render_group.empty()
